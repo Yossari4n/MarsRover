@@ -24,7 +24,7 @@ class Object {
     using Components_t = std::vector<std::unique_ptr<Component>>;
 
 public:
-    Object(ObjectManager& scene, std::uint8_t id, std::string name = "object");
+    Object(ObjectManager& scene, size_t id, std::string name);
 
     void ProcessFrame();
 
@@ -35,7 +35,7 @@ public:
     void RegisterUpdateCall(const Component* component);
     void UnregisterUpdateCall(const Component* component);
 
-    std::uint8_t ID() const { return m_ID; }
+    size_t ID() const { return m_ID; }
 
     const std::string& Name() const { return m_Name; }
     void Name(const std::string& name) { m_Name = name; }
@@ -195,7 +195,7 @@ public:
 private:
     void MarkToDestroy(Components_t::iterator it);
 
-    std::uint8_t m_ID;
+    size_t m_ID;
     std::string m_Name;
 
     ObjectManager& m_Owner;

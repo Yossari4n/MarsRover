@@ -54,7 +54,6 @@ int main() {
     main_scene.PreRun();
     main_scene.CreateScene();
     main_scene.Run();
-    main_scene.PostRun();
 
     // End of application
     glfwSetWindowShouldClose(g_Window, true);

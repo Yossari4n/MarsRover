@@ -20,15 +20,15 @@ public:
 
     void PreRun();
     void Run();
-    void PostRun();
 
     void Exit();
     void FrameRateLimit(unsigned int frame_rate);
     float FrameRate() const { return 1.0f / g_Time.DeltaTime(); }
 
     // ObjectManger functions
-    Object* CreateObject(std::string name = "");
-    void DestroyObject(std::uint8_t id);
+    Object* CreateObject(std::string name);
+    void DestroyObject(std::string name);
+    void DestroyObject(size_t id);
 
     // DrawManager functions
     void RegisterDrawCall(Drawable* drawable);

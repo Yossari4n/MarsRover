@@ -22,7 +22,6 @@ Camera::Camera(float left, float right, float bottom, float top, float near, flo
     : m_ViewMatrix(0.0f)
     , m_Projection(Orthographic(left, right, bottom, top, near, far))
     , m_Transform(nullptr) {
-    
 }
 
 void Camera::Initialize() {
