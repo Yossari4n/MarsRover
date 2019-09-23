@@ -30,10 +30,11 @@ class MeshRenderer : public Component, public Drawable {
 public:
     MeshRenderer(const std::string& path, ShaderProgram::Type type);
 
+    void MakeConnectors(MessageManager& message_manager) override;
     void Initialize() override;
     void Destroy() override;
 
-    void Draw(const ShaderProgram &shader) const override;
+    void Draw(const ShaderProgram& shader) const override;
 
     const std::vector<Mesh>& Meshes() const { return m_Meshes; }
 
@@ -41,14 +42,14 @@ public:
 
     const std::string& Directory() const { return m_Directory; }
 
-    PropertyIn<glm::mat4> Model{ this };
+    PropertyIn<glm::mat4> ModelIn;
 
 private:
     void LoadModel(const std::string& path);
-    void ProcessNode(aiNode *node, const aiScene *scene);
-    void ProcessMesh(aiMesh *mesh, const aiScene *scene);
-    std::vector<Texture> LoadMaterialTextures(aiMaterial *mat, aiTextureType type, const std::string& typeName) const;
-    unsigned int TextureFromFile(const char *path, const std::string &directory) const;
+    void ProcessNode(aiNode* node, const aiScene* scene);
+    void ProcessMesh(aiMesh* mesh, const aiScene* scene);
+    std::vector<Texture> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, const std::string& typeName) const;
+    unsigned int TextureFromFile(const char* path, const std::string& directory) const;
 
     std::vector<Mesh> m_Meshes;
     std::vector<Texture> m_TexturesLoaded;

@@ -2,13 +2,14 @@
 #define Component_h
 
 #include <iostream>
-#include <exception>
+#include <vector>
+#include <algorithm>
 
 class Object;
-class Transform;
+class ConnectionPipe;
+class MessageManager;
 
 class Component {
-    // TODO doc about friendship and constructors
     friend class Object;
 
 public:
@@ -26,6 +27,7 @@ protected:
     virtual void Initialize() {};
     virtual void Update() {};
     virtual void Destroy() {};
+    virtual void MakeConnectors(MessageManager& message_manager) { (void)message_manager; };
 
     void RegisterUpdateCall() const;
     void UnregisterUpdateCall() const;

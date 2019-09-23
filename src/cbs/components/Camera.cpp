@@ -18,10 +18,11 @@ Camera::Camera(float fovy, float aspect, float near, float far)
     
 }
 
-Camera::Camera(float left, float right, float bottom, float top, float near, float far) 
+Camera::Camera(float left, float right, float bottom, float top, float near, float far)
     : m_ViewMatrix(0.0f)
     , m_Projection(Orthographic(left, right, bottom, top, near, far))
     , m_Transform(nullptr) {
+    
 }
 
 void Camera::Initialize() {

@@ -11,7 +11,8 @@ void Scene::PreRun() {
 void Scene::Run() {
     m_ObjectManager.InitializeObjects();
 
-    // To avoid misrepresented delta time initialize clock as close to game loop as possible
+    // Initialize Time manager as close to game loop as possible
+    // to avoid misrepresented delta time
     g_Time.Initialize();
     
     // Game loop
@@ -32,6 +33,10 @@ void Scene::Run() {
     }
 }
 
+void Scene::PostRun() {
+    m_ObjectManager.DestroyObjects();
+}
+
 void Scene::Exit() {
     m_Running = false;
 }
@@ -44,11 +49,7 @@ Object* Scene::CreateObject(std::string name) {
     return m_ObjectManager.CreateObject(name);
 }
 
-void Scene::DestroyObject(std::string name) {
-    m_ObjectManager.DestroyObject(name);
-}
-
-void Scene::DestroyObject(size_t id) {
+void Scene::DestroyObject(std::uint8_t id) {
     m_ObjectManager.DestroyObject(id);
 }
 

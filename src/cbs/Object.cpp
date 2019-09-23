@@ -3,7 +3,7 @@
 #include "ObjectManager.h"
 #include "../scenes/Scene.h"
 
-Object::Object(ObjectManager& owner, size_t id, std::string name)
+Object::Object(ObjectManager& owner, std::uint8_t id, std::string name)
     : m_ID(id)
     , m_Name(name)
     , m_Owner(owner)
@@ -14,9 +14,10 @@ Object::Object(ObjectManager& owner, size_t id, std::string name)
     , m_ToInitializeNextFrame(0)
     , m_ToUpdate(0)
     , m_ToDestroy(0) {
-    Component* root = &m_Root;
-    root->m_Object = this;
-    root->m_ID = 1;
+    m_Root.m_Object = this;
+    m_Root.m_ID = 1;
+    m_Root.MakeConnectors(m_MessageManager);
+    m_Root.Initialize();
 }
 
 void Object::ProcessFrame() {

@@ -3,9 +3,9 @@
 
 #pragma warning(push, 0)
 #include <GLFW/glfw3.h>
-#pragma warning(pop)
 
 #include <string>
+#pragma warning(pop)
 
 class Window {
     friend void framebuffer_size_callback(GLFWwindow* window, int width, int height);

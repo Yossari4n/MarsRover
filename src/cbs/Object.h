@@ -24,7 +24,7 @@ class Object {
     using Components_t = std::vector<std::unique_ptr<Component>>;
 
 public:
-    Object(ObjectManager& scene, size_t id, std::string name);
+    Object(ObjectManager& scene, std::uint8_t id, std::string name = "object");
 
     void ProcessFrame();
 
@@ -35,7 +35,7 @@ public:
     void RegisterUpdateCall(const Component* component);
     void UnregisterUpdateCall(const Component* component);
 
-    size_t ID() const { return m_ID; }
+    std::uint8_t ID() const { return m_ID; }
 
     const std::string& Name() const { return m_Name; }
     void Name(const std::string& name) { m_Name = name; }
@@ -58,8 +58,12 @@ public:
     T* CreateComponent(Args&&... params) {
         // Add new Component at the end of vecotr to be initialized in the next frame
         m_Components.emplace_back(std::make_unique<T>(params...));
-        m_Components.back()->m_Object = this;
-        m_Components.back()->m_ID = m_NextCompID;
+
+        // 
+        auto& comp = m_Components.back();
+        comp->m_Object = this;
+        comp->m_ID = m_NextCompID;
+        comp->MakeConnectors(m_MessageManager);
 
         m_ToInitializeNextFrame = m_ToInitializeNextFrame + 1;
         m_NextCompID = m_NextCompID + 1;
@@ -171,7 +175,7 @@ public:
     /**
      * Disconnect
      *
-     * Attempts to disconnect either properties, message or trigger pipes of it's
+     * Attempts to disconnect either properties or message pipes of it's
      * two owned components. Type compatibility is ensured at the compilation time.
      */
     template <class T>
@@ -195,12 +199,12 @@ public:
 private:
     void MarkToDestroy(Components_t::iterator it);
 
-    size_t m_ID;
+    std::uint8_t m_ID;
     std::string m_Name;
 
     ObjectManager& m_Owner;
     MessageManager m_MessageManager;
- 
+
     std::uint8_t m_NextCompID;
 
     // All components owned by Object

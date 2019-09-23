@@ -1,15 +1,19 @@
 #include "TextRenderer.h"
 
-TextRenderer::TextRenderer(const std::string& text, glm::vec2 offset, EAlign horizontal, EAlign vertical)
-    : m_Text(text)
-    , m_Horizontal(horizontal)
-    , m_Vertical(vertical) 
-    , m_Offset(offset)
-    , m_Color(1.0f, 1.0f, 1.0f, 1.0f) {
-    assert(offset.x >= 0.0f && offset.x <= 1.0f && offset.y >= 0.0f && offset.y <= 1.0f);
+TextRenderer::TextRenderer(const std::string& font_path, float size)
+    : m_Horizontal(EAlign::NONE)
+    , m_Vertical(EAlign::NONE)
+    , m_Offset(0.0f)
+    , m_Color(0.0f, 0.0f, 0.0f, 1.0f) {
 
-    // Set font as default font
-    m_Font = ImGui::GetIO().Fonts->Fonts[0];
+    ImGuiIO& io = ImGui::GetIO();
+    m_Font = io.Fonts->AddFontFromFileTTF(font_path.c_str(), size);
+    io.Fonts->Build();
+}
+
+void TextRenderer::MakeConnectors(MessageManager& message_manager) {
+    message_manager.Make(this, TextIn);
+    message_manager.Make(this, ColorIn);
 }
 
 void TextRenderer::Initialize() {
@@ -40,16 +44,14 @@ void TextRenderer::Draw() const {
     ImGui::End();
 }
 
-void TextRenderer::ChangeFont(std::string path, float size) {
+void TextRenderer::Font(const std::string& path, float size) {
     ImGuiIO& io = ImGui::GetIO();
     m_Font = io.Fonts->AddFontFromFileTTF(path.c_str(), size);
     io.Fonts->Build();
 }
 
-void TextRenderer::ChangeText(std::string text) {
-    m_Text = text;
-}
-
-void TextRenderer::ChangeColor(glm::vec4 color) {
-    m_Color = color;
+void TextRenderer::Position(glm::vec2 offset, EAlign horizontal, EAlign vertical) {
+    m_Offset = offset;
+    m_Vertical = vertical;
+    m_Horizontal = horizontal;
 }

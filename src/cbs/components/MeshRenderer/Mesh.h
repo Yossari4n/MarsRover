@@ -29,7 +29,7 @@ struct Texture {
 
 class Mesh {
 public:
-    Mesh(const std::vector<Vertex> &verticies, const std::vector<unsigned int> &indicies, const std::vector<Texture> &textures);
+    Mesh(const std::vector<Vertex>& verticies, const std::vector<unsigned int>& indicies, const std::vector<Texture>& textures);
 
     Mesh() = delete;
     Mesh(const Mesh&) = delete;
@@ -38,7 +38,7 @@ public:
     Mesh& operator=(Mesh&& other) noexcept;
     ~Mesh();
 
-    void Draw(const ShaderProgram &shader) const;
+    void Draw(const ShaderProgram& shader) const;
 
     const std::vector<Vertex>& Vertices() const { return m_Vertices; }
 

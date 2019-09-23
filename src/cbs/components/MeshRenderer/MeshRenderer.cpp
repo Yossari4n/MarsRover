@@ -5,6 +5,10 @@ MeshRenderer::MeshRenderer(const std::string& path, ShaderProgram::Type type)
     LoadModel(path);
 }
 
+void MeshRenderer::MakeConnectors(MessageManager& message_manager) {
+    message_manager.Make(this, ModelIn);
+}
+
 void MeshRenderer::Initialize() {
     Object().Scene().RegisterDrawCall(this);
 }
@@ -13,40 +17,40 @@ void MeshRenderer::Destroy() {
     Object().Scene().UnregisterDrawCall(this);
 }
 
-void MeshRenderer::Draw(const ShaderProgram &shader) const {
-    shader.Uniform("model", Model);
-    
-    for (const Mesh &mesh: m_Meshes) {
+void MeshRenderer::Draw(const ShaderProgram& shader) const {
+    shader.Uniform("model", ModelIn);
+
+    for (const Mesh& mesh : m_Meshes) {
         mesh.Draw(shader);
     }
 }
 
 void MeshRenderer::LoadModel(const std::string& path) {
     Assimp::Importer importer;
-    const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
-    
+    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << '\n';
         return;
     }
-    
+
     m_Directory = path.substr(0, path.find_last_of('/'));
     m_Meshes.reserve(scene->mRootNode->mNumMeshes);
     ProcessNode(scene->mRootNode, scene);
 }
 
-void MeshRenderer::ProcessNode(aiNode *node, const aiScene *scene) {
+void MeshRenderer::ProcessNode(aiNode* node, const aiScene* scene) {
     for (unsigned int i = 0; i < node->mNumMeshes; ++i) {
-        aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
+        aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
         ProcessMesh(mesh, scene);
     }
-    
+
     for (unsigned int i = 0; i < node->mNumChildren; ++i) {
         ProcessNode(node->mChildren[i], scene);
     }
 }
 
-void MeshRenderer::ProcessMesh(aiMesh *mesh, const aiScene *scene) {
+void MeshRenderer::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
     std::vector<Texture> textures;
@@ -73,13 +77,13 @@ void MeshRenderer::ProcessMesh(aiMesh *mesh, const aiScene *scene) {
 
     for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
         aiFace face = mesh->mFaces[i];
-        for(unsigned int j = 0; j < face.mNumIndices; j++)
+        for (unsigned int j = 0; j < face.mNumIndices; j++)
             indices.push_back(face.mIndices[j]);
     }
 
     // Does mesh contains material
     if (mesh->mMaterialIndex >= 0) {
-        aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
+        aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
         std::vector<Texture> diffuseMaps = LoadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
         textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
@@ -91,24 +95,24 @@ void MeshRenderer::ProcessMesh(aiMesh *mesh, const aiScene *scene) {
     m_Meshes.emplace_back(vertices, indices, textures);
 }
 
-std::vector<Texture> MeshRenderer::LoadMaterialTextures(aiMaterial *material, aiTextureType type, const std::string& type_name) const {
+std::vector<Texture> MeshRenderer::LoadMaterialTextures(aiMaterial* material, aiTextureType type, const std::string& type_name) const {
     std::vector<Texture> textures;
-    
+
     for (unsigned int i = 0; i < material->GetTextureCount(type); ++i) {
         aiString string;
         material->GetTexture(type, i, &string);
-        
+
         Texture texture;
         texture.ID = TextureFromFile(string.C_Str(), m_Directory);
         texture.Type = type_name;
         texture.Path = string.C_Str();
         textures.push_back(texture);
     }
-    
+
     return textures;
 }
 
-unsigned int MeshRenderer::TextureFromFile(const char *path, const std::string &directory) const {
+unsigned int MeshRenderer::TextureFromFile(const char* path, const std::string& directory) const {
     std::string filename = std::string(path);
     filename = directory + '/' + filename;
 
@@ -116,7 +120,7 @@ unsigned int MeshRenderer::TextureFromFile(const char *path, const std::string &
     glGenTextures(1, &id);
 
     int width, height, components;
-    unsigned char *data = stbi_load(filename.c_str(), &width, &height, &components, 0);
+    unsigned char* data = stbi_load(filename.c_str(), &width, &height, &components, 0);
     if (data) {
         GLenum format = 0;
         if (components == 1) {
