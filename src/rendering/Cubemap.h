@@ -12,7 +12,7 @@
 
 class Cubemap : public Drawable {
 public:
-    Cubemap(const std::string& right, const std::string& left, const std::string& top, const std::string& bottom, const std::string& back, const std::string& front, ShaderProgram::Type type);
+    Cubemap(const std::string& right, const std::string& left, const std::string& top, const std::string& bottom, const std::string& back, const std::string& front, ShaderProgram::EType type);
     
     void Draw(const ShaderProgram& shader) const override;
     

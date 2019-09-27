@@ -19,20 +19,20 @@ void DrawManager::Initialize() {
     io.Fonts->AddFontDefault();
 
     // Create shader programs
-    m_ShaderPrograms[ShaderProgram::Type::PURE_COLOR].AttachShaders("src/shaders/PURE_COLOR.vert",
+    m_ShaderPrograms[ShaderProgram::EType::PureColor].AttachShaders("src/shaders/PURE_COLOR.vert",
                                                                     "src/shaders/PURE_COLOR.frag");
 
 
-    m_ShaderPrograms[ShaderProgram::Type::PURE_TEXTURE].AttachShaders("src/shaders/PURE_TEXTURE.vert",
+    m_ShaderPrograms[ShaderProgram::EType::PureTexture].AttachShaders("src/shaders/PURE_TEXTURE.vert",
                                                                       "src/shaders/PURE_TEXTURE.frag");
 
 
-    m_ShaderPrograms[ShaderProgram::Type::PHONG].AttachShaders("src/shaders/PHONG.vert",
+    m_ShaderPrograms[ShaderProgram::EType::Phong].AttachShaders("src/shaders/PHONG.vert",
                                                                "src/shaders/PHONG.frag");
-    m_ShaderPrograms[ShaderProgram::Type::PHONG].Traits(ShaderProgram::Trait::LIGHT_RECEIVER);
+    m_ShaderPrograms[ShaderProgram::EType::Phong].Traits(ShaderProgram::ETrait::LIGHT_RECEIVER);
 
 
-    m_ShaderPrograms[ShaderProgram::Type::SKYBOX].AttachShaders("src/shaders/SKYBOX.vert",
+    m_ShaderPrograms[ShaderProgram::EType::Skybox].AttachShaders("src/shaders/SKYBOX.vert",
                                                                 "src/shaders/SKYBOX.frag");
 
     glEnable(GL_DEPTH_TEST);
@@ -47,7 +47,7 @@ Camera* DrawManager::MainCamera() const {
 }
 
 void DrawManager::Skybox(const std::string& right, const std::string& left, const std::string& top, const std::string& bottom, const std::string& back, const std::string& front) {
-    m_Skybox = std::make_unique<Cubemap>(right, left, top, bottom, back, front, ShaderProgram::Type::SKYBOX);
+    m_Skybox = std::make_unique<Cubemap>(right, left, top, bottom, back, front, ShaderProgram::EType::Skybox);
 }
 
 void DrawManager::Background(const glm::vec3& background) {
@@ -114,7 +114,7 @@ void DrawManager::CallDraws() const {
         curr_shader.Uniform("pv", pv);
 
         // For each trait in shader set corresponding properties 
-        if (curr_shader.Traits() & ShaderProgram::Trait::LIGHT_RECEIVER) {
+        if (curr_shader.Traits() & ShaderProgram::ETrait::LIGHT_RECEIVER) {
             curr_shader.Uniform("viewPos", m_Camera->Object().Root().Position());
             curr_shader.Uniform("material.shininess", 32.0f);
 
@@ -129,7 +129,7 @@ void DrawManager::CallDraws() const {
     // Draw skybox
     if (m_Skybox != nullptr) {
         glDepthFunc(GL_LEQUAL);
-        const ShaderProgram& skybox_shader = m_ShaderPrograms[ShaderProgram::Type::SKYBOX];
+        const ShaderProgram& skybox_shader = m_ShaderPrograms[ShaderProgram::EType::Skybox];
 
         skybox_shader.Use();
         skybox_shader.Uniform("pv", m_Camera->Projection() * glm::mat4(glm::mat3(m_Camera->ViewMatrix())));

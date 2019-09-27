@@ -1,7 +1,7 @@
 #include "Line.h"
 
 Line::Line(glm::vec3 start, glm::vec3 end, glm::vec3 color)
-    : Drawable(ShaderProgram::Type::PURE_COLOR)
+    : Drawable(ShaderProgram::EType::PureColor)
     , m_Start(start)
     , m_End(end)
     , m_Color(color) {
@@ -9,7 +9,7 @@ Line::Line(glm::vec3 start, glm::vec3 end, glm::vec3 color)
 }
 
 Line::Line(const Line& other)
-    : Drawable(ShaderProgram::Type::PURE_COLOR)
+    : Drawable(ShaderProgram::EType::PureColor)
     , m_Start(other.m_Start)
     , m_End(other.m_End)
     , m_Color(other.m_Color) {
@@ -24,7 +24,7 @@ Line& Line::operator=(const Line &other) {
     m_Start = other.m_Start;
     m_End = other.m_End;
     m_Color = other.m_Color;
-    m_ShaderType = ShaderProgram::Type::PURE_COLOR;
+    m_ShaderType = ShaderProgram::EType::PureColor;
     SetupLine();
 
     return *this;

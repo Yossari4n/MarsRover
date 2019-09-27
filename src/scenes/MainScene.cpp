@@ -26,7 +26,7 @@ void MainScene::CreateScene() {
     auto rover = CreateObject("Rover");
     {
         rover->Root().Scale(glm::vec3(0.1f));
-        auto mesh = rover->CreateComponent<MeshRenderer>("resources/opportunity/oppy.obj", ShaderProgram::Type::PHONG);
+        auto mesh = rover->CreateComponent<MeshRenderer>(ShaderProgram::EType::Phong);
         rover->Connect(rover->Root().ModelOut, mesh->ModelIn);
     }
 

@@ -13,17 +13,16 @@
 
 class ShaderProgram {
 public:
-    enum Type : int {
-        PURE_COLOR = 0,
-        PURE_TEXTURE,
-        PHONG,
-        SKYBOX,
-        TEXT,
+    enum EType {
+        PureColor = 0,
+        PureTexture,
+        Phong,
+        Skybox,
         
-        COUNT
+        Count
     };
 
-    enum Trait : unsigned char {
+    enum ETrait : unsigned char {
         NONE = 0,
         LIGHT_RECEIVER = 1 << 0
     };
@@ -40,8 +39,8 @@ public:
     void Use() const;
     int ID() const;
     
-    Trait Traits() const { return m_Traits; }
-    void Traits(Trait traits) { m_Traits = traits; }
+    ETrait Traits() const { return m_Traits; }
+    void Traits(ETrait traits) { m_Traits = traits; }
     
     // Setters for OpenGL shaders
     void Uniform(const std::string &name, bool value) const;
@@ -62,9 +61,9 @@ private:
     unsigned int AttachShader(const char *path, GLenum shader);
     
     unsigned int m_ID;
-    Trait m_Traits;
+    ETrait m_Traits;
 };
 
-ShaderProgram::Trait operator| (ShaderProgram::Trait lhs, ShaderProgram::Trait rhs);
+ShaderProgram::ETrait operator| (ShaderProgram::ETrait lhs, ShaderProgram::ETrait rhs);
 
 #endif

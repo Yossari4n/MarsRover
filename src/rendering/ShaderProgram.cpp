@@ -1,11 +1,11 @@
 #include "ShaderProgram.h"
 
-ShaderProgram::Trait operator| (ShaderProgram::Trait lhs, ShaderProgram::Trait rhs) {
-    return static_cast<ShaderProgram::Trait>(static_cast<unsigned int>(lhs) | static_cast<unsigned int>(rhs));
+ShaderProgram::ETrait operator| (ShaderProgram::ETrait lhs, ShaderProgram::ETrait rhs) {
+    return static_cast<ShaderProgram::ETrait>(static_cast<unsigned int>(lhs) | static_cast<unsigned int>(rhs));
 }
 
 ShaderProgram::ShaderProgram()
-    : m_Traits(Trait::NONE) {
+    : m_Traits(ETrait::NONE) {
     m_ID = glCreateProgram();
 }
 

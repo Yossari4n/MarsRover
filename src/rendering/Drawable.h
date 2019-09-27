@@ -5,7 +5,7 @@
 
 class Drawable {
 public:
-    Drawable(ShaderProgram::Type shader_type);
+    Drawable(ShaderProgram::EType shader_type);
     virtual ~Drawable() = default;
     Drawable(const Drawable&) = delete;
     Drawable& operator=(const Drawable&) = delete;
@@ -14,11 +14,11 @@ public:
 
     virtual void Draw(const ShaderProgram &shader) const = 0;
 
-    ShaderProgram::Type ShaderType() const { return m_ShaderType; }
-    void ShaderType(ShaderProgram::Type type) { m_ShaderType = type; }
+    ShaderProgram::EType ShaderType() const { return m_ShaderType; }
+    void ShaderType(ShaderProgram::EType type) { m_ShaderType = type; }
 
 protected:
-    ShaderProgram::Type m_ShaderType;
+    ShaderProgram::EType m_ShaderType;
 };
 
 #endif

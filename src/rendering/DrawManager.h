@@ -55,7 +55,7 @@ private:
     std::vector<IWidget*> m_Widgets;
     std::vector<ILightSource*> m_LightSources;
 
-    std::array<ShaderProgram, static_cast<size_t>(ShaderProgram::Type::COUNT)> m_ShaderPrograms;
+    std::array<ShaderProgram, static_cast<size_t>(ShaderProgram::EType::Count)> m_ShaderPrograms;
 };
 
 #endif
