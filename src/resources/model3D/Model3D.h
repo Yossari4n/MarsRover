@@ -21,8 +21,6 @@ class Model3D {
 public:
     Model3D(std::string path, ResourcesManager& manager);
 
-    void Draw(const ShaderProgram& shader) const;
-
     std::string FilePath() const { return m_Path; }
     const std::vector<Mesh>& Meshes() const { return m_Meshes; }
 

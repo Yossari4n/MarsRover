@@ -23,6 +23,8 @@ public:
     PropertyIn<glm::mat4> ModelIn;
 
 private:
+    void DrawMesh(const ShaderProgram& shader, const Mesh& mesh) const;
+
     Model3D& m_Model3D;
 };
 

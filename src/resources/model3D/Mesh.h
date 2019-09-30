@@ -32,8 +32,6 @@ public:
     Mesh& operator=(Mesh&& other) noexcept;
     ~Mesh();
 
-    void Draw(const ShaderProgram& shader) const;
-
     GLuint VAO() const { return m_VAO; }
     GLuint VBO() const { return m_VBO; }
     GLuint EBO() const { return m_EBO; }

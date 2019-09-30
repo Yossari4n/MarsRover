@@ -8,12 +8,6 @@ Model3D::Model3D(std::string path, ResourcesManager& manager)
     Load(manager);
 }
 
-void Model3D::Draw(const ShaderProgram& shader) const {
-    for (const auto& mesh : m_Meshes) {
-        mesh.Draw(shader);
-    }
-}
-
 void Model3D::Load(ResourcesManager& manager) {
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(m_Path, aiProcess_Triangulate | aiProcess_FlipUVs);

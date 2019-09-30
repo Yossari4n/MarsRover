@@ -55,17 +55,3 @@ Mesh::~Mesh() {
     glDeleteBuffers(1, &m_VBO);
     glDeleteBuffers(1, &m_EBO);
 }
-
-void Mesh::Draw(const ShaderProgram &shader) const {
-    for (GLuint i = 0; i < m_Textures.size(); i++) {
-        glActiveTexture(GL_TEXTURE0 + static_cast<GLenum>(i));
-        shader.Uniform("material." + m_Textures[i].TypeName(), static_cast<int>(i));
-        glBindTexture(GL_TEXTURE_2D, m_Textures[i].ID());
-    }
-
-    glBindVertexArray(m_VAO);
-    glDrawElements(GL_TRIANGLES, m_IndicesCount, GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
-
-    glActiveTexture(GL_TEXTURE0);
-}
