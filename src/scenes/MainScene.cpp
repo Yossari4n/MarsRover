@@ -8,12 +8,12 @@
 
 void MainScene::CreateScene() {
     FrameRateLimit(60);
-    Skybox("resources/skybox/right.png",
-           "resources/skybox/left.png",
-           "resources/skybox/top.png",
-           "resources/skybox/bottom.png",
-           "resources/skybox/back.png",
-           "resources/skybox/front.png");
+    Skybox("resources/skyboxes/basic_blue/right.png",
+           "resources/skyboxes/basic_blue/left.png",
+           "resources/skyboxes/basic_blue/top.png",
+           "resources/skyboxes/basic_blue/bottom.png",
+           "resources/skyboxes/basic_blue/back.png",
+           "resources/skyboxes/basic_blue/front.png");
 
     auto light = CreateObject("Light"); {
         light->CreateComponent<DirectionalLight>(glm::vec3(-0.2f, -0.5f, 0.3f),
@@ -24,7 +24,7 @@ void MainScene::CreateScene() {
 
     auto rover = CreateObject("Rover"); {
         rover->Root().Scale(glm::vec3(0.1f));
-        auto mesh = rover->CreateComponent<MeshRenderer>(GetModel("resources/opportunity/oppy.obj"), ShaderProgram::EType::Phong);
+        auto mesh = rover->CreateComponent<MeshRenderer>(GetModel("resources/models/opportunity/oppy.obj"), ShaderProgram::EType::Phong);
         rover->Connect(rover->Root().ModelOut, mesh->ModelIn);
     }
 

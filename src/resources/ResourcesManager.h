@@ -15,8 +15,8 @@
 #include <unordered_map>
 #pragma warning(pop)
 
-constexpr const char* ERROR_TEXTURE_PATH = "resources/texture/ErrorTexture.png";
-constexpr const char* ERROR_MODEL3D_PATH = ""; // TODO
+constexpr const char* ERROR_TEXTURE_PATH = "resources/textures/ErrorTexture.png";
+constexpr const char* ERROR_MODEL3D_PATH = "resources/models/ErrorMesh/ErrorMesh.obj";
 
 class ResourcesManager {
 public:

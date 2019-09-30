@@ -38,7 +38,7 @@ public:
     GLuint VBO() const { return m_VBO; }
     GLuint EBO() const { return m_EBO; }
     GLsizei IndicesCount() const { return m_IndicesCount; }
-    const std::vector<Texture> Textures() const { return m_Textures; }
+    const std::vector<Texture>& Textures() const { return m_Textures; }
 
 private:
     GLuint m_VAO;
