@@ -6,12 +6,16 @@ in vec2 TexCoords;
 
 struct Material {
     sampler2D diffuse;
-    sampler2D specular;
-    float shininess;
 };
 
 uniform Material material;
 
 void main() {
-    FragColor = texture(material.diffuse, TexCoords);
+    vec4 tex_diffuse = texture(material.diffuse, TexCoords);
+
+    if (tex_diffuse.a < 0.1f) {
+        discard;
+    }
+
+    FragColor = vec4(tex_diffuse.xyz, 1.0f);
 }

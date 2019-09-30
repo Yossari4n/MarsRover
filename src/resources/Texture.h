@@ -4,6 +4,9 @@
 #pragma warning(push, 0)
 #include <glad/glad.h>
 
+#include <stb/stb_image.h>
+
+#include <assert.h>
 #include <string>
 #pragma warning(pop)
 

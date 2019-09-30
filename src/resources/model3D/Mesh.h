@@ -8,6 +8,7 @@
 #include <glad/glad.h>
 
 #include <glm/glm.hpp>
+#include <stb/stb_image.h>
 
 #include <iostream>
 #include <string>
@@ -32,6 +33,12 @@ public:
     ~Mesh();
 
     void Draw(const ShaderProgram& shader) const;
+
+    GLuint VAO() const { return m_VAO; }
+    GLuint VBO() const { return m_VBO; }
+    GLuint EBO() const { return m_EBO; }
+    GLsizei IndicesCount() const { return m_IndicesCount; }
+    const std::vector<Texture> Textures() const { return m_Textures; }
 
 private:
     GLuint m_VAO;

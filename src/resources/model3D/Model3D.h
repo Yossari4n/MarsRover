@@ -1,8 +1,9 @@
-#ifndef MeshObject_h
-#define MeshObject_h
+#ifndef Model3D_h
+#define Model3D_h
 
 #include "Mesh.h"
 
+#pragma warning(push, 0)
 #include <GLFW/glfw3.h>
 
 #include <assimp/Importer.hpp>
@@ -12,12 +13,18 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#pragma warning(pop)
 
 class ResourcesManager;
 
 class Model3D {
 public:
     Model3D(std::string path, ResourcesManager& manager);
+
+    void Draw(const ShaderProgram& shader) const;
+
+    std::string FilePath() const { return m_Path; }
+    const std::vector<Mesh>& Meshes() const { return m_Meshes; }
 
 private:
     void Load(ResourcesManager& manager);

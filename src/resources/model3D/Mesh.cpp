@@ -1,8 +1,8 @@
 #include "Mesh.h"
 
 Mesh::Mesh(std::vector<Vertex> verticies, std::vector<unsigned int> indicies, std::vector<Texture> textures)
-    : m_IndicesCount(indicies.size())
-    , m_Textures(std::move(textures)) {
+    : m_IndicesCount(static_cast<GLsizei>(indicies.size()))
+    , m_Textures(textures) {
     glGenVertexArrays(1, &m_VAO);
     glGenBuffers(1, &m_VBO);
     glGenBuffers(1, &m_EBO);
@@ -36,7 +36,7 @@ Mesh::Mesh(Mesh&& other) noexcept
     : m_VAO(std::exchange(other.m_VAO, 0))
     , m_VBO(std::exchange(other.m_VBO, 0))
     , m_EBO(std::exchange(other.m_EBO, 0))
-    , m_IndicesCount(other.m_IndicesCount)      // No need to exchange
+    , m_IndicesCount(std::exchange(other.m_IndicesCount, 0))
     , m_Textures(std::move(other.m_Textures)) {
 }
 
@@ -44,7 +44,7 @@ Mesh& Mesh::operator=(Mesh&& other) noexcept {
     m_VAO = std::exchange(other.m_VAO, 0);
     m_VBO = std::exchange(other.m_VBO, 0);
     m_EBO = std::exchange(other.m_EBO, 0);
-    m_IndicesCount = other.m_IndicesCount;      // No need to exchange
+    m_IndicesCount = std::exchange(other.m_IndicesCount, 0);
     m_Textures = std::move(other.m_Textures);
 
     return *this;
@@ -59,7 +59,7 @@ Mesh::~Mesh() {
 void Mesh::Draw(const ShaderProgram &shader) const {
     for (GLuint i = 0; i < m_Textures.size(); i++) {
         glActiveTexture(GL_TEXTURE0 + static_cast<GLenum>(i));
-        glUniform1i(glGetUniformLocation(shader.ID(), m_Textures[i].TypeName().c_str()), i);
+        shader.Uniform("material." + m_Textures[i].TypeName(), static_cast<int>(i));
         glBindTexture(GL_TEXTURE_2D, m_Textures[i].ID());
     }
 

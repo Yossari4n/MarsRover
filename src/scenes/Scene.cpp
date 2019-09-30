@@ -92,3 +92,11 @@ void Scene::Skybox(const std::string& right, const std::string& left, const std:
 void Scene::Background(const glm::vec3& background) {
     m_DrawManager.Background(background);
 }
+
+Texture& Scene::GetTexture(std::string path) {
+    return m_ResourceManager.GetTexture(path);
+}
+
+Model3D& Scene::GetModel(std::string path) {
+    return m_ResourceManager.GetModel3D(path);
+}

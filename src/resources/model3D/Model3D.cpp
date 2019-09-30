@@ -1,10 +1,17 @@
 #include "Model3D.h"
 
 #include "../ResourcesManager.h"
+#include "../../rendering/ShaderProgram.h"
 
 Model3D::Model3D(std::string path, ResourcesManager& manager)
     : m_Path(path) {
     Load(manager);
+}
+
+void Model3D::Draw(const ShaderProgram& shader) const {
+    for (const auto& mesh : m_Meshes) {
+        mesh.Draw(shader);
+    }
 }
 
 void Model3D::Load(ResourcesManager& manager) {
@@ -74,11 +81,12 @@ void Model3D::LoadMesh(const aiMesh* mesh, const aiScene* scene, std::string dir
 
         // Load diffuse textures
         auto count = material->GetTextureCount(aiTextureType_DIFFUSE);
-        textures.reserve(count + material->GetTextureCount(aiTextureType_SPECULAR));
+        textures.reserve(static_cast<size_t>(count) + static_cast<size_t>(material->GetTextureCount(aiTextureType_SPECULAR)));
         for (unsigned int i = 0; i < count; i++) {
             aiString path;
             material->GetTexture(aiTextureType_DIFFUSE, i, &path);
-            textures.push_back(manager.GetTexture(directory + "/n" + path.C_Str()));
+            textures.push_back(manager.GetTexture(directory + '/' + path.C_Str()));
+            textures.back().Type(Texture::EType::Diffuse);
         }
 
         // Load specular textures
@@ -86,7 +94,8 @@ void Model3D::LoadMesh(const aiMesh* mesh, const aiScene* scene, std::string dir
         for (unsigned int i = 0; i < count; i++) {
             aiString path;
             material->GetTexture(aiTextureType_SPECULAR, i, &path);
-            textures.push_back(manager.GetTexture(directory + "/n" + path.C_Str()));
+            textures.push_back(manager.GetTexture(directory + '/' + path.C_Str()));
+            textures.back().Type(Texture::EType::Specular);
         }
     }
 

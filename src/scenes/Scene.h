@@ -3,6 +3,7 @@
 
 #include "../cbs/ObjectManager.h"
 #include "../rendering/DrawManager.h"
+#include "../resources/ResourcesManager.h"
 #include "../utilities/Time.h"
 #include "../utilities/Input.h"
 #include "../utilities/Window.h"
@@ -42,9 +43,14 @@ public:
     void Skybox(const std::string& right, const std::string& left, const std::string& top, const std::string& bottom, const std::string& back, const std::string& front);
     void Background(const glm::vec3& background);
 
+    // ResourceManager functions
+    Texture& GetTexture(std::string path);
+    Model3D& GetModel(std::string path);
+
 private:
     ObjectManager m_ObjectManager{ *this };
-    DrawManager m_DrawManager{ };
+    DrawManager m_DrawManager{};
+    ResourcesManager m_ResourceManager{};
 
     bool m_Running{ false };
     float m_FrameRateLimit{ 0.0f };
