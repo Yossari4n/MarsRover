@@ -29,7 +29,7 @@ void MainScene::CreateScene() {
     }
 
     auto camera = CreateObject("Camera"); {
-        camera->CreateComponent<Camera>(glm::perspective(glm::radians(45.0f), static_cast<float>(g_Window.Width()) / static_cast<float>(g_Window.Height()), 0.1f, 5000.0f));
+        camera->CreateComponent<Camera>(glm::perspective(glm::radians(45.0f), static_cast<float>(g_Window.Width()) / static_cast<float>(g_Window.Height()), 0.1f, 100.0f));
         camera->CreateComponent<FirstPersonController>();
     }
 }

@@ -36,6 +36,10 @@ Texture::Texture(const unsigned char* data, int width, int height, int component
     glGenerateMipmap(GL_TEXTURE_2D);
 }
 
+void Texture::Free() {
+    glDeleteTextures(1, &m_ID);
+}
+
 std::string Texture::TypeName() const {
     switch (m_Type) {
     case Texture::EType::Diffuse:

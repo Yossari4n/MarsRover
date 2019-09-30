@@ -1,7 +1,9 @@
 #include "ResourcesManager.h"
 
 ResourcesManager::~ResourcesManager() {
-    // TODO delete resources
+    for (auto& [key, texture] : m_Textures) {
+        texture.Free();
+    }
 }
 
 Texture& ResourcesManager::GetTexture(std::string path) {

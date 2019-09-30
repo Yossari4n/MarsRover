@@ -6,10 +6,18 @@
 
 #include <stb/stb_image.h>
 
+#include <iostream>
 #include <assert.h>
 #include <string>
 #pragma warning(pop)
 
+/**
+ * Texture
+ *
+ * TODO doc
+ * Life time: managed by ResourceManager; parameterized ctor and Free() should be only called by ResourceManager
+ * Value semantics: copyable, moveable
+ */
 class Texture {
 public:
     enum class EType {
@@ -35,6 +43,8 @@ public:
     Texture(Texture&&) = default;
     Texture& operator=(Texture&&) = default;
     ~Texture() = default;
+
+    void Free();
 
     GLuint ID() const { return m_ID; }
     void Type(EType type) { m_Type = type; }
