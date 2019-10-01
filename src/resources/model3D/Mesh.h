@@ -7,9 +7,6 @@
 #pragma warning(push, 0)
 #include <glad/glad.h>
 
-#include <glm/glm.hpp>
-#include <stb/stb_image.h>
-
 #include <iostream>
 #include <string>
 #include <vector>
@@ -26,11 +23,13 @@ public:
     Mesh(std::vector<Vertex> verticies, std::vector<unsigned int> indicies, std::vector<Texture> textures);
 
     Mesh() = delete;
-    Mesh(const Mesh&) = delete;
-    Mesh& operator=(const Mesh&) = delete;
-    Mesh(Mesh&& other) noexcept;
-    Mesh& operator=(Mesh&& other) noexcept;
-    ~Mesh();
+    Mesh(const Mesh&) = default;
+    Mesh& operator=(const Mesh&) = default;
+    Mesh(Mesh&& other) = default;
+    Mesh& operator=(Mesh&& other) = default;
+    ~Mesh() = default;
+
+    void Free();
 
     GLuint VAO() const { return m_VAO; }
     GLuint VBO() const { return m_VBO; }

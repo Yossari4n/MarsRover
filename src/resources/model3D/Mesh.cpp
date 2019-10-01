@@ -32,25 +32,7 @@ Mesh::Mesh(std::vector<Vertex> verticies, std::vector<unsigned int> indicies, st
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-Mesh::Mesh(Mesh&& other) noexcept
-    : m_VAO(std::exchange(other.m_VAO, 0))
-    , m_VBO(std::exchange(other.m_VBO, 0))
-    , m_EBO(std::exchange(other.m_EBO, 0))
-    , m_IndicesCount(std::exchange(other.m_IndicesCount, 0))
-    , m_Textures(std::move(other.m_Textures)) {
-}
-
-Mesh& Mesh::operator=(Mesh&& other) noexcept {
-    m_VAO = std::exchange(other.m_VAO, 0);
-    m_VBO = std::exchange(other.m_VBO, 0);
-    m_EBO = std::exchange(other.m_EBO, 0);
-    m_IndicesCount = std::exchange(other.m_IndicesCount, 0);
-    m_Textures = std::move(other.m_Textures);
-
-    return *this;
-}
-
-Mesh::~Mesh() {
+void Mesh::Free() {
     glDeleteVertexArrays(1, &m_VAO);
     glDeleteBuffers(1, &m_VBO);
     glDeleteBuffers(1, &m_EBO);

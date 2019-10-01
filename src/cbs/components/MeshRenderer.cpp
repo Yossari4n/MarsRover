@@ -29,7 +29,7 @@ void MeshRenderer::Draw(const ShaderProgram& shader) const {
 void MeshRenderer::DrawMesh(const ShaderProgram& shader, const Mesh& mesh) const {
     const auto size = mesh.Textures().size();
     for (GLuint i = 0; i < size; i++) {
-        const auto& texture = mesh.Textures()[i];
+        const auto texture = mesh.Textures()[i];
 
         glActiveTexture(GL_TEXTURE0 + static_cast<GLenum>(i));
         shader.Uniform("material." + texture.TypeName(), static_cast<int>(i));

@@ -26,6 +26,9 @@ public:
     Model3D& GetModel3D(std::string path);
 
 private:
+    std::vector<Mesh> LoadNode(const aiNode* node, const aiScene* scene, std::string directory);
+    Mesh LoadMesh(const aiMesh* mesh, const aiScene* scene, std::string directory);
+
     std::unordered_map<std::string, Texture> m_Textures;
     std::unordered_map<std::string, Model3D> m_Models;
 };

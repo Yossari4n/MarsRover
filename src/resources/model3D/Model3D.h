@@ -3,33 +3,31 @@
 
 #include "Mesh.h"
 
-#pragma warning(push, 0)
-#include <GLFW/glfw3.h>
-
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-
-#include <iostream>
-#include <string>
 #include <vector>
-#pragma warning(pop)
 
-class ResourcesManager;
-
+/**
+ * Texture
+ *
+ * TODO doc
+ * Life time: managed by ResourceManager; parameterized ctor and Free() should be only called by ResourceManager
+ * Value semantics: copyable, moveable
+ */
 class Model3D {
 public:
-    Model3D(std::string path, ResourcesManager& manager);
+    explicit Model3D(std::vector<Mesh> meshes);
 
-    std::string FilePath() const { return m_Path; }
+    Model3D() = delete;
+    Model3D(const Model3D&) = default;
+    Model3D& operator=(const Model3D&) = default;
+    Model3D(Model3D&&) = default;
+    Model3D& operator=(Model3D&&) = default;
+    ~Model3D() = default;
+
+    void Free();
+
     const std::vector<Mesh>& Meshes() const { return m_Meshes; }
 
 private:
-    void Load(ResourcesManager& manager);
-    void LoadNode(const aiNode* node, const aiScene* scene, std::string directory, ResourcesManager& manager);
-    void LoadMesh(const aiMesh* mesh, const aiScene* scene, std::string directory, ResourcesManager& manager);
-
-    std::string m_Path;
     std::vector<Mesh> m_Meshes;
 };
 
