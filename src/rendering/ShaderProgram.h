@@ -4,12 +4,13 @@
 #pragma warning(push, 0)
 #include <glad/glad.h>
 #include <glm/glm.hpp>
-#pragma warning(pop)
+
 
 #include <iostream>
 #include <string>
 #include <fstream>
 #include <sstream>
+#pragma warning(pop)
 
 class ShaderProgram {
 public:

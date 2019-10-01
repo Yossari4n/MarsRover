@@ -20,6 +20,11 @@ constexpr const char* ERROR_MODEL3D_PATH = "resources/models/ErrorMesh/ErrorMesh
 
 class ResourcesManager {
 public:
+    ResourcesManager() = default;
+    ResourcesManager(const ResourcesManager&) = delete;
+    ResourcesManager& operator=(const ResourcesManager&) = delete;
+    ResourcesManager(ResourcesManager&&) = delete;
+    ResourcesManager& operator=(ResourcesManager&&) = delete;
     ~ResourcesManager();
 
     Texture& GetTexture(std::string path);
