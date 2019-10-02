@@ -1,19 +1,14 @@
 #ifndef Logger_h
 #define Logger_h
 
-class Logger {
-public:
-    static Logger& Get();
 
-    Logger(const Logger&) = delete;
-    Logger& operator=(const Logger&) = delete;
-    Logger(Logger&&) = delete;
-    Logger& operator=(Logger&&) = delete;
-    ~Logger() = default;
+#ifdef _WIN32
+  #include "platform/win32/Win32Logger.h"
+#elif defined(__linux__)
 
-private:
-    Logger();
-};
+#elif defined(__APPLE__)
+
+#endif
 
 
 #endif
