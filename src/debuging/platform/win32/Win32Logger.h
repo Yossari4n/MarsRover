@@ -21,7 +21,7 @@ public:
         Error = 0x1
     };
 
-    static Logger& Get();
+    static Logger& Instance();
 
     Logger(const Logger&) = delete;
     Logger& operator=(const Logger&) = delete;
@@ -29,18 +29,27 @@ public:
     Logger& operator=(Logger&&) = delete;
     ~Logger() = default;
 
+    void Push(EChannel channel);
+    void Pop(EChannel channel);
+
+    void PriorityLevel(EPriority level) { m_PriorityLevel = level; }
+
     void InfoLog(int color, const char* format, ...);
     void InfoLog(int color, EPriority priority, const char* format, ...);
+
+    void WarningLog(int color, const char* format, ...);
+    void WarningLog(int color, EPriority priority, const char* format, ...);
+
+    void ErrorLog(int color, const char* format, ...);
+    void ErrorLog(int color, EPriority priority, const char* format, ...);
 
 private:
     Logger();
 
-    void Log(int color, const char* format, ...);
-
     HANDLE m_ConsoleHandle;
     EChannel m_ChannelMask;
+    EPriority m_PriorityLevel;
 };
-
 ENABLE_BITMASK_OPERATORS(Logger::EChannel);
 
 #endif
