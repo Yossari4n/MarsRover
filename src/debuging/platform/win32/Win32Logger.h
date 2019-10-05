@@ -5,20 +5,25 @@
 #include "../../../core/Enum.h"
 
 #include <iostream>
+#define NOMINMAX
 #include <Windows.h>
 
 class Logger {
 public:
-    enum class EPriority {
-        High = 2,
-        Medium = 1,
-        Low = 0
-    };
-
     enum class EChannel : unsigned char {
         Info = 0x4,
         Warning = 0x2,
         Error = 0x1
+    };
+
+    // Windows specific codes for colors
+    // Don't add beyond white
+    enum class ESender : WORD {
+        CBS = 1,        // Blue
+        Rendering = 2,  // Green
+        Resources = 3,  // Cyan
+
+        None = 15       // White
     };
 
     static Logger& Instance();
@@ -32,25 +37,20 @@ public:
     void Push(EChannel channel);
     void Pop(EChannel channel);
 
-    void PriorityLevel(EPriority level) { m_PriorityLevel = level; }
-
-    void InfoLog(int color, const char* format, ...);
-    void InfoLog(int color, EPriority priority, const char* format, ...);
-
-    void WarningLog(int color, const char* format, ...);
-    void WarningLog(int color, EPriority priority, const char* format, ...);
-
-    void ErrorLog(int color, const char* format, ...);
-    void ErrorLog(int color, EPriority priority, const char* format, ...);
+    void InfoLog(ESender sender, const char* format, ...);
+    void WarningLog(ESender sender, const char* format, ...);
+    void ErrorLog(ESender sender, const char* format, ...);
 
 private:
     Logger();
 
+    void Log(WORD color, const char* format, va_list list);
+
     HANDLE m_ConsoleHandle;
     EChannel m_ChannelMask;
-    EPriority m_PriorityLevel;
 };
 ENABLE_BITMASK_OPERATORS(Logger::EChannel);
+ENABLE_BITMASK_OPERATORS(Logger::ESender);
 
 #endif
 #endif

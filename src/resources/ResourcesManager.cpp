@@ -16,7 +16,7 @@ Texture& ResourcesManager::GetTexture(std::string path) {
         unsigned char* data = stbi_load(path.c_str(), &width, &height, &components, 0);
 
         if (!data) {
-            std::cout << "Could not load texture:\n" << path << "\n\n";
+            Logger::Instance().ErrorLog(Logger::ESender::Resources, "Failed to load texture %s", path);
             data = stbi_load(ERROR_TEXTURE_PATH, &width, &height, &components, 0);
         }
 
@@ -35,7 +35,7 @@ Model3D& ResourcesManager::GetModel3D(std::string path) {
         const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
 
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-            std::cout << "Could not load model:\n" << path << '\n' << importer.GetErrorString() << "\n\n";
+            Logger::Instance().ErrorLog(Logger::ESender::Resources, "Failed to load model %s:\n%s", path.c_str(), importer.GetErrorString());
             scene = importer.ReadFile(ERROR_MODEL3D_PATH, aiProcess_Triangulate | aiProcess_FlipUVs);
         }
 
@@ -124,4 +124,3 @@ Mesh ResourcesManager::LoadMesh(const aiMesh* mesh, const aiScene* scene, std::s
 
     return Mesh(vertices, indices, textures);
 }
-

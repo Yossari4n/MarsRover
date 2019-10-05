@@ -100,10 +100,9 @@ unsigned int ShaderProgram::AttachShader(const char *path, GLenum shader_type) {
         
         shader_code = shader_stream.str();
     } catch(const std::ifstream::failure &e) {
-        //TODO DebugLog
-        std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ " << path << '\n' << e.what() << "\n\n";
+        Logger::Instance().ErrorLog(Logger::ESender::Rendering, "Failed to read shader file %s:\n%s", path, e.what());
     }
-    
+
     // Compile shader
     unsigned int shader = glCreateShader(shader_type);
     const char *shader_code_ptr = shader_code.c_str();
@@ -115,9 +114,8 @@ unsigned int ShaderProgram::AttachShader(const char *path, GLenum shader_type) {
     GLchar info_log[1024];
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if (!success) {
-        //TODO DebugLog
         glGetShaderInfoLog(shader, 1024, NULL, info_log);
-        std::cout << "ERROR::SHADER_COMPILATION_ERROR " << path << '\n' << info_log << "\n\n";
+        Logger::Instance().ErrorLog(Logger::ESender::Rendering, "Failed to compile shader %s:\n%s", path, info_log);
     }
     
     glAttachShader(m_ID, shader);
@@ -133,8 +131,7 @@ void ShaderProgram::LinkProgram() {
     char info_log[1024];
     glGetProgramiv(m_ID, GL_LINK_STATUS, &success);
     if (!success) {
-        //TODO DebugLog
         glGetProgramInfoLog(m_ID, 1024, nullptr, info_log);
-        std::cout << "ERROR::LINKING_SHADERS_ERROR\n" << info_log << "\n\n";
+        Logger::Instance().ErrorLog(Logger::ESender::Rendering, "Failed to link shader %d:\n%s", m_ID, info_log);
     }
 }

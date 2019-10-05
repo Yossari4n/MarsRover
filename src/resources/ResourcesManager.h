@@ -3,6 +3,7 @@
 
 #include "Texture.h"
 #include "Model3D/Model3D.h"
+#include "../debuging/Logger.h"
 
 #pragma warning(push, 0)
 #include <assimp/Importer.hpp>

@@ -1,10 +1,11 @@
 #ifndef ShaderProgram_h
 #define ShaderProgram_h
 
+#include "../debuging/Logger.h"
+
 #pragma warning(push, 0)
 #include <glad/glad.h>
 #include <glm/glm.hpp>
-
 
 #include <iostream>
 #include <string>
