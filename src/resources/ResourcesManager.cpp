@@ -16,7 +16,7 @@ Texture& ResourcesManager::GetTexture(std::string path) {
         unsigned char* data = stbi_load(path.c_str(), &width, &height, &components, 0);
 
         if (!data) {
-            Logger::Instance().ErrorLog(Logger::ESender::Resources, "Failed to load texture %s", path);
+            Logger::Instance().ErrorLog(Logger::ESender::Resources, "Failed to load texture %s", path.c_str());
             data = stbi_load(ERROR_TEXTURE_PATH, &width, &height, &components, 0);
         }
 

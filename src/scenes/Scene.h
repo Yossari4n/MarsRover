@@ -4,6 +4,7 @@
 #include "../cbs/ObjectManager.h"
 #include "../rendering/DrawManager.h"
 #include "../resources/ResourcesManager.h"
+#include "../physics/PhysicsManager.h"
 #include "../utilities/Time.h"
 #include "../utilities/Input.h"
 #include "../utilities/Window.h"
@@ -51,6 +52,7 @@ private:
     ObjectManager m_ObjectManager{ *this };
     DrawManager m_DrawManager{};
     ResourcesManager m_ResourceManager{};
+    PhysicsManager m_PhysicsManager{};
 
     bool m_Running{ false };
     float m_FrameRateLimit{ 0.0f };

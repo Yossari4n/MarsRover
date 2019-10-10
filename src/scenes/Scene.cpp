@@ -4,12 +4,15 @@
 #include "../rendering/ILightSource.h"
 
 void Scene::PreRun() {
-    m_Running = true;
     m_DrawManager.Initialize();
+    m_PhysicsManager.Initialize();
+
+    // Initialize objects after initialization of all systems
+    m_ObjectManager.InitializeObjects();
 }
 
 void Scene::Run() {
-    m_ObjectManager.InitializeObjects();
+    m_Running = true;
 
     // Initialize Time manager as close to game loop as possible
     // to avoid misrepresented delta time

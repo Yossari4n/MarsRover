@@ -22,6 +22,7 @@ public:
         CBS = 1,        // Blue
         Rendering = 2,  // Green
         Resources = 3,  // Cyan
+        Physics = 4,    // Red
 
         None = 15       // White
     };
