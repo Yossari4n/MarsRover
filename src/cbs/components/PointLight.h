@@ -1,14 +1,15 @@
 #ifndef PointLight_hpp
 #define PointLight_hpp
 
-#pragma warning(push, 0)
-#include <glm/glm.hpp>
-#pragma warning(pop)
-
 #include "Component.h"
 #include "../Object.h"
 #include "../../scenes/Scene.h"
 #include "../../rendering/ILightSource.h"
+#include "../../debuging/Logger.h"
+
+#pragma warning(push, 0)
+#include <glm/glm.hpp>
+#pragma warning(pop)
 
 class PointLight : public Component, public ILightSource {
 public:
