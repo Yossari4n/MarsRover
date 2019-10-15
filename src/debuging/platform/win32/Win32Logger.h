@@ -45,8 +45,6 @@ public:
 private:
     Logger();
 
-    void Log(WORD color, const char* format, va_list list);
-
     HANDLE m_ConsoleHandle;
     EChannel m_ChannelMask;
 };

@@ -21,37 +21,47 @@ void Logger::Pop(EChannel channel) {
 
 void Logger::InfoLog(ESender sender, const char* format, ...) {
     if (static_cast<unsigned char>(m_ChannelMask & EChannel::Info)) {
+        SetConsoleTextAttribute(m_ConsoleHandle, static_cast<WORD>(sender));
+
         va_list argptr;
         va_start(argptr, format);
-        Log(static_cast<WORD>(sender), format, argptr);
+        vfprintf(stdout, format, argptr);
+        printf("\n");
         va_end(argptr);
+
+        // Return to default state white text on black background
+        SetConsoleTextAttribute(m_ConsoleHandle, 15);
     }
 }
 
 void Logger::WarningLog(ESender sender, const char* format, ...) {
     if (static_cast<unsigned char>(m_ChannelMask & EChannel::Warning)) {
+        SetConsoleTextAttribute(m_ConsoleHandle, static_cast<WORD>(sender));
+
         va_list argptr;
         va_start(argptr, format);
-        Log(static_cast<WORD>(sender), format, argptr);
+        printf("Warning: ");
+        vfprintf(stdout, format, argptr);
+        printf("\n");
         va_end(argptr);
+
+        // Return to default state white text on black background
+        SetConsoleTextAttribute(m_ConsoleHandle, 15);
     }
 }
 
 void Logger::ErrorLog(ESender sender, const char* format, ...) {
     if (static_cast<unsigned char>(m_ChannelMask & EChannel::Error)) {
+        SetConsoleTextAttribute(m_ConsoleHandle, static_cast<WORD>(sender));
+
         va_list argptr;
         va_start(argptr, format);
-        Log(static_cast<WORD>(sender), format, argptr);
+        printf("Error: ");
+        vfprintf(stdout, format, argptr);
+        printf("\n");
         va_end(argptr);
+
+        // Return to default state white text on black background
+        SetConsoleTextAttribute(m_ConsoleHandle, 15);
     }
-}
-
-void Logger::Log(WORD color, const char* format, va_list list) {
-    SetConsoleTextAttribute(m_ConsoleHandle, color);
-
-    vfprintf(stdout, format, list);
-    printf("\n");
-
-    // Return to default state white text on black background
-    SetConsoleTextAttribute(m_ConsoleHandle, 15);
 }
