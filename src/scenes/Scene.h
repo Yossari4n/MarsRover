@@ -44,6 +44,12 @@ public:
     void Skybox(const std::string& right, const std::string& left, const std::string& top, const std::string& bottom, const std::string& back, const std::string& front);
     void Background(const glm::vec3& background);
 
+    // PhysicsManager functions
+    void AddRigidBody(btRigidBody* rigid_body);
+    void RemoveRigidBody(btRigidBody* rigid_body);
+    void Gravity(const btVector3& gravity);
+    btVector3 Gravity() const;
+
     // ResourceManager functions
     Texture& GetTexture(std::string path);
     Model3D& GetModel(std::string path);
@@ -51,8 +57,8 @@ public:
 private:
     ObjectManager m_ObjectManager{ *this };
     DrawManager m_DrawManager{};
-    ResourcesManager m_ResourceManager{};
     PhysicsManager m_PhysicsManager{};
+    ResourcesManager m_ResourceManager{};
 
     bool m_Running{ false };
     float m_FrameRateLimit{ 0.0f };

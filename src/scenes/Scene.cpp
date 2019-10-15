@@ -32,12 +32,14 @@ void Scene::Run() {
         
         // Managers
         m_ObjectManager.ProcessFrame();
+        m_PhysicsManager.StepSimulation(g_Time.DeltaTime());
         m_DrawManager.CallDraws();
     }
 }
 
 void Scene::PostRun() {
     m_ObjectManager.DestroyObjects();
+    m_PhysicsManager.ExitPhysics();
 }
 
 void Scene::Exit() {
@@ -94,6 +96,22 @@ void Scene::Skybox(const std::string& right, const std::string& left, const std:
 
 void Scene::Background(const glm::vec3& background) {
     m_DrawManager.Background(background);
+}
+
+void Scene::AddRigidBody(btRigidBody* rigid_body) {
+    m_PhysicsManager.AddRigidBody(rigid_body);
+}
+
+void Scene::RemoveRigidBody(btRigidBody* rigid_body) {
+    m_PhysicsManager.RemoveRigidBody(rigid_body);
+}
+
+void Scene::Gravity(const btVector3& gravity) {
+    m_PhysicsManager.Gravity(gravity);
+}
+
+btVector3 Scene::Gravity() const {
+    return m_PhysicsManager.Gravity();
 }
 
 Texture& Scene::GetTexture(std::string path) {
