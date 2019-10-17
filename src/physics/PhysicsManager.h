@@ -1,10 +1,13 @@
 #ifndef PhysicsManager_h
+#define PhysicsManager_h
 
 #include "../debuging/Logger.h"
 
 #pragma warning(push, 0)
 #include "btBulletDynamicsCommon.h"
 #include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
+
+#include <assert.h>
 #pragma warning(pop)
 
 class PhysicsManager {

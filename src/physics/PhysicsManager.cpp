@@ -46,6 +46,8 @@ void PhysicsManager::ExitPhysics() {
 }
 
 void PhysicsManager::AddRigidBody(btRigidBody* rigid_body) {
+    // Bullet assert that each rigidbody can be added only once
+
     m_World->addRigidBody(rigid_body);
 }
 
