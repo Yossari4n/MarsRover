@@ -8,9 +8,9 @@
 class RigidBody : public Component {
 public:
     RigidBody(btScalar mass, btCollisionShape* shape);
-    ~RigidBody();
 
     void Initialize() override;
+    void Update() override;
     void Destroy() override;
 
 private:

@@ -9,7 +9,7 @@ RigidBody::RigidBody(btScalar mass, btCollisionShape* shape) {
     btTransform start;
     start.setIdentity();
 
-    // motion_state will be deleted with m_RigidBody deletion
+    // Resources will be deleted by PhysicsManager on PhysicsExits
     btDefaultMotionState* motion_state = new btDefaultMotionState(start);
     btRigidBody::btRigidBodyConstructionInfo info(mass, motion_state, shape, local_inertia);
 
@@ -17,13 +17,29 @@ RigidBody::RigidBody(btScalar mass, btCollisionShape* shape) {
     m_RigidBody->setUserIndex(-1);
 }
 
-RigidBody::~RigidBody() {
-    delete m_RigidBody->getMotionState();
-    delete m_RigidBody;
+void RigidBody::Initialize() {
+    btTransform transform;
+    transform.setIdentity();
+
+    auto pos = Object().Root().Position();
+    transform.setOrigin(btVector3(pos.x, pos.y, pos.z));
+
+    auto rot = Object().Root().Rotation();
+    transform.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
+
+    m_RigidBody->setWorldTransform(transform);
+    m_RigidBody->getMotionState()->setWorldTransform(transform);
+
+    Object().Scene().AddRigidBody(m_RigidBody);
+    RegisterUpdateCall();
 }
 
-void RigidBody::Initialize() {
-    Object().Scene().AddRigidBody(m_RigidBody);
+void RigidBody::Update() {
+    btTransform trans;
+    m_RigidBody->getMotionState()->getWorldTransform(trans);
+
+    Object().Root().Position(glm::vec3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ()));
+    Object().Root().Rotation(glm::quat(trans.getRotation().getW(), trans.getRotation().getX(), trans.getRotation().getY(), trans.getRotation().getZ()));
 }
 
 void RigidBody::Destroy() {
