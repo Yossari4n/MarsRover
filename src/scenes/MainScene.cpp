@@ -25,9 +25,9 @@ void MainScene::CreateScene() {
 
     auto rover = CreateObject("Rover"); {
         rover->Root().Scale(glm::vec3(0.1f));
-        rover->Root().Rotate(glm::vec3(glm::radians(93.0f), glm::radians(21.0f), glm::radians(87.0f)));
+        //rover->Root().Rotate(glm::vec3(glm::radians(93.0f), glm::radians(21.0f), glm::radians(87.0f)));
         auto mesh = rover->CreateComponent<MeshRenderer>(GetModel("resources/models/opportunity/oppy.obj"), ShaderProgram::EType::Phong);
-        auto rigid_body = rover->CreateComponent<RigidBody>(btScalar(1.0f), new btBoxShape(btVector3(0.1f, 0.1f, 0.1f)));
+        //auto rigid_body = rover->CreateComponent<RigidBody>(btScalar(1.0f), new btBoxShape(btVector3(0.1f, 0.1f, 0.1f)));
         rover->Connect(rover->Root().ModelOut, mesh->ModelIn);
     }
 

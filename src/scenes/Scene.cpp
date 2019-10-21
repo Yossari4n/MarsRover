@@ -118,10 +118,10 @@ btVector3 Scene::Gravity() const {
     return m_PhysicsManager.Gravity();
 }
 
-Texture& Scene::GetTexture(std::string path) {
+RawTexture& Scene::GetTexture(std::string path) {
     return m_ResourceManager.GetTexture(path);
 }
 
-Model3D& Scene::GetModel(std::string path) {
-    return m_ResourceManager.GetModel3D(path);
+RawModel& Scene::GetModel(std::string path) {
+    return m_ResourceManager.GetModel(path);
 }

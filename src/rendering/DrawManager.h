@@ -2,7 +2,7 @@
 #define DrawManager_h
 
 #include "ShaderProgram.h"
-#include "Cubemap.h"
+#include "primitives/Cubemap.h"
 
 #pragma warning(push, 0)
 #include <dependencies/imgui/imgui.h>

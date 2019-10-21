@@ -5,7 +5,7 @@
 #include "../../scenes/Scene.h"
 #include "../../utilities/Time.h"
 #include "../../utilities/Input.h"
-#include "../../rendering/Cubemap.h"
+#include "../../rendering/primitives/Cubemap.h"
 
 #pragma warning(push, 0)
 #include <glad/glad.h>

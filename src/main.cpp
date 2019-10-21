@@ -26,7 +26,7 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    
+
     // Create window
     g_Window.Initialize(1920, 1080, "Rubik's cube");
     if (!g_Window) {
@@ -35,18 +35,18 @@ int main() {
         return EXIT_FAILURE;
     }
     glfwMakeContextCurrent(g_Window);
-    
+
     // Load glad
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cout << "Failed to initialize GLAD\n";
         return EXIT_FAILURE;
     }
-    
+
     // Set callbacks
     glfwSetFramebufferSizeCallback(g_Window, framebuffer_size_callback);
     glfwSetCursorPosCallback(g_Window, mouse_callback);
     glfwSetScrollCallback(g_Window, scroll_callback);
-    
+
     glfwSetInputMode(g_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // Main scene
@@ -55,7 +55,7 @@ int main() {
     main_scene.PreRun();
     main_scene.Run();
     main_scene.PostRun();
-    
+
     // End of application
     glfwSetWindowShouldClose(g_Window, true);
     glfwTerminate();

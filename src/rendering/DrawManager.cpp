@@ -4,7 +4,7 @@
 #include "IWidget.h"
 #include "ILightSource.h"
 #include "../utilities/Window.h"
-#include "../rendering/Cubemap.h"
+#include "../rendering/primitives/Cubemap.h"
 #include "../cbs/components/Camera.h"
 
 void DrawManager::Initialize() {
@@ -116,7 +116,6 @@ void DrawManager::CallDraws() const {
         // For each trait in shader set corresponding properties 
         if (curr_shader.Traits() & ShaderProgram::ETrait::LIGHT_RECEIVER) {
             curr_shader.Uniform("viewPos", m_Camera->Object().Root().Position());
-            curr_shader.Uniform("material.shininess", 32.0f);
 
             for (auto light_source = m_LightSources.begin(); light_source != m_LightSources.end(); ++light_source) {
                 (*light_source)->SetLightProperties(curr_shader);

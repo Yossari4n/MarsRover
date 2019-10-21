@@ -1,7 +1,7 @@
 #ifndef Line_h
 #define Line_h
 
-#include "../rendering/Drawable.h"
+#include "../../rendering/Drawable.h"
 
 class Line : public Drawable {
 public:

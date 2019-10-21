@@ -1,7 +1,7 @@
 #ifndef Cubemap_h
 #define Cubemap_h
 
-#include "../rendering/Drawable.h"
+#include "../../rendering/Drawable.h"
 
 #pragma warning(push, 0)
 #include <stb/stb_image.h>

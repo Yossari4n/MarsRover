@@ -52,8 +52,8 @@ public:
     btVector3 Gravity() const;
 
     // ResourceManager functions
-    Texture& GetTexture(std::string path);
-    Model3D& GetModel(std::string path);
+    RawTexture& GetTexture(std::string path);
+    RawModel& GetModel(std::string path);
 
 private:
     ObjectManager m_ObjectManager{ *this };

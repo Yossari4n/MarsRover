@@ -8,11 +8,11 @@
 #include "../message_system/PropertyIn.h"
 #include "../../scenes/Scene.h"
 #include "../../rendering/Drawable.h"
-#include "../../resources/Model3D/Model3D.h"
+#include "../../rendering/Model/Model.h"
 
 class MeshRenderer : public Component, public Drawable {
 public:
-    MeshRenderer(Model3D& model, ShaderProgram::EType type);
+    MeshRenderer(RawModel& model, ShaderProgram::EType type);
 
     void MakeConnectors(MessageManager& message_manager) override;
     void Initialize() override;
@@ -25,7 +25,7 @@ public:
 private:
     void DrawMesh(const ShaderProgram& shader, const Mesh& mesh) const;
 
-    Model3D& m_Model3D;
+    Model m_Model;
 };
 
 #pragma warning(default: 26495)
