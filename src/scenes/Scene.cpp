@@ -31,7 +31,7 @@ void Scene::Run() {
         g_Input.Update(g_Window);
         
         // Managers
-        m_ObjectManager.ProcessFrame();
+        m_ObjectManager.UpdateObjects();
         m_PhysicsManager.StepSimulation(g_Time.DeltaTime());
         m_DrawManager.CallDraws();
     }

@@ -21,12 +21,6 @@ Object::Object(ObjectManager& owner, std::uint8_t id, std::string name)
 }
 
 void Object::ProcessFrame() {
-    InitializeComponents();
-    UpdateComponents();
-    DestroyComponents();
-}
-
-void Object::InitializeComponents() {
     // Components registered in previous frame will be initialized now
     m_ToInitialize = m_ToInitializeNextFrame;
     m_ToInitializeNextFrame = 0;
@@ -37,16 +31,12 @@ void Object::InitializeComponents() {
     }
 
     m_ToInitialize = 0;
-}
 
-void Object::UpdateComponents() {    
     // Update all components from (begin + m_ToDestroy + m_ToUpdate) to (begin + m_ToDestroy)
     for (int i = 0; i < m_ToUpdate; i++) {
         m_Components[m_ToDestroy + m_ToUpdate - i - 1]->Update();
     }
-}
 
-void Object::DestroyComponents() {
     // Destroy all components from begining to (begin + m_ToDestroy)
     if (m_ToDestroy > 0) {
         for (m_CurrentIndex = 0; m_CurrentIndex < m_ToDestroy; m_CurrentIndex++) {
@@ -56,6 +46,28 @@ void Object::DestroyComponents() {
         m_Components.erase(m_Components.begin(), m_Components.begin() + m_ToDestroy);
         m_ToDestroy = 0;
     }
+}
+
+void Object::InitializeComponents() {
+    for (int i = 0; i < m_Components.size(); i++) {
+        m_Components[i]->Initialize();
+    }
+    m_ToInitialize = 0;
+}
+
+void Object::UpdateComponents() {    
+    for (int i = 0; i < m_Components.size(); i++) {
+        m_Components[i]->Update();
+    }
+}
+
+void Object::DestroyComponents() {
+    for (int i = 0; i < m_Components.size(); i++) {
+        m_Components[i]->Destroy();
+    }
+    m_CurrentIndex = 0;
+    m_ToUpdate = 0;
+    m_ToDestroy = 0;
 }
 
 void Object::RegisterUpdateCall(const Component* component) {

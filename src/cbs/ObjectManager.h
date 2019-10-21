@@ -14,8 +14,6 @@ class ObjectManager {
 public:
     explicit ObjectManager(class Scene& owner);
 
-    void ProcessFrame();
-
     void InitializeObjects();
     void UpdateObjects();
     void DestroyObjects();
@@ -26,15 +24,10 @@ public:
     Scene& Scene() const { return m_Scene; }
     
 private:
-    void MarkToDestroy(Objects_t::iterator it);
-
     class Scene& m_Scene;
 
     std::uint8_t m_NextObjectID;
     Objects_t m_Objects;
-    Objects_t::size_type m_ToInitialize;
-    Objects_t::size_type m_ToInitializeNextFrame;
-    Objects_t::size_type m_ToDestroy;
 };
 
 #endif

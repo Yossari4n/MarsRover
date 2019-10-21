@@ -36,14 +36,4 @@ void MainScene::CreateScene() {
         camera->CreateComponent<Camera>(glm::perspective(glm::radians(45.0f), static_cast<float>(g_Window.Width()) / static_cast<float>(g_Window.Height()), 0.1f, 100.0f));
         camera->CreateComponent<FirstPersonController>();
     }
-
-    btBoxShape* groundShape = new btBoxShape(btVector3(btScalar(50.0f), btScalar(0.1f), btScalar(50.0f)));
-    btTransform groundTrans;
-    groundTrans.setIdentity();
-    groundTrans.setOrigin(btVector3(0, -15, 0));
-    btDefaultMotionState* motion_state = new btDefaultMotionState(groundTrans);
-    btRigidBody::btRigidBodyConstructionInfo info(0.0f, motion_state, groundShape);
-
-    btRigidBody* ground = new btRigidBody(info);
-    AddRigidBody(ground);
 }

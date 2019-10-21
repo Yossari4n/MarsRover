@@ -49,8 +49,8 @@ int main() {
     
     // Main scene
     MainScene main_scene;
-    main_scene.PreRun();
     main_scene.CreateScene();
+    main_scene.PreRun();
     main_scene.Run();
     main_scene.PostRun();
     
