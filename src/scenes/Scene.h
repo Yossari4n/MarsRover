@@ -29,8 +29,9 @@ public:
     float FrameRate() const { return 1.0f / g_Time.DeltaTime(); }
 
     // ObjectManger functions
-    Object* CreateObject(std::string name = "");
-    void DestroyObject(std::uint8_t id);
+    Object* CreateObject(const std::string& name);
+    void DestroyObject(const std::string& name);
+    void DestroyObject(Object::ID_t id);
 
     // DrawManager functions
     void RegisterDrawCall(Drawable* drawable);

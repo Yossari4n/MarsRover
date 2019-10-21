@@ -3,7 +3,7 @@
 #include "ObjectManager.h"
 #include "../scenes/Scene.h"
 
-Object::Object(ObjectManager& owner, std::uint8_t id, std::string name)
+Object::Object(ObjectManager& owner, ID_t id, std::string name)
     : m_ID(id)
     , m_Name(name)
     , m_Owner(owner)

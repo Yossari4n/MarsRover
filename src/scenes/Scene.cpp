@@ -50,11 +50,15 @@ void Scene::FrameRateLimit(unsigned int frame_rate) {
     m_FrameRateLimit = frame_rate != 0 ? 1.0f / (float)frame_rate : 0.0f;
 }
 
-Object* Scene::CreateObject(std::string name) {
+Object* Scene::CreateObject(const std::string& name) {
     return m_ObjectManager.CreateObject(name);
 }
 
-void Scene::DestroyObject(std::uint8_t id) {
+void Scene::DestroyObject(const std::string& name) {
+    m_ObjectManager.DestroyObject(name);
+}
+
+void Scene::DestroyObject(Object::ID_t id) {
     m_ObjectManager.DestroyObject(id);
 }
 

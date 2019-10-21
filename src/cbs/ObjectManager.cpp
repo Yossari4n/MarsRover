@@ -3,44 +3,48 @@
 #include "../scenes/Scene.h"
 
 ObjectManager::ObjectManager(class Scene& owner)
-    : m_Scene(owner)
-    , m_NextObjectID(0) {
+    : m_Scene(owner) {
 }
 
 void ObjectManager::InitializeObjects() {
-    for (Objects_t::size_type i = 0; i < m_Objects.size(); i++) {
-        m_Objects[i]->InitializeComponents();
+    for (auto& [key, object] : m_Objects) {
+        object.InitializeComponents();
     }
 }
 
 void ObjectManager::UpdateObjects() {
-    for (Objects_t::size_type i = 0; i < m_Objects.size(); i++) {
-        m_Objects[i]->UpdateComponents();
+    for (auto& [key, object] : m_Objects) {
+        object.UpdateComponents();
     }
 }
 
 void ObjectManager::DestroyObjects() {
-    for (Objects_t::size_type i = 0; i < m_Objects.size(); i++) {
-        m_Objects[i]->DestroyComponents();
+    for (auto& [key, object] : m_Objects) {
+        object.DestroyComponents();
     }
     m_Objects.clear();
 }
 
-Object* ObjectManager::CreateObject(std::string name) {
-    m_Objects.push_back(std::make_unique<Object>(*this, m_NextObjectID, name));
+Object* ObjectManager::CreateObject(const std::string& name) {
+    Object::ID_t id = m_Hasher(name);
 
-    m_NextObjectID = m_NextObjectID + 1;
+    assert(m_Objects.find(id) == m_Objects.end());
 
-    return m_Objects.at(m_Objects.size() - 1).get();
+    m_Objects.try_emplace(id, *this, id, name);
+
+    return &m_Objects.at(id);
 }
 
-void ObjectManager::DestroyObject(std::uint8_t id) {
-    auto object = std::find_if(m_Objects.begin(),
-                               m_Objects.end(),
-                               [=](std::unique_ptr<Object>& obj) { return obj->ID() == id; });
+void ObjectManager::DestroyObject(const std::string& name) {
+    Object::ID_t id = m_Hasher(name);
+    DestroyObject(id);
+}
+
+void ObjectManager::DestroyObject(Object::ID_t id) {
+    auto object = m_Objects.find(id);
 
     if (object != m_Objects.end()) {
-        (*object)->DestroyComponents();
+        object->second.DestroyComponents();
         m_Objects.erase(object);
     }
 }
