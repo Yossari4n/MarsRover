@@ -25,8 +25,8 @@ public:
     GLuint VBO() const { return m_VBO; }
     GLuint EBO() const { return m_EBO; }
     GLsizei IndicesCount() const { return m_IndicesCount; }
-    const std::vector<Texture>& DiffuseTextures() const { return m_DiffuseTextures; }
-    const std::vector<Texture>& SpecularTextures() const { return m_SpecularTextures; }
+    const Texture* Diffuse() const { return m_Diffuse.get(); }
+    const Texture* Specular() const { return m_Specular.get(); }
     float Shininess() const { return m_Shininess; }
 
 private:
@@ -34,8 +34,8 @@ private:
     GLuint m_VBO;
     GLuint m_EBO;
     GLsizei m_IndicesCount;
-    std::vector<Texture> m_DiffuseTextures;
-    std::vector<Texture> m_SpecularTextures;
+    std::unique_ptr<Texture> m_Diffuse{ nullptr };
+    std::unique_ptr<Texture> m_Specular{ nullptr };
     float m_Shininess;
 };
 

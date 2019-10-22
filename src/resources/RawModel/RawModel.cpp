@@ -30,8 +30,8 @@ void RawModel::LoadNode(const aiNode* node, const aiScene* scene, const std::str
 void RawModel::LoadMesh(const aiMesh* mesh, const aiScene* scene, const std::string& directory, ResourcesManager& manager) {
     std::vector<RawMesh::Vertex> vertices;
     std::vector<unsigned int> indices;
-    std::vector<RawTexture*> diffuse;
-    std::vector<RawTexture*> specular;
+    RawTexture* diffuse = nullptr;
+    RawTexture* specular = nullptr;
     float shininess = 1.0f;
 
     // Load vertices
@@ -68,20 +68,17 @@ void RawModel::LoadMesh(const aiMesh* mesh, const aiScene* scene, const std::str
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
         // Load diffuse texture
-        aiString path;
-        unsigned int count = material->GetTextureCount(aiTextureType_DIFFUSE);
-        diffuse.reserve(count);
-        for (unsigned int i = 0; i < count; i++) {
-            material->GetTexture(aiTextureType_DIFFUSE, i, &path);
-            diffuse.push_back(&manager.GetTexture(directory + "/" + path.C_Str()));
+        if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0) {
+            aiString path;
+            material->GetTexture(aiTextureType_DIFFUSE, 0, &path);
+            diffuse = &manager.GetTexture(directory + '/' + path.C_Str());
         }
 
         // Load specular texture
-        count = material->GetTextureCount(aiTextureType_SPECULAR);
-        specular.reserve(count);
-        for (unsigned int i = 0; i < count; i++) {
-            material->GetTexture(aiTextureType_SPECULAR, i, &path);
-            specular.push_back(&manager.GetTexture(directory + "/" + path.C_Str()));
+        if (material->GetTextureCount(aiTextureType_SPECULAR) > 0) {
+            aiString path;
+            material->GetTexture(aiTextureType_SPECULAR, 0, &path);
+            specular = &manager.GetTexture(directory + '/' + path.C_Str());
         }
 
         // Load shininess

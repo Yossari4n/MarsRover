@@ -20,7 +20,7 @@ public:
         glm::vec2 TexCoords{ 0.0f };
     };
 
-    RawMesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<RawTexture*> diffuse, std::vector<RawTexture*> specular, float shininess);
+    RawMesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, const RawTexture* diffuse, const RawTexture* specular, float shininess);
 
     RawMesh() = delete;
     RawMesh(const RawMesh&) = default;
@@ -31,15 +31,15 @@ public:
 
     const std::vector<Vertex>& Vertices() const { return m_Vertices; }
     const std::vector<unsigned int>& Indices() const { return m_Indices; }
-    const std::vector<RawTexture*>& DiffuseTextures() const { return m_DiffuseTextures; }
-    const std::vector<RawTexture*>& SpecularTextures() const { return m_SpecularTextures; }
+    const RawTexture* Diffuse() const { return m_Diffuse; }
+    const RawTexture* Specular() const { return m_Specular; }
     float Shininess() const { return m_Shininess; }
 
 private:
     std::vector<Vertex> m_Vertices;
     std::vector<unsigned int> m_Indices;
-    std::vector<RawTexture*> m_DiffuseTextures;
-    std::vector<RawTexture*> m_SpecularTextures;
+    const RawTexture* m_Diffuse;
+    const RawTexture* m_Specular;
     float m_Shininess;
 };
 

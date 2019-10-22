@@ -3,14 +3,12 @@
 Mesh::Mesh(const RawMesh& raw_mesh) 
     : m_IndicesCount(raw_mesh.Indices().size())
     , m_Shininess(raw_mesh.Shininess()) {
-    m_DiffuseTextures.reserve(raw_mesh.DiffuseTextures().size());
-    for (auto texture : raw_mesh.DiffuseTextures()) {
-        m_DiffuseTextures.emplace_back(*texture, Texture::EType::Diffuse);
+    if (raw_mesh.Diffuse()) {
+        m_Diffuse = std::make_unique<Texture>(*raw_mesh.Diffuse(), Texture::EType::Diffuse);
     }
 
-    m_SpecularTextures.reserve(raw_mesh.SpecularTextures().size());
-    for (auto texture : raw_mesh.SpecularTextures()) {
-        m_SpecularTextures.emplace_back(*texture, Texture::EType::Specular);
+    if (raw_mesh.Specular()) {
+        m_Specular = std::make_unique<Texture>(*raw_mesh.Specular(), Texture::EType::Specular);
     }
 
     glGenVertexArrays(1, &m_VAO);
@@ -52,8 +50,8 @@ Mesh::Mesh(Mesh&& other) noexcept
     : m_VAO(std::exchange(other.m_VAO, 0))
     , m_VBO(std::exchange(other.m_VBO, 0))
     , m_EBO(std::exchange(other.m_EBO, 0))
-    , m_DiffuseTextures(std::move(other.m_DiffuseTextures)) 
-    , m_SpecularTextures(std::move(other.m_SpecularTextures)) {
+    , m_Diffuse(std::move(other.m_Diffuse)) 
+    , m_Specular(std::move(other.m_Specular)) {
     m_IndicesCount = other.m_IndicesCount;
     m_Shininess = other.m_Shininess;
 }
@@ -62,8 +60,8 @@ Mesh& Mesh::operator=(Mesh&& other) noexcept {
     m_VAO = std::exchange(other.m_VAO, 0);
     m_VBO = std::exchange(other.m_VBO, 0);
     m_EBO = std::exchange(other.m_EBO, 0);
-    m_DiffuseTextures = std::move(other.m_DiffuseTextures);
-    m_SpecularTextures = std::move(other.m_DiffuseTextures);
+    m_Diffuse = std::move(other.m_Diffuse);
+    m_Specular = std::move(other.m_Diffuse);
     m_IndicesCount = other.m_IndicesCount;
     m_Shininess = other.m_Shininess;
 
