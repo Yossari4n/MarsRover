@@ -25,15 +25,20 @@ void MainScene::CreateScene() {
 
     auto rover = CreateObject("Rover"); {
         rover->Root().Scale(glm::vec3(0.1f));
-        //rover->Root().Rotate(glm::vec3(glm::radians(93.0f), glm::radians(21.0f), glm::radians(87.0f)));
+        auto trans = rover->CreateComponent<Transform>();
         auto mesh = rover->CreateComponent<MeshRenderer>(GetModel("resources/models/opportunity/oppy.obj"), ShaderProgram::EType::Phong);
-        //auto rigid_body = rover->CreateComponent<RigidBody>(btScalar(1.0f), new btBoxShape(btVector3(0.1f, 0.1f, 0.1f)));
+        auto rigid_body = rover->CreateComponent<RigidBody>(btScalar(1.0f), new btBoxShape(btVector3(0.1f, 0.1f, 0.1f)));
+        rover->Connect(rover->Root().TransformOut, trans->Parent);
         rover->Connect(rover->Root().ModelOut, mesh->ModelIn);
     }
 
     auto camera = CreateObject("Camera"); {
-        camera->Root().Position(glm::vec3(-17.5f, -10.0f, 0.0f));
         camera->CreateComponent<Camera>(glm::perspective(glm::radians(45.0f), static_cast<float>(g_Window.Width()) / static_cast<float>(g_Window.Height()), 0.1f, 100.0f));
         camera->CreateComponent<FirstPersonController>();
+    }
+
+    auto ground = CreateObject("Ground"); {
+        ground->Root().Position(glm::vec3(0.0f, -1.0f, 0.0f));
+        
     }
 }

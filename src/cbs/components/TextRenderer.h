@@ -5,7 +5,7 @@
 #include "../../rendering/IWidget.h"
 #include "../Object.h"
 #include "../../scenes/Scene.h"
-#include "../message_system/MessageIn.h"
+#include "../connections/MessageIn.h"
 
 #include <string>
 

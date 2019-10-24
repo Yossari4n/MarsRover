@@ -2,11 +2,10 @@
 
 #include "../Object.h"
 
-
 void Transform::MakeConnectors(MessageManager& message_manager) {
     message_manager.Make(this, Parent);
 
-    message_manager.Make(this, TransformOut);
+    message_manager.Make(this, TransformOut, this);
     message_manager.Make(this, ModelOut);
     message_manager.Make(this, PositionOut, glm::vec3(0.0f));
     message_manager.Make(this, RotationOut, glm::vec3(0.0f));
@@ -77,7 +76,7 @@ void Transform::Scale(const glm::vec3& scale) {
 
 void Transform::UpdateModel() {
     if (Parent.Connected()) {
-        ModelOut = Parent.Value().Model();
+        ModelOut = Parent.Value()->Model();
     } else {
         ModelOut = glm::mat4(1.0f);
     }

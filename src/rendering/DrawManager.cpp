@@ -36,6 +36,7 @@ void DrawManager::Initialize() {
                                                                 "src/shaders/SKYBOX.frag");
 
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_MULTISAMPLE);
 }
 
 void DrawManager::RegisterCamera(Camera *camera) {

@@ -4,7 +4,7 @@
 #include "Component.h"
 #include "../Object.h"
 #include "../../scenes/Scene.h"
-#include "../message_system/PropertyIn.h"
+#include "../connections/PropertyIn.h"
 
 #include "../../utilities/Time.h"
 #include "../../utilities/Input.h"

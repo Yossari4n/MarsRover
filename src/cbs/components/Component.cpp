@@ -1,7 +1,7 @@
 #include "Component.h"
 
 #include "../Object.h"
-#include "../message_system/ConnectionInterfaces.h"
+#include "../connections/ConnectionInterfaces.h"
 
 void Component::RegisterUpdateCall() const {
     m_Object->RegisterUpdateCall(this);

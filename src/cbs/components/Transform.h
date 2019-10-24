@@ -2,8 +2,8 @@
 #define Transform_h
 
 #include "Component.h"
-#include "../message_system/PropertyOut.h"
-#include "../message_system/PropertyIn.h"
+#include "../connections/PropertyOut.h"
+#include "../connections/PropertyIn.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
 #pragma warning(push, 0)
@@ -38,7 +38,7 @@ public:
     glm::vec3 Up() { return RotationOut.Value() * glm::vec3(0.0f, 1.0f, 0.0f); }
     glm::vec3 Right() { return RotationOut.Value() * glm::vec3(0.0f, 0.0f, 1.0f); }
 
-    PropertyIn<Transform> Parent;
+    PropertyIn<Transform*> Parent;
 
     PropertyOut<Transform*> TransformOut;
 

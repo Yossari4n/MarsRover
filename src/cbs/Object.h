@@ -1,7 +1,7 @@
 #ifndef Object_h
 #define Object_h
 
-#include "message_system/MessageManager.h"
+#include "connections/MessageManager.h"
 #include "components/Component.h"
 #include "components/Transform.h"
 

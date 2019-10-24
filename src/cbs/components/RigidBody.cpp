@@ -17,6 +17,10 @@ RigidBody::RigidBody(btScalar mass, btCollisionShape* shape) {
     m_RigidBody->setUserIndex(-1);
 }
 
+void RigidBody::MakeConnectors(MessageManager& message_manager) {
+    message_manager.Make(this, TransformIn);
+}
+
 void RigidBody::Initialize() {
     btTransform transform;
     transform.setIdentity();
