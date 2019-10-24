@@ -7,7 +7,7 @@ Object::Object(ObjectManager& owner, ID_t id, std::string name)
     : m_ID(id)
     , m_Name(name)
     , m_Owner(owner)
-    , m_MessageManager()
+    , m_ConnectionsManager()
     , m_NextCompID(2)
     , m_CurrentIndex(0)
     , m_ToInitialize(0)
@@ -16,7 +16,7 @@ Object::Object(ObjectManager& owner, ID_t id, std::string name)
     , m_ToDestroy(0) {
     m_Root.m_Object = this;
     m_Root.m_ID = 1;
-    m_Root.MakeConnectors(m_MessageManager);
+    m_Root.MakeConnectors(m_ConnectionsManager);
     m_Root.Initialize();
 }
 
@@ -40,7 +40,7 @@ void Object::ProcessFrame() {
     // Destroy all components from begining to (begin + m_ToDestroy)
     if (m_ToDestroy > 0) {
         for (m_CurrentIndex = 0; m_CurrentIndex < m_ToDestroy; m_CurrentIndex++) {
-            m_MessageManager.RemoveConnections(m_Components[m_Components.size() - 1 - m_CurrentIndex].get());
+            m_ConnectionsManager.RemoveConnections(m_Components[m_Components.size() - 1 - m_CurrentIndex].get());
             m_Components[m_Components.size() - 1 - m_CurrentIndex - m_ToInitializeNextFrame]->Destroy();
         }
         m_Components.erase(m_Components.begin(), m_Components.begin() + m_ToDestroy);

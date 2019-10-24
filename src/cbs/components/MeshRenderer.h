@@ -14,7 +14,7 @@ class MeshRenderer : public Component, public Drawable {
 public:
     MeshRenderer(RawModel& model, ShaderProgram::EType type);
 
-    void MakeConnectors(MessageManager& message_manager) override;
+    void MakeConnectors(ConnectionsManager& message_manager) override;
     void Initialize() override;
     void Destroy() override;
 

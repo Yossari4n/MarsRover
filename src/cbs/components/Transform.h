@@ -16,7 +16,7 @@
 class Transform : public Component {
 public:
 
-    void MakeConnectors(MessageManager& message_manager) override;
+    void MakeConnectors(ConnectionsManager& message_manager) override;
     void Initialize() override;
 
     const glm::mat4& Model() const;

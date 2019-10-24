@@ -11,7 +11,7 @@ TextRenderer::TextRenderer(const std::string& font_path, float size)
     io.Fonts->Build();
 }
 
-void TextRenderer::MakeConnectors(MessageManager& message_manager) {
+void TextRenderer::MakeConnectors(ConnectionsManager& message_manager) {
     message_manager.Make(this, TextIn);
     message_manager.Make(this, ColorIn);
 }

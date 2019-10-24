@@ -1,26 +1,26 @@
-#include "MessageManager.h"
+#include "ConnectionsManager.h"
 
 #include "../components/Component.h"
 
 
-void MessageManager::Make(Component* owner, TriggerOut& to_make) {
+void ConnectionsManager::Make(Component* owner, TriggerOut& to_make) {
     to_make = TriggerOut(owner, this);
 }
 
-void MessageManager::ForwardMessage(AbstractMessageOut* sender, void* message) {
+void ConnectionsManager::ForwardMessage(AbstractMessageOut* sender, void* message) {
     for (auto it = m_MessageConnections[sender].begin(); it != m_MessageConnections[sender].end(); it++) {
         (*it)->Receive(message);
     }
 }
 
-void MessageManager::ForwardTrigger(AbstractTriggerOut* sender) {
+void ConnectionsManager::ForwardTrigger(AbstractTriggerOut* sender) {
     for (auto it = m_TriggerConnections[sender].begin(); it != m_TriggerConnections[sender].end(); it++) {
         (*it)->Receive();
     }
 }
 
 // TODO docs
-void MessageManager::RemoveConnections(Component* component) {
+void ConnectionsManager::RemoveConnections(Component* component) {
     std::uint8_t comp_id = component->ID();
 
     m_PropertyConnections.erase(std::remove_if(m_PropertyConnections.begin(),

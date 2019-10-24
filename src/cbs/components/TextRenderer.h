@@ -13,7 +13,7 @@ class TextRenderer : public Component, public IWidget {
 public:
     TextRenderer(const std::string& font_path, float size);
 
-    void MakeConnectors(MessageManager& message_manager) override;
+    void MakeConnectors(ConnectionsManager& message_manager) override;
     void Initialize() override;
     void Destroy() override;
 

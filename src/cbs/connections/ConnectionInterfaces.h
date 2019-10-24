@@ -1,7 +1,7 @@
 #ifndef ConnectionInterfaces_h
 #define ConnectionInterfaces_h
 
-#include "MessageManager.h"
+#include "ConnectionsManager.h"
 
 /**
  * AbstractProperty
@@ -9,7 +9,7 @@
  * TODO doc
  **/
 class AbstractPropertyOut {
-    friend class MessageManager;
+    friend class ConnectionsManager;
 
 public:
     AbstractPropertyOut() = default;
@@ -23,7 +23,7 @@ public:
 };
 
 class AbstractPropertyIn {
-    friend class MessageManager;
+    friend class ConnectionsManager;
 
 public:
     AbstractPropertyIn() = default;
@@ -46,7 +46,7 @@ protected:
  * TODO doc
  **/
 class AbstractMessageOut {
-    friend class MessageManager;
+    friend class ConnectionsManager;
 
 public:
     AbstractMessageOut() = default;
@@ -60,7 +60,7 @@ public:
 };
 
 class AbstractMessageIn {
-    friend class MessageManager;
+    friend class ConnectionsManager;
 
 public:
     AbstractMessageIn() = default;
@@ -83,7 +83,7 @@ protected:
  * TODO doc
  **/
 class AbstractTriggerOut {
-    friend class MessageManager;
+    friend class ConnectionsManager;
 
 public:
     AbstractTriggerOut() = default;
@@ -98,7 +98,7 @@ public:
 };
 
 class AbstractTriggerIn {
-    friend class MessageManager;
+    friend class ConnectionsManager;
 
 public:
     AbstractTriggerIn() = default;

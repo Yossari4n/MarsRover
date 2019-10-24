@@ -2,7 +2,7 @@
 
 #include "../Object.h"
 
-void Transform::MakeConnectors(MessageManager& message_manager) {
+void Transform::MakeConnectors(ConnectionsManager& message_manager) {
     message_manager.Make(this, Parent);
 
     message_manager.Make(this, TransformOut, this);

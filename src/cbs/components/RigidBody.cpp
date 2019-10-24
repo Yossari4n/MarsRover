@@ -17,7 +17,7 @@ RigidBody::RigidBody(btScalar mass, btCollisionShape* shape) {
     m_RigidBody->setUserIndex(-1);
 }
 
-void RigidBody::MakeConnectors(MessageManager& message_manager) {
+void RigidBody::MakeConnectors(ConnectionsManager& message_manager) {
     message_manager.Make(this, TransformIn);
 }
 

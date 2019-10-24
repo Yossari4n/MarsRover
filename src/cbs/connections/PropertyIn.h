@@ -1,12 +1,12 @@
 #ifndef PropertyIn_h
 #define PropertyIn_h
 
-#include "MessageManager.h"
+#include "ConnectionsManager.h"
 #include "PropertyOut.h"
 
 template <class T>
 class PropertyIn final : public AbstractPropertyIn {
-    friend class MessageManager;
+    friend class ConnectionsManager;
 
 public:
     PropertyIn()

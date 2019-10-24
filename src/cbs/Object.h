@@ -1,7 +1,7 @@
 #ifndef Object_h
 #define Object_h
 
-#include "connections/MessageManager.h"
+#include "connections/ConnectionsManager.h"
 #include "components/Component.h"
 #include "components/Transform.h"
 
@@ -65,7 +65,7 @@ public:
         auto& comp = m_Components.back();
         comp->m_Object = this;
         comp->m_ID = m_NextCompID;
-        comp->MakeConnectors(m_MessageManager);
+        comp->MakeConnectors(m_ConnectionsManager);
 
         m_ToInitializeNextFrame = m_ToInitializeNextFrame + 1;
         m_NextCompID = m_NextCompID + 1;
@@ -158,19 +158,19 @@ public:
     template <class T>
     void Connect(PropertyOut<T>& subject, PropertyIn<T>& observer) {
         assert(subject.Owner()->Object().ID() == m_ID && observer.Owner()->Object().ID() == m_ID);
-        m_MessageManager.Connect(subject, observer);
+        m_ConnectionsManager.Connect(subject, observer);
     }
 
     template <class M, class O, void(O::* F)(M)>
     void Connect(MessageOut<M>& sender, MessageIn<M, O, F>& receiver) {
         assert(sender.Owner()->Object().ID() == m_ID && receiver.Owner()->Object().ID() == m_ID);
-        m_MessageManager.Connect(sender, receiver);
+        m_ConnectionsManager.Connect(sender, receiver);
     }
 
     template <class O, void(O::*F)(void)>
     void Connect(TriggerOut& sender, TriggerIn<O, F>& receiver) {
         assert(sender.Owner()->Object().ID() == m_ID && receiver.Owner()->Object().ID() == m_ID);
-        m_MessageManager.Connect(sender, receiver);
+        m_ConnectionsManager.Connect(sender, receiver);
     }
 
 
@@ -183,19 +183,19 @@ public:
     template <class T>
     void Disconnect(PropertyOut<T>& subject, PropertyIn<T>& observer) {
         assert(subject.Owner()->Object().ID() == m_ID && observer.Owner()->Object().ID() == m_ID);
-        m_MessageManager.Disconnect(subject, observer);
+        m_ConnectionsManager.Disconnect(subject, observer);
     }
 
     template <class M, class O, void (O::*F)(M)>
     void Disconnect(MessageOut<M>& sender, MessageIn<M, O, F>& receiver) {
         assert(sender.Owner()->Object().ID() == m_ID && receiver.Owner()->Object().ID() == m_ID);
-        m_MessageManager.Disconnect(sender, receiver);
+        m_ConnectionsManager.Disconnect(sender, receiver);
     }
 
     template <class O, void (O::*F)(void)>
     void Disconnect(TriggerOut& sender, TriggerIn<O, F>& receiver) {
         assert(sender.Owner()->Object().ID() == m_ID && receiver.Owner()->Object().ID() == m_ID);
-        m_MessageManager.Disconnect(sender, receiver);
+        m_ConnectionsManager.Disconnect(sender, receiver);
     }
 
 private:
@@ -205,7 +205,7 @@ private:
     std::string m_Name;
 
     ObjectManager& m_Owner;
-    MessageManager m_MessageManager;
+    ConnectionsManager m_ConnectionsManager;
 
     std::uint8_t m_NextCompID;
 

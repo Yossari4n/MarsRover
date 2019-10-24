@@ -1,12 +1,11 @@
 #ifndef PropertyOut_h
 #define PropertyOut_h
 
-#include "MessageManager.h"
-
+#include "ConnectionsManager.h"
 
 template <class T>
 class PropertyOut final : public AbstractPropertyOut {
-    friend class MessageManager;
+    friend class ConnectionsManager;
 
 public:
     PropertyOut()

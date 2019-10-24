@@ -10,7 +10,7 @@ class RigidBody : public Component {
 public:
     RigidBody(btScalar mass, btCollisionShape* shape);
 
-    void MakeConnectors(MessageManager& message_manager) override;
+    void MakeConnectors(ConnectionsManager& message_manager) override;
     void Initialize() override;
     void Update() override;
     void Destroy() override;

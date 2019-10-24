@@ -1,25 +1,25 @@
 #ifndef TriggerOut_h
 #define TriggerOut_h
 
-#include "MessageManager.h"
+#include "ConnectionsManager.h"
 
 class TriggerOut final : public AbstractTriggerOut {
-    friend class MessageManager;
+    friend class ConnectionsManager;
 
 public:
     TriggerOut() 
         : m_Owner(nullptr)
-        , m_MessageManager(nullptr) { }
+        , m_ConnectionsManager(nullptr) { }
     ~TriggerOut() = default;
 
     Component* Owner() const override { return m_Owner; }
 
-    void Trigger() override { m_MessageManager->ForwardTrigger(this); }
+    void Trigger() override { m_ConnectionsManager->ForwardTrigger(this); }
 
 private:
-    TriggerOut(Component* owner, MessageManager* message_manager)
+    TriggerOut(Component* owner, ConnectionsManager* connections_manager)
         : m_Owner(owner)
-        , m_MessageManager(message_manager) { }
+        , m_ConnectionsManager(connections_manager) { }
 
     TriggerOut& operator=(const TriggerOut& other) {
         if (this == &other) {
@@ -27,7 +27,7 @@ private:
         }
 
         m_Owner = other.m_Owner;
-        m_MessageManager = other.m_MessageManager;
+        m_ConnectionsManager = other.m_ConnectionsManager;
 
         return *this;
     }
@@ -37,7 +37,7 @@ private:
     TriggerOut& operator=(TriggerOut&&) = default;
 
     Component* m_Owner;
-    MessageManager* m_MessageManager;
+    ConnectionsManager* m_ConnectionsManager;
 };
 
 #endif

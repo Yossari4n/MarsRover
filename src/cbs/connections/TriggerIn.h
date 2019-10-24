@@ -1,11 +1,11 @@
 #ifndef TriggerIn_h
 #define TriggerIn_h
 
-#include "MessageManager.h"
+#include "ConnectionsManager.h"
 
 template <class O, void(O::* F)()>
 class TriggerIn final : public AbstractTriggerIn {
-    friend class MessageManager;
+    friend class ConnectionsManager;
 
 public:
     TriggerIn()

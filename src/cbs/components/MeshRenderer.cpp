@@ -5,7 +5,7 @@ MeshRenderer::MeshRenderer(RawModel& raw_model, ShaderProgram::EType type)
     , m_Model(raw_model) {
 }
 
-void MeshRenderer::MakeConnectors(MessageManager& message_manager) {
+void MeshRenderer::MakeConnectors(ConnectionsManager& message_manager) {
     message_manager.Make(this, ModelIn);
 }
 

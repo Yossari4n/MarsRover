@@ -1,11 +1,11 @@
 #ifndef MessageIn_h
 #define MessageIn_h
 
-#include "MessageManager.h"
+#include "ConnectionsManager.h"
 
 template <class M, class O, void(O::*F)(M)>
 class MessageIn final : public AbstractMessageIn {
-    friend class MessageManager;
+    friend class ConnectionsManager;
 
 public:
     MessageIn() 

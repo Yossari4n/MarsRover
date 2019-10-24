@@ -1,16 +1,16 @@
 #ifndef MessageOut_h
 #define MessageOut_h
 
-#include "MessageManager.h"
+#include "ConnectionsManager.h"
 
 template <class M>
 class MessageOut final : public AbstractMessageOut {
-    friend class MessageManager;
+    friend class ConnectionsManager;
 
 public:
     MessageOut() 
         : m_Owner(nullptr)
-        , m_MessageManager(nullptr) { }
+        , m_ConnectionsManager(nullptr) { }
     ~MessageOut() = default;
 
     Component* Owner() const override { return m_Owner; }
@@ -18,9 +18,9 @@ public:
     void Send(M& message) {  m_MessageManager->ForwardMessage(this, &message); }
 
 private:
-    MessageOut(Component* owner, MessageManager* message_manager)
+    MessageOut(Component* owner, ConnectionsManager* connections_manager)
         : m_Owner(owner)
-        , m_MessageManager(message_manager) { }
+        , m_ConnectionsManager(connections_manager) { }
 
     MessageOut& operator=(const MessageOut& other) {
         if (this == &other) {
@@ -28,7 +28,7 @@ private:
         }
 
         m_Owner = other.m_Owner;
-        m_MessageManager = other.m_MessageManager;
+        m_ConnectionsManager = other.m_ConnectionsManager;
 
         return *this;
     }
@@ -38,7 +38,7 @@ private:
     MessageOut& operator=(MessageOut&&) = default;
 
     Component* m_Owner;
-    MessageManager* m_MessageManager;
+    ConnectionsManager* m_ConnectionsManager;
 };
 
 #endif

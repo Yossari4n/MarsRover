@@ -1,5 +1,5 @@
-#ifndef MessageManager_h
-#define MessageManager_h
+#ifndef ConnectionsManager_h
+#define ConnectionsManager_h
 
 #include <algorithm>
 #include <vector>
@@ -36,7 +36,7 @@ class TriggerIn;
 
 #pragma endregion
 
-class MessageManager {
+class ConnectionsManager {
     using PropertyConnections_t = std::vector<std::pair<AbstractPropertyOut*, AbstractPropertyIn*>>;
     using MessageConnections_t = std::unordered_map<AbstractMessageOut*, std::vector<AbstractMessageIn*>>;
     using TriggerConnections_t = std::unordered_map<AbstractTriggerOut*, std::vector<AbstractTriggerIn*>>;
@@ -93,32 +93,32 @@ private:
 #include "TriggerOut.h"
 
 template<class T, class ...Args>
-void MessageManager::Make(Component* owner, PropertyOut<T>& to_make, Args&& ...params) {
+void ConnectionsManager::Make(Component* owner, PropertyOut<T>& to_make, Args&& ...params) {
     to_make = PropertyOut<T>(owner, std::forward<Args>(params)...);
 }
 
 template<class T>
-void MessageManager::Make(Component* owner, PropertyIn<T>& to_make) {
+void ConnectionsManager::Make(Component* owner, PropertyIn<T>& to_make) {
     to_make = PropertyIn<T>(owner);
 }
 
 template<class M>
-void MessageManager::Make(Component* owner, MessageOut<M>& to_make) {
+void ConnectionsManager::Make(Component* owner, MessageOut<M>& to_make) {
     to_make = MessageOut<M>(owner, this);
 }
 
 template<class M, class O, void(O::*F)(M)>
-void MessageManager::Make(O* owner, MessageIn<M, O, F>& to_make) {
+void ConnectionsManager::Make(O* owner, MessageIn<M, O, F>& to_make) {
     to_make = MessageIn<M, O, F>(owner);
 }
 
 template<class O, void(O::* F)(void)>
-void MessageManager::Make(O* owner, TriggerIn<O, F>& to_make) {
+void ConnectionsManager::Make(O* owner, TriggerIn<O, F>& to_make) {
     to_make = TriggerIn<O, F>(owner);
 }
 
 template <class T>
-void MessageManager::Connect(PropertyOut<T>& subject, PropertyIn<T>& observer) {
+void ConnectionsManager::Connect(PropertyOut<T>& subject, PropertyIn<T>& observer) {
     if (observer.m_Source == nullptr) {
         observer.m_Source = &subject;
 
@@ -129,7 +129,7 @@ void MessageManager::Connect(PropertyOut<T>& subject, PropertyIn<T>& observer) {
 }
 
 template <class T>
-void MessageManager::Disconnect(PropertyOut<T>& subject, PropertyIn<T>& observer) {
+void ConnectionsManager::Disconnect(PropertyOut<T>& subject, PropertyIn<T>& observer) {
     m_PropertyConnections.erase(std::remove_if(m_PropertyConnections.begin(),
                                                m_PropertyConnections.end(),
                                                [=](std::pair<AbstractPropertyOut*, AbstractPropertyIn*>& pair) { 
@@ -141,24 +141,24 @@ void MessageManager::Disconnect(PropertyOut<T>& subject, PropertyIn<T>& observer
 }
 
 template <class M, class O, void(O::*F)(M)>
-void MessageManager::Connect(MessageOut<M>& sender, MessageIn<M, O, F>& receiver) {
+void ConnectionsManager::Connect(MessageOut<M>& sender, MessageIn<M, O, F>& receiver) {
     m_MessageConnections[&sender].push_back(&receiver);
 }
 
 template <class M, class O, void (O::*F)(M)>
-void MessageManager::Disconnect(MessageOut<M>& sender, MessageIn<M, O, F>& receiver) {
+void ConnectionsManager::Disconnect(MessageOut<M>& sender, MessageIn<M, O, F>& receiver) {
     m_MessageConnections[&sender].erase(std::remove(m_MessageConnections[&sender].begin(), 
                                                     m_MessageConnections[&sender].end(), 
                                                     receiver));
 }
 
 template <class O, void(O::* F)()>
-void MessageManager::Connect(TriggerOut& sender, TriggerIn<O, F>& receiver) {
+void ConnectionsManager::Connect(TriggerOut& sender, TriggerIn<O, F>& receiver) {
     m_TriggerConnections[&sender].push_back(&receiver);
 }
 
 template <class O, void(O::* F)()>
-void MessageManager::Disconnect(TriggerOut& sender, TriggerIn<O, F>& receiver) {
+void ConnectionsManager::Disconnect(TriggerOut& sender, TriggerIn<O, F>& receiver) {
     m_TriggerConnections[&sender].erase(std::remove(m_TriggerConnections[&sender].begin(),
                                                     m_TriggerConnections[&sender].end(),
                                                     receiver));
