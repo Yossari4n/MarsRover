@@ -27,7 +27,6 @@ protected:
     virtual void Initialize() {};
     virtual void Update() {};
     virtual void Destroy() {};
-    virtual void MakeConnectors(ConnectionsManager& message_manager) { (void)message_manager; };
 
     void RegisterUpdateCall() const;
     void UnregisterUpdateCall() const;

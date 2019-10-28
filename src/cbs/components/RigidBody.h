@@ -10,12 +10,12 @@ class RigidBody : public Component {
 public:
     RigidBody(btScalar mass, btCollisionShape* shape);
 
-    void MakeConnectors(ConnectionsManager& message_manager) override;
     void Initialize() override;
     void Update() override;
     void Destroy() override;
 
-    PropertyIn<Transform> TransformIn;
+public:
+    PropertyIn<Transform*> TransformIn{ this };
 
 private:
     btRigidBody* m_RigidBody;

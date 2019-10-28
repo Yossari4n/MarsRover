@@ -8,8 +8,14 @@ class TriggerIn final : public AbstractTriggerIn {
     friend class ConnectionsManager;
 
 public:
-    TriggerIn()
-        : m_Owner(nullptr) {}
+    TriggerIn(O* owner)
+        : m_Owner(owner) {}
+
+    TriggerIn() = delete;
+    TriggerIn(const TriggerIn&) = delete;
+    TriggerIn& operator=(const TriggerIn& other) = delete;
+    TriggerIn(TriggerIn&&) = delete;
+    TriggerIn& operator=(TriggerIn&&) = default;
     ~TriggerIn() = default;
 
     Component* Owner() const { return m_Owner; }
@@ -17,23 +23,6 @@ public:
     void Receive() override { (m_Owner->*F)(); }
 
 private:
-    TriggerIn(O* owner)
-        : m_Owner(owner) {}
-
-    TriggerIn& operator=(const TriggerIn& other) {
-        if (this == &other) {
-            return *this;
-        }
-
-        m_Owner = other.m_Owner;
-
-        return *this;
-    }
-
-    TriggerIn(const TriggerIn&) = default;
-    TriggerIn(TriggerIn&&) = default;
-    TriggerIn& operator=(TriggerIn&&) = default;
-
     O* m_Owner;
 };
 

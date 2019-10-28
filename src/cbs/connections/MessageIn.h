@@ -8,8 +8,14 @@ class MessageIn final : public AbstractMessageIn {
     friend class ConnectionsManager;
 
 public:
-    MessageIn() 
-        : m_Owner(nullptr) { }
+    MessageIn(O* owner)
+        : m_Owner(owner) {}
+
+    MessageIn() = delete;
+    MessageIn(const MessageIn&) = delete;
+    MessageIn& operator=(const MessageIn& other) = delete;
+    MessageIn(MessageIn&&) = delete;
+    MessageIn& operator=(MessageIn&&) = delete;
     ~MessageIn() = default;
 
     Component* Owner() const override { return m_Owner; }
@@ -17,23 +23,6 @@ public:
     void Receive(void* message) override { (m_Owner->*F)(*static_cast<M*>(message)); }
 
 private:
-    MessageIn(O* owner)
-        : m_Owner(owner) {}
-
-    MessageIn& operator=(const MessageIn& other) {
-        if (this == &other) {
-            return *this;
-        }
-
-        m_Owner = other.m_Owner;
-
-        return *this;
-    }
-
-    MessageIn(const MessageIn&) = default;
-    MessageIn(MessageIn&&) = default;
-    MessageIn& operator=(MessageIn&&) = default;
-
     O* m_Owner;
 };
 

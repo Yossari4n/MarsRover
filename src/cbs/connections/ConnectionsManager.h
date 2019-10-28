@@ -42,23 +42,6 @@ class ConnectionsManager {
     using TriggerConnections_t = std::unordered_map<AbstractTriggerOut*, std::vector<AbstractTriggerIn*>>;
 
 public:
-    template <class T, class ...Args>
-    void Make(Component* owner, PropertyOut<T>& to_make, Args&& ...params);
-
-    template <class T>
-    void Make(Component* owner, PropertyIn<T>& to_make);
-
-    template <class M>
-    void Make(Component* owner, MessageOut<M>& to_make);
-
-    template <class M, class O, void(O::*F)(M)>
-    void Make(O* owner, MessageIn<M, O, F>& to_make);
-
-    void Make(Component* owner, TriggerOut& to_make);
-
-    template <class O, void(O::*F)(void)>
-    void Make(O* owner, TriggerIn<O, F>& to_make);
-
     template <class T>
     void Connect(PropertyOut<T>& subject, PropertyIn<T>& observer);
 
@@ -91,31 +74,6 @@ private:
 
 #include "ConnectionInterfaces.h"
 #include "TriggerOut.h"
-
-template<class T, class ...Args>
-void ConnectionsManager::Make(Component* owner, PropertyOut<T>& to_make, Args&& ...params) {
-    to_make = PropertyOut<T>(owner, std::forward<Args>(params)...);
-}
-
-template<class T>
-void ConnectionsManager::Make(Component* owner, PropertyIn<T>& to_make) {
-    to_make = PropertyIn<T>(owner);
-}
-
-template<class M>
-void ConnectionsManager::Make(Component* owner, MessageOut<M>& to_make) {
-    to_make = MessageOut<M>(owner, this);
-}
-
-template<class M, class O, void(O::*F)(M)>
-void ConnectionsManager::Make(O* owner, MessageIn<M, O, F>& to_make) {
-    to_make = MessageIn<M, O, F>(owner);
-}
-
-template<class O, void(O::* F)(void)>
-void ConnectionsManager::Make(O* owner, TriggerIn<O, F>& to_make) {
-    to_make = TriggerIn<O, F>(owner);
-}
 
 template <class T>
 void ConnectionsManager::Connect(PropertyOut<T>& subject, PropertyIn<T>& observer) {

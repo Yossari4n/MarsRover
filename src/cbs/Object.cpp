@@ -16,7 +16,6 @@ Object::Object(ObjectManager& owner, ID_t id, std::string name)
     , m_ToDestroy(0) {
     m_Root.m_Object = this;
     m_Root.m_ID = 1;
-    m_Root.MakeConnectors(m_ConnectionsManager);
     m_Root.Initialize();
 }
 

@@ -65,7 +65,6 @@ public:
         auto& comp = m_Components.back();
         comp->m_Object = this;
         comp->m_ID = m_NextCompID;
-        comp->MakeConnectors(m_ConnectionsManager);
 
         m_ToInitializeNextFrame = m_ToInitializeNextFrame + 1;
         m_NextCompID = m_NextCompID + 1;

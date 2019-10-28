@@ -14,13 +14,12 @@ class MeshRenderer : public Component, public Drawable {
 public:
     MeshRenderer(RawModel& model, ShaderProgram::EType type);
 
-    void MakeConnectors(ConnectionsManager& message_manager) override;
     void Initialize() override;
     void Destroy() override;
 
     void Draw(const ShaderProgram& shader) const override;
 
-    PropertyIn<glm::mat4> ModelIn;
+    PropertyIn<glm::mat4> ModelIn{ this };
 
 private:
     void DrawMesh(const ShaderProgram& shader, const Mesh& mesh) const;

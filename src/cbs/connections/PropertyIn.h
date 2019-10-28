@@ -9,9 +9,15 @@ class PropertyIn final : public AbstractPropertyIn {
     friend class ConnectionsManager;
 
 public:
-    PropertyIn()
-        : m_Owner(nullptr)
-        , m_Source(nullptr) { }
+    PropertyIn(Component* owner)
+        : m_Owner(owner)
+        , m_Source(nullptr) {}
+
+    PropertyIn() = delete;
+    PropertyIn(const PropertyIn&) = delete;
+    PropertyIn& operator=(const PropertyIn& other) = delete;
+    PropertyIn(PropertyIn&&) = delete;
+    PropertyIn& operator=(PropertyIn&&) = delete;
     ~PropertyIn() = default;
 
     Component* Owner() const override { return m_Owner; }
@@ -22,25 +28,6 @@ public:
     bool Connected() const { return m_Source != nullptr; }
 
 private:
-    PropertyIn(Component* owner)
-        : m_Owner(owner)
-        , m_Source(nullptr) {}
-
-    PropertyIn& operator=(const PropertyIn& other) {
-        if (this == &other) {
-            return *this;
-        }
-
-        m_Owner = other.m_Owner;
-        m_Source = other.m_Source;
-
-        return *this;
-    }
-
-    PropertyIn(const PropertyIn&) = default;
-    PropertyIn(PropertyIn&&) = default;
-    PropertyIn& operator=(PropertyIn&&) = default;
-
     void RemoveSource() override { m_Source = nullptr; }
 
     Component* m_Owner;
