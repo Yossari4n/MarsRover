@@ -1,8 +1,9 @@
 #include "DrawManager.h"
 
-#include "Drawable.h"
+#include "IDrawable.h"
+#include "IShaderProperty.h"
 #include "IWidget.h"
-#include "ILightSource.h"
+#include "primitives/Cubemap.h"
 #include "../utilities/Window.h"
 #include "../rendering/primitives/Cubemap.h"
 #include "../cbs/components/Camera.h"
@@ -19,21 +20,21 @@ void DrawManager::Initialize() {
     io.Fonts->AddFontDefault();
 
     // Create shader programs
-    m_ShaderPrograms[ShaderProgram::EType::PureColor].AttachShaders("src/shaders/PURE_COLOR.vert",
-                                                                    "src/shaders/PURE_COLOR.frag");
+    m_ShaderPrograms[static_cast<size_t>(EShaderType::PureColor)].AttachShaders("src/shaders/PURE_COLOR.vert",
+                                                                                "src/shaders/PURE_COLOR.frag");
 
 
-    m_ShaderPrograms[ShaderProgram::EType::PureTexture].AttachShaders("src/shaders/PURE_TEXTURE.vert",
-                                                                      "src/shaders/PURE_TEXTURE.frag");
+    m_ShaderPrograms[static_cast<size_t>(EShaderType::PureTexture)].AttachShaders("src/shaders/PURE_TEXTURE.vert",
+                                                                                  "src/shaders/PURE_TEXTURE.frag");
 
 
-    m_ShaderPrograms[ShaderProgram::EType::Phong].AttachShaders("src/shaders/PHONG.vert",
-                                                               "src/shaders/PHONG.frag");
-    m_ShaderPrograms[ShaderProgram::EType::Phong].Traits(ShaderProgram::ETrait::LIGHT_RECEIVER);
+    m_ShaderPrograms[static_cast<size_t>(EShaderType::Phong)].AttachShaders("src/shaders/PHONG.vert",
+                                                                            "src/shaders/PHONG.frag");
+    m_ShaderPrograms[static_cast<size_t>(EShaderType::Phong)].Traits(ShaderProgram::ETrait::LIGHT_RECEIVER);
 
 
-    m_ShaderPrograms[ShaderProgram::EType::Skybox].AttachShaders("src/shaders/SKYBOX.vert",
-                                                                "src/shaders/SKYBOX.frag");
+    m_ShaderPrograms[static_cast<size_t>(EShaderType::Skybox)].AttachShaders("src/shaders/SKYBOX.vert",
+                                                                             "src/shaders/SKYBOX.frag");
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_MULTISAMPLE);
@@ -48,26 +49,27 @@ Camera* DrawManager::MainCamera() const {
 }
 
 void DrawManager::Skybox(const std::string& right, const std::string& left, const std::string& top, const std::string& bottom, const std::string& back, const std::string& front) {
-    m_Skybox = std::make_unique<Cubemap>(right, left, top, bottom, back, front, ShaderProgram::EType::Skybox);
+    m_Skybox = std::make_unique<Cubemap>(right, left, top, bottom, back, front);
 }
 
 void DrawManager::Background(const glm::vec3& background) {
     m_Background = background;
 }
 
-void DrawManager::RegisterDrawCall(Drawable* component) {
-    // Ensure that each component is registered at most once
-    assert(std::find(m_Drawables.begin(), m_Drawables.end(), component) == m_Drawables.end());
-
-    m_Drawables.push_back(component);
+void DrawManager::RegisterDrawCall(const IDrawable* drawable, EShaderType shader) {
+    m_ShaderPrograms[static_cast<size_t>(shader)].RegisterDrawCall(drawable);
 }
 
-void DrawManager::UnregisterDrawCall(Drawable* component) {
-    // Unregistering not registered component has no effect
-    auto to_erase = std::find(m_Drawables.begin(), m_Drawables.end(), component);
-    if (to_erase != m_Drawables.end()) {
-        m_Drawables.erase(to_erase);
-    }
+void DrawManager::UnregisterDrawCall(const IDrawable* drawable, EShaderType shader) {
+    m_ShaderPrograms[static_cast<size_t>(shader)].UnregisterDrawCall(drawable);
+}
+
+void DrawManager::RegisterShaderProperty(const IShaderProperty* property, EShaderType shader) {
+    m_ShaderPrograms[static_cast<size_t>(shader)].RegisterShaderProperty(property);
+}
+
+void DrawManager::UnregisterShaderProperty(const IShaderProperty* property, EShaderType shader) {
+    m_ShaderPrograms[static_cast<size_t>(shader)].UnregisterShaderProperty(property);
 }
 
 void DrawManager::RegisterWidget(IWidget* widget) {
@@ -85,51 +87,26 @@ void DrawManager::UnregisterWidget(IWidget* widget) {
     }
 }
 
-void DrawManager::RegisterLightSource(ILightSource* light_source) {
-    // Ensure that every component is registered at most once
-    assert(std::find(m_LightSources.begin(), m_LightSources.end(), light_source) == m_LightSources.end());
-
-    m_LightSources.push_back(light_source);
-}
-
-void DrawManager::UnregisterLightSource(ILightSource* light_source) {
-    // Unregistering unregistered component has no effect
-    auto to_erase = std::find(m_LightSources.begin(), m_LightSources.end(), light_source);
-    if (to_erase != m_LightSources.end()) {
-        m_LightSources.erase(to_erase);
-    }
-}
-
 void DrawManager::CallDraws() const {
     glClearColor(m_Background.x, m_Background.y, m_Background.z, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glm::mat4 pv = m_Camera->Projection() * m_Camera->ViewMatrix();
 
-    // Draw objects
-    for (auto to_draw = m_Drawables.cbegin(); to_draw != m_Drawables.cend(); to_draw++) {
-        int shader_type = (*to_draw)->ShaderType();
-        const ShaderProgram& curr_shader = m_ShaderPrograms[shader_type];
+    for (auto shader = m_ShaderPrograms.begin(); shader != m_ShaderPrograms.end(); shader++) {
+        shader->Use();
 
-        curr_shader.Use();
-        curr_shader.Uniform("pv", pv);
+        shader->Uniform("pv", pv);
+        shader->Uniform("viewPos", m_Camera->Object().Root().Position());
 
-        // For each trait in shader set corresponding properties 
-        if (curr_shader.Traits() & ShaderProgram::ETrait::LIGHT_RECEIVER) {
-            curr_shader.Uniform("viewPos", m_Camera->Object().Root().Position());
-
-            for (auto light_source = m_LightSources.begin(); light_source != m_LightSources.end(); ++light_source) {
-                (*light_source)->SetLightProperties(curr_shader);
-            }
-        }
-
-        (*to_draw)->Draw(curr_shader);
+        shader->CallProperties();
+        shader->CallDraws();
     }
 
     // Draw skybox
     if (m_Skybox != nullptr) {
         glDepthFunc(GL_LEQUAL);
-        const ShaderProgram& skybox_shader = m_ShaderPrograms[ShaderProgram::EType::Skybox];
+        const ShaderProgram& skybox_shader = m_ShaderPrograms[static_cast<size_t>(EShaderType::Skybox)];
 
         skybox_shader.Use();
         skybox_shader.Uniform("pv", m_Camera->Projection() * glm::mat4(glm::mat3(m_Camera->ViewMatrix())));
@@ -138,7 +115,7 @@ void DrawManager::CallDraws() const {
 
         glDepthFunc(GL_LESS);
     }
-    
+
     // Draw GUI
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();

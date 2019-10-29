@@ -8,14 +8,14 @@ DirectionalLight::DirectionalLight(glm::vec3 direction, glm::vec3 ambient, glm::
 }
 
 void DirectionalLight::Initialize() {
-    Object().Scene().RegisterLightSource(this);
+    Object().Scene().RegisterShaderProperty(this, EShaderType::Phong);
 }
 
 void DirectionalLight::Destroy() {
-    Object().Scene().UnregisterLightSource(this);
+    Object().Scene().UnregisterShaderProperty(this, EShaderType::Phong);
 }
 
-void DirectionalLight::SetLightProperties(const ShaderProgram& shader) {
+void DirectionalLight::SetProperty(const ShaderProgram& shader) const {
     shader.Uniform("dirLight.direction", m_Direction);
     shader.Uniform("dirLight.ambient", m_Ambient);
     shader.Uniform("dirLight.diffuse", m_Diffuse);

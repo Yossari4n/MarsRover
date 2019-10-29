@@ -35,7 +35,6 @@ void RigidBody::Initialize() {
 }
 
 void RigidBody::Destroy() {
-    Object().Scene().RemoveRigidBody(m_RigidBody);
     Object().Scene().UnregisterPhysicalObject(this);
 }
 

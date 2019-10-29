@@ -1,16 +1,16 @@
 #include "MeshRenderer.h"
 
-MeshRenderer::MeshRenderer(RawModel& raw_model, ShaderProgram::EType type)
-    : Drawable(type)
-    , m_Model(raw_model) {
+MeshRenderer::MeshRenderer(RawModel& raw_model, EShaderType shader)
+    : m_Model(raw_model)
+    , m_ShaderType(shader) {
 }
 
 void MeshRenderer::Initialize() {
-    Object().Scene().RegisterDrawCall(this);
+    Object().Scene().RegisterDrawCall(this, m_ShaderType);
 }
 
 void MeshRenderer::Destroy() {
-    Object().Scene().UnregisterDrawCall(this);
+    Object().Scene().UnregisterDrawCall(this, m_ShaderType);
 }
 
 void MeshRenderer::Draw(const ShaderProgram& shader) const {

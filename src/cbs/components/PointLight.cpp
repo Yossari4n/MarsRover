@@ -31,14 +31,14 @@ PointLight::PointLight(glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular,
 }
 
 void PointLight::Initialize() {
-    Object().Scene().RegisterLightSource(this);
+    Object().Scene().RegisterShaderProperty(this, EShaderType::Phong);
 }
 
 void PointLight::Destroy() {
-    Object().Scene().UnregisterLightSource(this);
+    Object().Scene().UnregisterShaderProperty(this, EShaderType::Phong);
 }
 
-void PointLight::SetLightProperties(const ShaderProgram& shader) {
+void PointLight::SetProperty(const ShaderProgram& shader) const {
     std::string pointLight = "pointLights[" + std::to_string(m_Index) + "].";
 
     shader.Uniform(pointLight + "position", Object().Root().Position());

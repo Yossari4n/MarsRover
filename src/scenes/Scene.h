@@ -1,10 +1,11 @@
 #ifndef Scene_hpp
 #define Scene_hpp
 
+#include "../physics/PhysicsManager.h"
 #include "../cbs/ObjectManager.h"
 #include "../rendering/DrawManager.h"
 #include "../resources/ResourcesManager.h"
-#include "../physics/PhysicsManager.h"
+
 #include "../utilities/Time.h"
 #include "../utilities/Input.h"
 #include "../utilities/Window.h"
@@ -34,12 +35,12 @@ public:
     void DestroyObject(Object::ID_t id);
 
     // DrawManager functions
-    void RegisterDrawCall(Drawable* drawable);
-    void UnregisterDrawCall(Drawable* drawable);
+    void RegisterDrawCall(const IDrawable* drawable, EShaderType shader);
+    void UnregisterDrawCall(const IDrawable* drawable, EShaderType shader);
+    void RegisterShaderProperty(const IShaderProperty* property, EShaderType shader);
+    void UnregisterShaderProperty(const IShaderProperty* property, EShaderType shader);
     void RegisterWidget(IWidget* widget);
     void UnregisterWidget(IWidget* widget);
-    void RegisterLightSource(ILightSource* light_source);
-    void UnregisterLightSource(ILightSource* light_source);
     void RegisterCamera(Camera* camera);
     Camera* MainCamera() const;
     void Skybox(const std::string& right, const std::string& left, const std::string& top, const std::string& bottom, const std::string& back, const std::string& front);

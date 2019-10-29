@@ -1,8 +1,7 @@
 #include "ShaderProgram.h"
 
-ShaderProgram::ETrait operator| (ShaderProgram::ETrait lhs, ShaderProgram::ETrait rhs) {
-    return static_cast<ShaderProgram::ETrait>(static_cast<unsigned int>(lhs) | static_cast<unsigned int>(rhs));
-}
+#include "IDrawable.h"
+#include "IShaderProperty.h"
 
 ShaderProgram::ShaderProgram()
     : m_Traits(ETrait::NONE) {
@@ -33,8 +32,46 @@ void ShaderProgram::AttachShaders(const char *vertex_path, const char *fragment_
     }
 }
 
-int ShaderProgram::ID() const {
-    return m_ID;
+void ShaderProgram::RegisterDrawCall(const IDrawable* drawable) {
+    // Ensure that each component is registered at most once
+    assert(std::find(m_Drawables.begin(), m_Drawables.end(), drawable) == m_Drawables.end());
+
+    m_Drawables.push_back(drawable);
+}
+
+void ShaderProgram::UnregisterDrawCall(const IDrawable* drawable) {
+    // Unregistering not registered component has no effect
+    auto to_erase = std::find(m_Drawables.begin(), m_Drawables.end(), drawable);
+    if (to_erase != m_Drawables.end()) {
+        m_Drawables.erase(to_erase);
+    }
+}
+
+void ShaderProgram::RegisterShaderProperty(const IShaderProperty* property) {
+    // Ensure that each component is registered at most once
+    assert(std::find(m_Properties.begin(), m_Properties.end(), property) == m_Properties.end());
+
+    m_Properties.push_back(property);
+}
+
+void ShaderProgram::UnregisterShaderProperty(const IShaderProperty* property) {
+    // Unregistering not registered component has no effect
+    auto to_erase = std::find(m_Properties.begin(), m_Properties.end(), property);
+    if (to_erase != m_Properties.end()) {
+        m_Properties.erase(to_erase);
+    }
+}
+
+void ShaderProgram::CallProperties() const {
+    for (auto& property : m_Properties) {
+        property->SetProperty(*this);
+    }
+}
+
+void ShaderProgram::CallDraws() const {
+    for (auto& drawable : m_Drawables) {
+        drawable->Draw(*this);
+    }
 }
 
 void ShaderProgram::Uniform(const std::string &name, bool value) const {

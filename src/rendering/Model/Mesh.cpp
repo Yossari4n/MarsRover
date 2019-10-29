@@ -2,7 +2,7 @@
 
 Mesh::Mesh(const RawMesh& raw_mesh) 
     : m_IndicesCount(raw_mesh.Indices().size())
-    , m_Shininess(raw_mesh.Shininess()) {
+    , m_Shininess(static_cast<float>(raw_mesh.Shininess())) {
     if (raw_mesh.Diffuse()) {
         m_Diffuse = std::make_unique<Texture>(*raw_mesh.Diffuse(), Texture::EType::Diffuse);
     }

@@ -3,16 +3,16 @@
 
 #include "Component.h"
 #include "../../scenes/Scene.h"
-#include "../../rendering/ILightSource.h"
+#include "../../rendering/IShaderProperty.h"
 
-class DirectionalLight : public Component, public ILightSource {
+class DirectionalLight : public Component, public IShaderProperty {
 public:
     DirectionalLight(glm::vec3 direction, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular);
 
     void Initialize() override;
     void Destroy() override;
 
-    void SetLightProperties(const ShaderProgram& shader) override;
+    void SetProperty(const ShaderProgram& shader) const override;
 
 private:
     glm::vec3 m_Direction;

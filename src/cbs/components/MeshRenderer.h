@@ -7,12 +7,12 @@
 #include "../Object.h"
 #include "../connections/PropertyIn.h"
 #include "../../scenes/Scene.h"
-#include "../../rendering/Drawable.h"
+#include "../../rendering/IDrawable.h"
 #include "../../rendering/Model/Model.h"
 
-class MeshRenderer : public Component, public Drawable {
+class MeshRenderer : public Component, public IDrawable {
 public:
-    MeshRenderer(RawModel& model, ShaderProgram::EType type);
+    MeshRenderer(RawModel& model, EShaderType shader);
 
     void Initialize() override;
     void Destroy() override;
@@ -25,6 +25,7 @@ private:
     void DrawMesh(const ShaderProgram& shader, const Mesh& mesh) const;
 
     Model m_Model;
+    EShaderType m_ShaderType;
 };
 
 #pragma warning(default: 26495)

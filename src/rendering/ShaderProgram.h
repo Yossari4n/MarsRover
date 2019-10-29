@@ -2,35 +2,31 @@
 #define ShaderProgram_h
 
 #include "../debuging/Logger.h"
+#include "../core/Enum.h"
 
 #pragma warning(push, 0)
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
+#include <assert.h>
+#include <vector>
 #include <iostream>
 #include <string>
 #include <fstream>
 #include <sstream>
 #pragma warning(pop)
 
+class IDrawable;
+class IShaderProperty;
+
 class ShaderProgram {
 public:
-    enum EType {
-        PureColor = 0,
-        PureTexture,
-        Phong,
-        Skybox,
-        
-        Count
-    };
-
-    enum ETrait : unsigned char {
+    enum class ETrait : unsigned char {
         NONE = 0,
         LIGHT_RECEIVER = 1 << 0
     };
 
     ShaderProgram();
-    // Delete copy semanatics to prevent silent deletion of shader program
     ShaderProgram(const ShaderProgram&) = delete;
     ShaderProgram& operator=(const ShaderProgram&) = delete;
     ShaderProgram(ShaderProgram&&) = default;
@@ -39,11 +35,21 @@ public:
     
     void AttachShaders(const char *vertex_path, const char *fragment_path, const char *geometry_path = nullptr);
     void Use() const;
-    int ID() const;
-    
+
+    GLuint ID() const { return m_ID; }
+
     ETrait Traits() const { return m_Traits; }
     void Traits(ETrait traits) { m_Traits = traits; }
-    
+
+    void RegisterDrawCall(const IDrawable* drawable);
+    void UnregisterDrawCall(const IDrawable* drawable);
+
+    void RegisterShaderProperty(const IShaderProperty* property);
+    void UnregisterShaderProperty(const IShaderProperty* property);
+
+    void CallProperties() const;
+    void CallDraws() const;
+
     // Setters for OpenGL shaders
     void Uniform(const std::string &name, bool value) const;
     void Uniform(const std::string &name, int value) const;
@@ -57,15 +63,17 @@ public:
     void Uniform(const std::string &name, const glm::mat2 &mat) const;
     void Uniform(const std::string &name, const glm::mat3 &mat) const;
     void Uniform(const std::string &name, const glm::mat4 &mat) const;
-    
+
 private:
     void LinkProgram();
     unsigned int AttachShader(const char *path, GLenum shader);
-    
-    unsigned int m_ID;
+
+    GLuint m_ID;
     ETrait m_Traits;
+    std::vector<const IDrawable*> m_Drawables;
+    std::vector<const IShaderProperty*> m_Properties;
 };
 
-ShaderProgram::ETrait operator| (ShaderProgram::ETrait lhs, ShaderProgram::ETrait rhs);
+ENABLE_BITMASK_OPERATORS(ShaderProgram::ETrait);
 
 #endif

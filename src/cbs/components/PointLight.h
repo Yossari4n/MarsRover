@@ -4,21 +4,21 @@
 #include "Component.h"
 #include "../Object.h"
 #include "../../scenes/Scene.h"
-#include "../../rendering/ILightSource.h"
+#include "../../rendering/IShaderProperty.h"
 #include "../../debuging/Logger.h"
 
 #pragma warning(push, 0)
 #include <glm/glm.hpp>
 #pragma warning(pop)
 
-class PointLight : public Component, public ILightSource {
+class PointLight : public Component, public IShaderProperty {
 public:
     PointLight(glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, float constant, float linear, float quadratic);
     
     void Initialize() override;
     void Destroy() override;
     
-    void SetLightProperties(const ShaderProgram& shader) override;
+    void SetProperty(const ShaderProgram& shader) const override;
     
     const glm::vec3& Ambient() const { return m_Ambient; }
     void Ambient(const glm::vec3& ambient);

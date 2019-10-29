@@ -1,8 +1,5 @@
 #include "Scene.h"
 
-#include "../rendering/Drawable.h"
-#include "../rendering/ILightSource.h"
-
 void Scene::PreRun() {
     m_DrawManager.Initialize();
     m_PhysicsManager.Initialize();
@@ -62,12 +59,20 @@ void Scene::DestroyObject(Object::ID_t id) {
     m_ObjectManager.DestroyObject(id);
 }
 
-void Scene::RegisterDrawCall(Drawable* drawable) {
-    m_DrawManager.RegisterDrawCall(drawable);
+void Scene::RegisterDrawCall(const IDrawable* drawable, EShaderType shader) {
+    m_DrawManager.RegisterDrawCall(drawable, shader);
 }
 
-void Scene::UnregisterDrawCall(Drawable* drawable) {
-    m_DrawManager.UnregisterDrawCall(drawable);
+void Scene::UnregisterDrawCall(const IDrawable* drawable, EShaderType shader) {
+    m_DrawManager.UnregisterDrawCall(drawable, shader);
+}
+
+void Scene::RegisterShaderProperty(const IShaderProperty* property, EShaderType shader) {
+    m_DrawManager.RegisterShaderProperty(property, shader);
+}
+
+void Scene::UnregisterShaderProperty(const IShaderProperty* property, EShaderType shader) {
+    m_DrawManager.UnregisterShaderProperty(property, shader);
 }
 
 void Scene::RegisterWidget(IWidget* widget) {
@@ -76,14 +81,6 @@ void Scene::RegisterWidget(IWidget* widget) {
 
 void Scene::UnregisterWidget(IWidget* widget) {
     m_DrawManager.UnregisterWidget(widget);
-}
-
-void Scene::RegisterLightSource(ILightSource* light_source) {
-    m_DrawManager.RegisterLightSource(light_source);
-}
-
-void Scene::UnregisterLightSource(ILightSource* light_source) {
-    m_DrawManager.UnregisterLightSource(light_source);
 }
 
 void Scene::RegisterCamera(Camera* camera) {

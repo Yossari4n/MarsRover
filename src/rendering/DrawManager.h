@@ -19,9 +19,18 @@
 
 
 class Camera;
-class Drawable;
+class IDrawable;
+class IShaderProperty;
 class IWidget;
-class ILightSource;
+
+enum class EShaderType {
+    PureColor = 0,
+    PureTexture,
+    Phong,
+    Skybox,
+
+    Count
+};
 
 class DrawManager {
 public:
@@ -35,14 +44,14 @@ public:
     void Skybox(const std::string& right, const std::string& left, const std::string& top, const std::string& bottom, const std::string& back, const std::string& front);
     void Background(const glm::vec3& background);
 
-    void RegisterDrawCall(Drawable* component);
-    void UnregisterDrawCall(Drawable* component);
+    void RegisterDrawCall(const IDrawable* drawable, EShaderType shader);
+    void UnregisterDrawCall(const IDrawable* drawable, EShaderType shader);
+
+    void RegisterShaderProperty(const IShaderProperty* property, EShaderType shader);
+    void UnregisterShaderProperty(const IShaderProperty* property, EShaderType shader);
 
     void RegisterWidget(IWidget* widget);
     void UnregisterWidget(IWidget* widget);
-
-    void RegisterLightSource(ILightSource* light_source);
-    void UnregisterLightSource(ILightSource* light_source);
 
     void CallDraws() const;
 
@@ -51,11 +60,9 @@ private:
     std::unique_ptr<Cubemap> m_Skybox{ nullptr };
 
     Camera* m_Camera{ nullptr };
-    std::vector<Drawable*> m_Drawables;
     std::vector<IWidget*> m_Widgets;
-    std::vector<ILightSource*> m_LightSources;
 
-    std::array<ShaderProgram, static_cast<size_t>(ShaderProgram::EType::Count)> m_ShaderPrograms;
+    std::array<ShaderProgram, static_cast<size_t>(EShaderType::Count)> m_ShaderPrograms;
 };
 
 #endif
