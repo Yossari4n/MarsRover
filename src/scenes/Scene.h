@@ -46,6 +46,8 @@ public:
     void Background(const glm::vec3& background);
 
     // PhysicsManager functions
+    void RegisterPhysicalObject(IPhysicalObject* component);
+    void UnregisterPhysicalObject(IPhysicalObject* component);
     void AddRigidBody(btRigidBody* rigid_body);
     void RemoveRigidBody(btRigidBody* rigid_body);
     void Gravity(const btVector3& gravity);

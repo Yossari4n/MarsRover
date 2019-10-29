@@ -15,6 +15,9 @@ void PhysicsManager::Initialize() {
 
 void PhysicsManager::StepSimulation(float delta_time) {
     m_World->stepSimulation(delta_time);
+    for (auto it = m_PhysicalObjects.begin(); it != m_PhysicalObjects.end(); it++) {
+        (*it)->PhysicsUpdate();
+    }
 }
 
 void PhysicsManager::ExitPhysics() {
@@ -31,17 +34,32 @@ void PhysicsManager::ExitPhysics() {
             btCollisionObject* obj = m_World->getCollisionObjectArray()[i];
             btRigidBody* body = btRigidBody::upcast(obj);
 
-            if (body && body->getMotionState()) {
-                delete body->getMotionState();
+            if (body) {
+                if (auto shape = body->getCollisionShape()) {
+                    delete shape;
+                }
+
+                if (auto motion_state = body->getMotionState()) {
+                    delete motion_state;
+                }
             }
 
             m_World->removeCollisionObject(obj);
             delete obj;
         }
     }
+}
 
-    for (int j = 0; j < m_CollisionShapes.size(); j++) {
-        delete m_CollisionShapes[j];
+void PhysicsManager::RegisterPhysicalObject(IPhysicalObject* component) {
+    assert(std::find(m_PhysicalObjects.begin(), m_PhysicalObjects.end(), component) == m_PhysicalObjects.end());
+
+    m_PhysicalObjects.push_back(component);
+}
+
+void PhysicsManager::UnregisterPhysiaclObject(IPhysicalObject* component) {
+    auto to_erase = std::find(m_PhysicalObjects.begin(), m_PhysicalObjects.end(), component);
+    if (to_erase != m_PhysicalObjects.end()) {
+        m_PhysicalObjects.erase(to_erase);
     }
 }
 

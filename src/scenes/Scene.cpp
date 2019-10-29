@@ -31,8 +31,8 @@ void Scene::Run() {
         g_Input.Update(g_Window);
         
         // Managers
-        m_ObjectManager.UpdateObjects();
         m_PhysicsManager.StepSimulation(g_Time.DeltaTime());
+        m_ObjectManager.UpdateObjects();
         m_DrawManager.CallDraws();
     }
 }
@@ -100,6 +100,14 @@ void Scene::Skybox(const std::string& right, const std::string& left, const std:
 
 void Scene::Background(const glm::vec3& background) {
     m_DrawManager.Background(background);
+}
+
+void Scene::RegisterPhysicalObject(IPhysicalObject* component) {
+    m_PhysicsManager.RegisterPhysicalObject(component);
+}
+
+void Scene::UnregisterPhysicalObject(IPhysicalObject* component) {
+    m_PhysicsManager.UnregisterPhysiaclObject(component);
 }
 
 void Scene::AddRigidBody(btRigidBody* rigid_body) {

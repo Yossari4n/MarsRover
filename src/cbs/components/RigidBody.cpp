@@ -31,17 +31,18 @@ void RigidBody::Initialize() {
     m_RigidBody->getMotionState()->setWorldTransform(transform);
 
     Object().Scene().AddRigidBody(m_RigidBody);
-    RegisterUpdateCall();
+    Object().Scene().RegisterPhysicalObject(this);
 }
 
-void RigidBody::Update() {
+void RigidBody::Destroy() {
+    Object().Scene().RemoveRigidBody(m_RigidBody);
+    Object().Scene().UnregisterPhysicalObject(this);
+}
+
+void RigidBody::PhysicsUpdate() {
     btTransform trans;
     m_RigidBody->getMotionState()->getWorldTransform(trans);
 
     Object().Root().Position(glm::vec3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ()));
     Object().Root().Rotation(glm::quat(trans.getRotation().getW(), trans.getRotation().getX(), trans.getRotation().getY(), trans.getRotation().getZ()));
-}
-
-void RigidBody::Destroy() {
-    Object().Scene().RemoveRigidBody(m_RigidBody);
 }
