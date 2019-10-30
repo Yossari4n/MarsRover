@@ -1,7 +1,7 @@
 #ifndef IWidget_h
 #define IWidget_h
 
-class IWidget {
+class IGUIWidget {
 public:
     enum class EAlign {
         NONE,
@@ -10,12 +10,12 @@ public:
         END
     };
 
-    IWidget() = default;
-    virtual ~IWidget() = default;
-    IWidget(const IWidget&) = delete;
-    IWidget& operator=(const IWidget&) = delete;
-    IWidget(IWidget&&) = delete;
-    IWidget& operator=(IWidget&&) = delete;
+    IGUIWidget() = default;
+    virtual ~IGUIWidget() = default;
+    IGUIWidget(const IGUIWidget&) = delete;
+    IGUIWidget& operator=(const IGUIWidget&) = delete;
+    IGUIWidget(IGUIWidget&&) = delete;
+    IGUIWidget& operator=(IGUIWidget&&) = delete;
 
     virtual void Draw() const = 0;
 

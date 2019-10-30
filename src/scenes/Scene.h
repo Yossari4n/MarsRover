@@ -39,16 +39,16 @@ public:
     void UnregisterDrawCall(const IDrawable* drawable, EShaderType shader);
     void RegisterShaderProperty(const IShaderProperty* property, EShaderType shader);
     void UnregisterShaderProperty(const IShaderProperty* property, EShaderType shader);
-    void RegisterWidget(IWidget* widget);
-    void UnregisterWidget(IWidget* widget);
+    void RegisterWidget(IGUIWidget* widget);
+    void UnregisterWidget(IGUIWidget* widget);
     void RegisterCamera(Camera* camera);
     Camera* MainCamera() const;
     void Skybox(const std::string& right, const std::string& left, const std::string& top, const std::string& bottom, const std::string& back, const std::string& front);
     void Background(const glm::vec3& background);
 
     // PhysicsManager functions
-    void RegisterPhysicalObject(IPhysicalObject* component);
-    void UnregisterPhysicalObject(IPhysicalObject* component);
+    void RegisterPhysicalObject(IPhysicalObject* physical_object);
+    void UnregisterPhysicalObject(IPhysicalObject* physical_object);
     void AddRigidBody(btRigidBody* rigid_body);
     void RemoveRigidBody(btRigidBody* rigid_body);
     void Gravity(const btVector3& gravity);

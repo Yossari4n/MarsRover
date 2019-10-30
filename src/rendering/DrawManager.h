@@ -21,7 +21,7 @@
 class Camera;
 class IDrawable;
 class IShaderProperty;
-class IWidget;
+class IGUIWidget;
 
 enum class EShaderType {
     PureColor = 0,
@@ -50,8 +50,8 @@ public:
     void RegisterShaderProperty(const IShaderProperty* property, EShaderType shader);
     void UnregisterShaderProperty(const IShaderProperty* property, EShaderType shader);
 
-    void RegisterWidget(IWidget* widget);
-    void UnregisterWidget(IWidget* widget);
+    void RegisterWidget(IGUIWidget* widget);
+    void UnregisterWidget(IGUIWidget* widget);
 
     void CallDraws() const;
 
@@ -60,7 +60,7 @@ private:
     std::unique_ptr<Cubemap> m_Skybox{ nullptr };
 
     Camera* m_Camera{ nullptr };
-    std::vector<IWidget*> m_Widgets;
+    std::vector<IGUIWidget*> m_GUIWidgets;
 
     std::array<ShaderProgram, static_cast<size_t>(EShaderType::Count)> m_ShaderPrograms;
 };

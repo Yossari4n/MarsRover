@@ -2,14 +2,14 @@
 #define TextRenderer_h
 
 #include "Component.h"
-#include "../../rendering/IWidget.h"
+#include "../../rendering/IGUIWidget.h"
 #include "../Object.h"
 #include "../../scenes/Scene.h"
 #include "../connections/MessageIn.h"
 
 #include <string>
 
-class TextRenderer : public Component, public IWidget {
+class TextRenderer : public Component, public IGUIWidget {
 public:
     TextRenderer(const std::string& font_path, float size);
 

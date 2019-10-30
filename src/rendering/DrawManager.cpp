@@ -2,7 +2,7 @@
 
 #include "IDrawable.h"
 #include "IShaderProperty.h"
-#include "IWidget.h"
+#include "IGUIWidget.h"
 #include "primitives/Cubemap.h"
 #include "../utilities/Window.h"
 #include "../rendering/primitives/Cubemap.h"
@@ -72,18 +72,18 @@ void DrawManager::UnregisterShaderProperty(const IShaderProperty* property, ESha
     m_ShaderPrograms[static_cast<size_t>(shader)].UnregisterShaderProperty(property);
 }
 
-void DrawManager::RegisterWidget(IWidget* widget) {
+void DrawManager::RegisterWidget(IGUIWidget* widget) {
     // Ensure that each widget is registered at most once
-    assert(std::find(m_Widgets.begin(), m_Widgets.end(), widget) == m_Widgets.end());
+    assert(std::find(m_GUIWidgets.begin(), m_GUIWidgets.end(), widget) == m_GUIWidgets.end());
 
-    m_Widgets.push_back(widget);
+    m_GUIWidgets.push_back(widget);
 }
 
-void DrawManager::UnregisterWidget(IWidget* widget) {
+void DrawManager::UnregisterWidget(IGUIWidget* widget) {
     // Unregistering not registered widget has no effect
-    auto to_erase = std::find(m_Widgets.begin(), m_Widgets.end(), widget);
-    if (to_erase != m_Widgets.end()) {
-        m_Widgets.erase(to_erase);
+    auto to_erase = std::find(m_GUIWidgets.begin(), m_GUIWidgets.end(), widget);
+    if (to_erase != m_GUIWidgets.end()) {
+        m_GUIWidgets.erase(to_erase);
     }
 }
 
@@ -121,7 +121,7 @@ void DrawManager::CallDraws() const {
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    for (auto widget = m_Widgets.begin(); widget != m_Widgets.end(); widget++) {
+    for (auto widget = m_GUIWidgets.begin(); widget != m_GUIWidgets.end(); widget++) {
         (*widget)->Draw();
     }
 

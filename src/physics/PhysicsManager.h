@@ -19,8 +19,8 @@ public:
     void StepSimulation(float delta_time);
     void ExitPhysics();
 
-    void RegisterPhysicalObject(IPhysicalObject* object);
-    void UnregisterPhysiaclObject(IPhysicalObject* object);
+    void RegisterPhysicalObject(IPhysicalObject* physical_object);
+    void UnregisterPhysiaclObject(IPhysicalObject* physical_object);
 
     void AddRigidBody(btRigidBody* rigid_body);
     void RemoveRigidBody(btRigidBody* rigid_body);

@@ -75,11 +75,11 @@ void Scene::UnregisterShaderProperty(const IShaderProperty* property, EShaderTyp
     m_DrawManager.UnregisterShaderProperty(property, shader);
 }
 
-void Scene::RegisterWidget(IWidget* widget) {
+void Scene::RegisterWidget(IGUIWidget* widget) {
     m_DrawManager.RegisterWidget(widget);
 }
 
-void Scene::UnregisterWidget(IWidget* widget) {
+void Scene::UnregisterWidget(IGUIWidget* widget) {
     m_DrawManager.UnregisterWidget(widget);
 }
 

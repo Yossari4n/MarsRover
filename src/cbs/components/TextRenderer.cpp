@@ -29,8 +29,8 @@ void TextRenderer::Draw() const {
     glm::vec2 pos(0.0f, 0.0f);
     pos.x = pos.x + m_Offset.x * g_Window.Width();
     pos.y = pos.y + m_Offset.y * g_Window.Height();
-    IWidget::Align(&pos.x, -margin.x / 2, g_Window.Width() - margin.x / 2 - text_size.x, m_Horizontal);
-    IWidget::Align(&pos.y, -margin.y / 2, g_Window.Height() - margin.y / 2 - text_size.y, m_Vertical);
+    IGUIWidget::Align(&pos.x, -margin.x / 2, g_Window.Width() - margin.x / 2 - text_size.x, m_Horizontal);
+    IGUIWidget::Align(&pos.y, -margin.y / 2, g_Window.Height() - margin.y / 2 - text_size.y, m_Vertical);
 
     ImGui::SetWindowPos(pos);
     ImGui::TextColored(m_Color, m_Text.c_str());
