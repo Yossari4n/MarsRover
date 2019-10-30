@@ -1,7 +1,7 @@
 #ifndef Line_h
 #define Line_h
 
-#include "../../rendering/IDrawable.h"
+#include "../IDrawable.h"
 
 class Line : public IDrawable {
 public:
@@ -17,8 +17,8 @@ public:
     void Draw(const ShaderProgram& shader) const override;
 
 private:
-    GLuint m_VAO;
     GLuint m_VBO;
+    GLuint m_VAO;
     glm::vec3 m_Color;
 };
 
