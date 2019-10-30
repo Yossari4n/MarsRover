@@ -39,8 +39,11 @@ public:
     void UnregisterDrawCall(const IDrawable* drawable, EShaderType shader);
     void RegisterShaderProperty(const IShaderProperty* property, EShaderType shader);
     void UnregisterShaderProperty(const IShaderProperty* property, EShaderType shader);
-    void RegisterWidget(IGUIWidget* widget);
-    void UnregisterWidget(IGUIWidget* widget);
+    void RegisterGUIWidget(IGUIWidget* widget);
+    void UnregisterGUIWidget(IGUIWidget* widget);
+    void DrawLine(glm::vec3 start, glm::vec3 end, glm::vec3 color);
+    void DrawPlane(glm::mat4 model, glm::vec3 color);
+    void DrawCuboid(glm::mat4 model, glm::vec3 color);
     void RegisterCamera(Camera* camera);
     Camera* MainCamera() const;
     void Skybox(const std::string& right, const std::string& left, const std::string& top, const std::string& bottom, const std::string& back, const std::string& front);

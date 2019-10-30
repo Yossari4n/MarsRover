@@ -15,7 +15,6 @@ Camera::Camera(float fovy, float aspect, float near, float far)
     : m_ViewMatrix(0.0f)
     , m_Projection(Perspective(fovy, aspect, near, far))
     , m_Transform(nullptr) {
-    
 }
 
 Camera::Camera(float left, float right, float bottom, float top, float near, float far)

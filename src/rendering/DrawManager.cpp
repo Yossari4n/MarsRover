@@ -3,6 +3,9 @@
 #include "IDrawable.h"
 #include "IShaderProperty.h"
 #include "IGUIWidget.h"
+#include "primitives/Line.h"
+#include "primitives/Plane.h"
+#include "primitives/Cuboid.h"
 #include "primitives/Cubemap.h"
 #include "../utilities/Window.h"
 #include "../rendering/primitives/Cubemap.h"
@@ -72,14 +75,14 @@ void DrawManager::UnregisterShaderProperty(const IShaderProperty* property, ESha
     m_ShaderPrograms[static_cast<size_t>(shader)].UnregisterShaderProperty(property);
 }
 
-void DrawManager::RegisterWidget(IGUIWidget* widget) {
+void DrawManager::RegisterGUIWidget(IGUIWidget* widget) {
     // Ensure that each widget is registered at most once
     assert(std::find(m_GUIWidgets.begin(), m_GUIWidgets.end(), widget) == m_GUIWidgets.end());
 
     m_GUIWidgets.push_back(widget);
 }
 
-void DrawManager::UnregisterWidget(IGUIWidget* widget) {
+void DrawManager::UnregisterGUIWidget(IGUIWidget* widget) {
     // Unregistering not registered widget has no effect
     auto to_erase = std::find(m_GUIWidgets.begin(), m_GUIWidgets.end(), widget);
     if (to_erase != m_GUIWidgets.end()) {
@@ -87,12 +90,29 @@ void DrawManager::UnregisterWidget(IGUIWidget* widget) {
     }
 }
 
-void DrawManager::CallDraws() const {
+void DrawManager::DrawLine(glm::vec3 start, glm::vec3 end, glm::vec3 color) {
+    m_NextFrameDraws.push(new Line(start, end, color));
+}
+
+void DrawManager::DrawPlane(glm::mat4 model, glm::vec3 color) {
+    m_NextFrameDraws.push(new Plane(model, color));
+}
+
+void DrawManager::DrawCuboid(glm::mat4 model, glm::vec3 color) {
+    m_NextFrameDraws.push(new Cuboid(model, color));
+}
+
+void DrawManager::DrawSphere(glm::mat4 model, glm::vec3 color) {
+
+}
+
+void DrawManager::CallDraws() {
     glClearColor(m_Background.x, m_Background.y, m_Background.z, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glm::mat4 pv = m_Camera->Projection() * m_Camera->ViewMatrix();
 
+    // Call draw calls in all shaders
     for (auto shader = m_ShaderPrograms.begin(); shader != m_ShaderPrograms.end(); shader++) {
         shader->Use();
 
@@ -102,6 +122,16 @@ void DrawManager::CallDraws() const {
         shader->CallProperties();
         shader->CallDraws();
     }
+
+    // Call one frame draw calls
+    auto& pure_color_shader = m_ShaderPrograms[static_cast<size_t>(EShaderType::PureColor)];
+    pure_color_shader.Use();
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    while (!m_NextFrameDraws.empty()) {
+        m_NextFrameDraws.top()->Draw(pure_color_shader);
+        m_NextFrameDraws.pop();
+    }
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     // Draw skybox
     if (m_Skybox != nullptr) {

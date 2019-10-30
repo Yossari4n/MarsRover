@@ -13,6 +13,8 @@
 #include <GLFW/glfw3.h>
 #pragma warning(pop)
 
+#include <iostream>
+#include <stack>
 #include <vector>
 #include <array>
 #include <assert.h>
@@ -34,8 +36,6 @@ enum class EShaderType {
 
 class DrawManager {
 public:
-    DrawManager() = default;
-
     void Initialize();
 
     void RegisterCamera(Camera* camera);
@@ -50,19 +50,24 @@ public:
     void RegisterShaderProperty(const IShaderProperty* property, EShaderType shader);
     void UnregisterShaderProperty(const IShaderProperty* property, EShaderType shader);
 
-    void RegisterWidget(IGUIWidget* widget);
-    void UnregisterWidget(IGUIWidget* widget);
+    void RegisterGUIWidget(IGUIWidget* widget);
+    void UnregisterGUIWidget(IGUIWidget* widget);
 
-    void CallDraws() const;
+    void DrawLine(glm::vec3 start, glm::vec3 end, glm::vec3 color);
+    void DrawPlane(glm::mat4 model, glm::vec3 color);
+    void DrawCuboid(glm::mat4 model, glm::vec3 color);
+    void DrawSphere(glm::mat4 model, glm::vec3 color);
+
+    void CallDraws();
 
 private:
     glm::vec3 m_Background{ 0.0f };
     std::unique_ptr<Cubemap> m_Skybox{ nullptr };
 
     Camera* m_Camera{ nullptr };
-    std::vector<IGUIWidget*> m_GUIWidgets;
-
     std::array<ShaderProgram, static_cast<size_t>(EShaderType::Count)> m_ShaderPrograms;
+    std::stack<IDrawable*> m_NextFrameDraws;
+    std::vector<IGUIWidget*> m_GUIWidgets;
 };
 
 #endif

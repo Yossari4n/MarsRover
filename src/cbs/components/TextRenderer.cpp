@@ -12,11 +12,11 @@ TextRenderer::TextRenderer(const std::string& font_path, float size)
 }
 
 void TextRenderer::Initialize() {
-    Object().Scene().RegisterWidget(this);
+    Object().Scene().RegisterGUIWidget(this);
 }
 
 void TextRenderer::Destroy() {
-    Object().Scene().UnregisterWidget(this);
+    Object().Scene().UnregisterGUIWidget(this);
 }
 
 void TextRenderer::Draw() const {

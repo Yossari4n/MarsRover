@@ -75,12 +75,24 @@ void Scene::UnregisterShaderProperty(const IShaderProperty* property, EShaderTyp
     m_DrawManager.UnregisterShaderProperty(property, shader);
 }
 
-void Scene::RegisterWidget(IGUIWidget* widget) {
-    m_DrawManager.RegisterWidget(widget);
+void Scene::RegisterGUIWidget(IGUIWidget* widget) {
+    m_DrawManager.RegisterGUIWidget(widget);
 }
 
-void Scene::UnregisterWidget(IGUIWidget* widget) {
-    m_DrawManager.UnregisterWidget(widget);
+void Scene::UnregisterGUIWidget(IGUIWidget* widget) {
+    m_DrawManager.UnregisterGUIWidget(widget);
+}
+
+void Scene::DrawLine(glm::vec3 start, glm::vec3 end, glm::vec3 color) {
+    m_DrawManager.DrawLine(start, end, color);
+}
+
+void Scene::DrawPlane(glm::mat4 model, glm::vec3 color) {
+    m_DrawManager.DrawPlane(model, color);
+}
+
+void Scene::DrawCuboid(glm::mat4 model, glm::vec3 color) {
+    m_DrawManager.DrawCuboid(model, color);
 }
 
 void Scene::RegisterCamera(Camera* camera) {

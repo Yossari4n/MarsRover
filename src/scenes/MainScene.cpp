@@ -6,6 +6,7 @@
 #include "../cbs/components/FirstPersonController.h"
 #include "../cbs/components/DirectionalLight.h"
 #include "../cbs/components/PointLight.h"
+#include "../cbs/components/Dummy.h"
 
 void MainScene::CreateScene() {
     FrameRateLimit(60);
@@ -25,11 +26,9 @@ void MainScene::CreateScene() {
 
     auto rover = CreateObject("Rover"); {
         rover->Root().Scale(glm::vec3(0.1f));
-        auto trans = rover->CreateComponent<Transform>();
-        auto mesh = rover->CreateComponent<MeshRenderer>(GetModel("resources/models/opportunity/oppy.obj"), EShaderType::Phong);
+        //auto mesh = rover->CreateComponent<MeshRenderer>(GetModel("resources/models/opportunity/oppy.obj"), EShaderType::Phong);
         //auto rigid_body = rover->CreateComponent<RigidBody>(btScalar(1.0f), new btBoxShape(btVector3(0.1f, 0.1f, 0.1f)));
-        rover->Connect(rover->Root().TransformOut, trans->Parent);
-        rover->Connect(rover->Root().ModelOut, mesh->ModelIn);
+        //rover->Connect(rover->Root().ModelOut, mesh->ModelIn);
     }
 
     auto camera = CreateObject("Camera"); {
@@ -39,6 +38,9 @@ void MainScene::CreateScene() {
 
     auto ground = CreateObject("Ground"); {
         ground->Root().Position(glm::vec3(0.0f, -1.0f, 0.0f));
-        
+    }
+
+    auto dummy = CreateObject("Dummy"); {
+        dummy->CreateComponent<Dummy>();
     }
 }

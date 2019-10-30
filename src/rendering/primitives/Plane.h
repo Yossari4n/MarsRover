@@ -19,7 +19,6 @@ public:
 private:
     GLuint m_VBO;
     GLuint m_VAO;
-    GLuint m_EBO;
     glm::mat4 m_Model;
 };
 
