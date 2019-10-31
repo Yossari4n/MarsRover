@@ -129,6 +129,8 @@ void DrawManager::CallDraws() {
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     while (!m_NextFrameDraws.empty()) {
         m_NextFrameDraws.top()->Draw(pure_color_shader);
+
+        delete m_NextFrameDraws.top();
         m_NextFrameDraws.pop();
     }
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
