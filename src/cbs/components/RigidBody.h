@@ -6,6 +6,7 @@
 #include "../../physics/PhysicsManager.h"
 #include "../../physics/IPhysicalObject.h"
 #include "../connections/PropertyIn.h"
+#include "../connections/PropertyOut.h"
 
 class RigidBody : public Component, public IPhysicalObject {
 public:
@@ -16,7 +17,9 @@ public:
 
     void PhysicsUpdate() override;
 
-public:
+    btRigidBody* Handler() { return m_RigidBody; }
+
+    PropertyOut<RigidBody*> This{ this, this };
     PropertyIn<Transform*> TransformIn{ this };
 
 private:

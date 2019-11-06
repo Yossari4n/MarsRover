@@ -74,3 +74,11 @@ void PhysicsManager::RemoveRigidBody(btRigidBody* rigid_body) {
 
     m_World->removeRigidBody(rigid_body);
 }
+
+void PhysicsManager::AddConstraint(btTypedConstraint* constraint, bool disable_collisions_between_linked_bodies) {
+    m_World->addConstraint(constraint, disable_collisions_between_linked_bodies);
+}
+
+void PhysicsManager::RemoveConstraint(btTypedConstraint* constraint) {
+    m_World->removeConstraint(constraint);
+}

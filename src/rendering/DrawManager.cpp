@@ -90,18 +90,22 @@ void DrawManager::UnregisterGUIWidget(IGUIWidget* widget) {
     }
 }
 
+// TODO optimise 
 void DrawManager::DrawLine(glm::vec3 start, glm::vec3 end, glm::vec3 color) {
     m_NextFrameDraws.push(new Line(start, end, color));
 }
 
+// TODO optimise
 void DrawManager::DrawPlane(glm::mat4 model, glm::vec3 color) {
     m_NextFrameDraws.push(new Plane(model, color));
 }
 
+// TODO optimise
 void DrawManager::DrawCuboid(glm::mat4 model, glm::vec3 color) {
     m_NextFrameDraws.push(new Cuboid(model, color));
 }
 
+// TODO optimise
 void DrawManager::DrawSphere(glm::mat4 model, glm::vec3 color) {
 
 }
@@ -112,7 +116,7 @@ void DrawManager::CallDraws() {
 
     glm::mat4 pv = m_Camera->Projection() * m_Camera->ViewMatrix();
 
-    // Call draw calls in all shaders
+    // Call draws in all shaders
     for (auto shader = m_ShaderPrograms.begin(); shader != m_ShaderPrograms.end(); shader++) {
         shader->Use();
 
@@ -123,7 +127,7 @@ void DrawManager::CallDraws() {
         shader->CallDraws();
     }
 
-    // Call one frame draw calls
+    // Call one-frame draws
     auto& pure_color_shader = m_ShaderPrograms[static_cast<size_t>(EShaderType::PureColor)];
     pure_color_shader.Use();
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);

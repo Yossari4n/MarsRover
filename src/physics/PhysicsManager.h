@@ -25,6 +25,9 @@ public:
     void AddRigidBody(btRigidBody* rigid_body);
     void RemoveRigidBody(btRigidBody* rigid_body);
 
+    void AddConstraint(btTypedConstraint* constraint, bool disable_collisions_between_linked_bodies = false);
+    void RemoveConstraint(btTypedConstraint* constraint);
+
     void Gravity(btVector3 gravity) { m_World->setGravity(gravity); }
     btVector3 Gravity() const { return m_World->getGravity(); }
 

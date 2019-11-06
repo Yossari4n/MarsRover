@@ -127,6 +127,14 @@ void Scene::RemoveRigidBody(btRigidBody* rigid_body) {
     m_PhysicsManager.RemoveRigidBody(rigid_body);
 }
 
+void Scene::AddConstraint(btTypedConstraint* constraint, bool disable_collisions_between_linked_bodies) {
+    m_PhysicsManager.AddConstraint(constraint, disable_collisions_between_linked_bodies);
+}
+
+void Scene::RemoveConstraint(btTypedConstraint* constraint) {
+    m_PhysicsManager.RemoveConstraint(constraint);
+}
+
 void Scene::Gravity(const btVector3& gravity) {
     m_PhysicsManager.Gravity(gravity);
 }
