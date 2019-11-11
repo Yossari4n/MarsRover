@@ -32,6 +32,8 @@ void RigidBody::Initialize() {
 
     Object().Scene().AddRigidBody(m_RigidBody);
     Object().Scene().RegisterPhysicalObject(this);
+
+    RegisterUpdateCall();
 }
 
 void RigidBody::Destroy() {
@@ -42,6 +44,12 @@ void RigidBody::PhysicsUpdate() {
     btTransform trans;
     m_RigidBody->getMotionState()->getWorldTransform(trans);
 
+    // TODO optimise it
     Object().Root().Position(glm::vec3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ()));
     Object().Root().Rotation(glm::quat(trans.getRotation().getW(), trans.getRotation().getX(), trans.getRotation().getY(), trans.getRotation().getZ()));
+
+    // Debug draw
+    float matrix[16];
+    trans.getOpenGLMatrix(matrix);
+    Object().Scene().DrawCuboid(glm::make_mat4(matrix), glm::vec3(1.0f, 0.0f, 0.0f));
 }

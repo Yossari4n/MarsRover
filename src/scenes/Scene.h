@@ -56,8 +56,11 @@ public:
     void RemoveRigidBody(btRigidBody* rigid_body);
     void AddConstraint(btTypedConstraint* constraint, bool disable_collisions_between_linked_bodies = false);
     void RemoveConstraint(btTypedConstraint* constraint);
+    void AddVehicle(btActionInterface* vehicle);
+    void RemoveVehicle(btActionInterface* vehicle);
     void Gravity(const btVector3& gravity);
     btVector3 Gravity() const;
+    btDynamicsWorld* DynamicsWorld();
 
     // ResourceManager functions
     RawTexture& GetTexture(std::string path);

@@ -32,9 +32,8 @@ void PhysicsManager::ExitPhysics() {
         i = m_World->getNumCollisionObjects() - 1;
         for (; i >= 0; i--) {
             btCollisionObject* obj = m_World->getCollisionObjectArray()[i];
-            btRigidBody* body = btRigidBody::upcast(obj);
 
-            if (body) {
+            if (btRigidBody* body = btRigidBody::upcast(obj)) {
                 if (auto shape = body->getCollisionShape()) {
                     delete shape;
                 }
@@ -81,4 +80,12 @@ void PhysicsManager::AddConstraint(btTypedConstraint* constraint, bool disable_c
 
 void PhysicsManager::RemoveConstraint(btTypedConstraint* constraint) {
     m_World->removeConstraint(constraint);
+}
+
+void PhysicsManager::AddVehicle(btActionInterface* vehicle) {
+    m_World->addVehicle(vehicle);
+}
+
+void PhysicsManager::RemoveVehicle(btActionInterface* vehicle) {
+    m_World->removeVehicle(vehicle);
 }

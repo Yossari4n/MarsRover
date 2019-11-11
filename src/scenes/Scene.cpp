@@ -135,12 +135,24 @@ void Scene::RemoveConstraint(btTypedConstraint* constraint) {
     m_PhysicsManager.RemoveConstraint(constraint);
 }
 
+void Scene::AddVehicle(btActionInterface* vehicle) {
+    m_PhysicsManager.AddVehicle(vehicle);
+}
+
+void Scene::RemoveVehicle(btActionInterface* vehicle) {
+    m_PhysicsManager.RemoveVehicle(vehicle);
+}
+
 void Scene::Gravity(const btVector3& gravity) {
     m_PhysicsManager.Gravity(gravity);
 }
 
 btVector3 Scene::Gravity() const {
     return m_PhysicsManager.Gravity();
+}
+
+btDynamicsWorld* Scene::DynamicsWorld() {
+    return m_PhysicsManager.DynamicsWorld();
 }
 
 RawTexture& Scene::GetTexture(std::string path) {

@@ -5,16 +5,15 @@
 #include "../connections/PropertyIn.h"
 #include "../../physics/PhysicsManager.h"
 
-#include "btBulletDynamicsCommon.h"
-
 class RigidBody;
 class Hinge2Constraint : public Component {
 public:
     Hinge2Constraint(const btVector3& parent_axis, const btVector3& child_axis, const btVector3& anchor);
 
     void Initialize() override;
+    void Destroy() override;
 
-    btHinge2Constraint* Handler() { return m_Constraint; }
+    btHinge2Constraint* Handle() { return m_Constraint; }
 
     PropertyIn<RigidBody*> RigidBodyA{ this };
     PropertyIn<RigidBody*> RigidBodyB{ this };

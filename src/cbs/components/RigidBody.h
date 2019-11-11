@@ -17,7 +17,7 @@ public:
 
     void PhysicsUpdate() override;
 
-    btRigidBody* Handler() { return m_RigidBody; }
+    btRigidBody* Handle() { return m_RigidBody; }
 
     PropertyOut<RigidBody*> This{ this, this };
     PropertyIn<Transform*> TransformIn{ this };

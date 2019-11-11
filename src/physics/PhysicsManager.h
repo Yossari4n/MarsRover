@@ -7,6 +7,8 @@
 #pragma warning(push, 0)
 #include "btBulletDynamicsCommon.h"
 #include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
+#include "BulletDynamics/MLCPSolvers/btMLCPSolver.h"
+#include "BulletDynamics/MLCPSolvers/btDantzigSolver.h"
 
 #include <assert.h>
 #include <vector>
@@ -28,8 +30,13 @@ public:
     void AddConstraint(btTypedConstraint* constraint, bool disable_collisions_between_linked_bodies = false);
     void RemoveConstraint(btTypedConstraint* constraint);
 
+    void AddVehicle(btActionInterface* vehicle);
+    void RemoveVehicle(btActionInterface* vehicle);
+
     void Gravity(btVector3 gravity) { m_World->setGravity(gravity); }
     btVector3 Gravity() const { return m_World->getGravity(); }
+
+    btDynamicsWorld* DynamicsWorld() { return m_World.get(); }
 
 private:
     std::unique_ptr<btDynamicsWorld> m_World;
