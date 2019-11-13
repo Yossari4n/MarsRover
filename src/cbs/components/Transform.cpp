@@ -10,6 +10,10 @@ const glm::mat4& Transform::Model() const {
     return ModelOut.Value();
 }
 
+void Transform::Model(const glm::mat4 model) {
+    ModelOut.Value() = model;
+}
+
 const glm::vec3& Transform::Position() const {
     return PositionOut.Value();
 }
@@ -59,7 +63,7 @@ const glm::vec3& Transform::Scale() const {
 }
 
 void Transform::Scale(const glm::vec3& scale) {
-    ScaleOut = scale;
+    ScaleOut.Value() = scale;
     
     UpdateModel();
 }

@@ -6,9 +6,11 @@ void PhysicsManager::Initialize() {
     m_CollisionConfiguration = std::make_unique<btDefaultCollisionConfiguration>();
     m_Dispatcher = std::make_unique<btCollisionDispatcher>(m_CollisionConfiguration.get());
     m_Broadphase = std::make_unique<btDbvtBroadphase>();
-    m_Solver = std::make_unique<btSequentialImpulseConstraintSolver>();
+    m_Solver = std::make_unique<btMLCPSolver>(new btDantzigSolver());
 
     m_World = std::make_unique<btDiscreteDynamicsWorld>(m_Dispatcher.get(), m_Broadphase.get(), m_Solver.get(), m_CollisionConfiguration.get());
+    m_World->getSolverInfo().m_minimumSolverBatchSize = 1;
+    m_World->getSolverInfo().m_globalCfm = 0.0001;
 
     m_World->setGravity(btVector3(btScalar(0), btScalar(-10), btScalar(0)));
 }

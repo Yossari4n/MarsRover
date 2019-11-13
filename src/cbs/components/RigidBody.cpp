@@ -1,6 +1,7 @@
 #include "RigidBody.h"
 
-RigidBody::RigidBody(btScalar mass, btCollisionShape* shape) {
+RigidBody::RigidBody(btScalar mass, btCollisionShape* shape)
+    : m_ScaleMatrix(1.0f) {
     btVector3 local_inertia(0, 0, 0);
     if (mass != 0.0f) {
         shape->calculateLocalInertia(mass, local_inertia);
@@ -15,16 +16,25 @@ RigidBody::RigidBody(btScalar mass, btCollisionShape* shape) {
 
     m_RigidBody = new btRigidBody(info);
     m_RigidBody->setUserIndex(-1);
+
+    // Dirty way to determinate scale matrix and debug draw function
+    switch (shape->getShapeType()) {
+    case BOX_SHAPE_PROXYTYPE:
+        auto box_shape = reinterpret_cast<btBoxShape*>(shape);
+        auto half_extents = box_shape->getHalfExtentsWithMargin();
+        m_ScaleMatrix = glm::scale(m_ScaleMatrix, glm::vec3(half_extents.x() * 2, half_extents.y() * 2, half_extents.z() * 2));
+        break;
+    }
 }
 
 void RigidBody::Initialize() {
     btTransform transform;
     transform.setIdentity();
 
-    auto pos = Object().Root().Position();
+    auto pos = TransformIn.Value()->Position();
     transform.setOrigin(btVector3(pos.x, pos.y, pos.z));
 
-    auto rot = Object().Root().Rotation();
+    auto rot = TransformIn.Value()->Rotation();
     transform.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
 
     m_RigidBody->setWorldTransform(transform);
@@ -32,8 +42,6 @@ void RigidBody::Initialize() {
 
     Object().Scene().AddRigidBody(m_RigidBody);
     Object().Scene().RegisterPhysicalObject(this);
-
-    RegisterUpdateCall();
 }
 
 void RigidBody::Destroy() {
@@ -44,12 +52,17 @@ void RigidBody::PhysicsUpdate() {
     btTransform trans;
     m_RigidBody->getMotionState()->getWorldTransform(trans);
 
-    // TODO optimise it
-    Object().Root().Position(glm::vec3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ()));
-    Object().Root().Rotation(glm::quat(trans.getRotation().getW(), trans.getRotation().getX(), trans.getRotation().getY(), trans.getRotation().getZ()));
+    // TODO optimise it?
+    auto origin = trans.getOrigin();
+    glm::vec3 glm_pos(origin.getX(), origin.getY(), origin.getZ());
+    auto rot = trans.getRotation();
+    glm::quat glm_rot(rot.getW(), rot.getX(), rot.getY(), rot.getZ());
+
+    // Update connected transform with position and rotation
+    TransformIn.Value()->Position(glm_pos);
+    TransformIn.Value()->Rotation(glm_rot);
 
     // Debug draw
-    float matrix[16];
-    trans.getOpenGLMatrix(matrix);
-    Object().Scene().DrawCuboid(glm::make_mat4(matrix), glm::vec3(1.0f, 0.0f, 0.0f));
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm_pos) * glm::mat4_cast(glm_rot) * m_ScaleMatrix;
+    Object().Scene().DrawCuboid(model, glm::vec3(1.0f, 0.0f, 0.0f));
 }

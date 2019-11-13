@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <assert.h>
 
 class Object;
 class ConnectionPipe;
@@ -25,7 +26,7 @@ public:
 
 protected:
     virtual void Initialize() {};
-    virtual void Update() {};
+    virtual void Update() { assert(true && "Update function not overloaded"); };
     virtual void Destroy() {};
 
     void RegisterUpdateCall() const;

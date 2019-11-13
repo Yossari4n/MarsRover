@@ -18,6 +18,7 @@ public:
     void Initialize() override;
 
     const glm::mat4& Model() const;
+    void Model(const glm::mat4 model);
     
     const glm::vec3& Position() const;
     void Position(const glm::vec3& position);

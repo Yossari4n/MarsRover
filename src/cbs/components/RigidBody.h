@@ -24,6 +24,8 @@ public:
 
 private:
     btRigidBody* m_RigidBody;
+
+    glm::mat4 m_ScaleMatrix;
 };
 
 #endif

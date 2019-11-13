@@ -29,11 +29,11 @@ private:
     btVehicleRaycaster* m_VehicleRaycaster;
     btRaycastVehicle::btVehicleTuning m_Tunning;
 
-    // Hardcoded for now
-    float m_EngineForce{ 1000.0f };
-    float m_BreakingForce{ 100.0f };
+    float m_EngineForce{ 0.0f };
+    float m_BreakingForce{ 0.0f };
     float m_VehicleSteering{ 0.0f };
 
+    // Hardcoded for now
     float m_MaxEngineForce{ 1000.0f };
     float m_MaxBreakingForce{ 100.0f };
     float m_SteeringIncrement{ 0.04f };
@@ -44,11 +44,11 @@ private:
     float m_WheelWidth{ 0.4f };
 
     // btWheelInfo
-    float m_WheelFriction{ 1.0f };
-    float m_SuspensionStiffness{ 10.0f };
+    float m_WheelFriction{ 1000.0f };
+    float m_SuspensionStiffness{ 20.0f };
     float m_SuspensionDamping{ 2.3f };
-    float m_SuspensionCompression{ 100.4f };
-    float m_RollInfluence{ 1.0f };
+    float m_SuspensionCompression{ 4.4f };
+    float m_RollInfluence{ 0.1f };
 
     btScalar m_SuspensionRestLength{ 0.6f };
     btVector3 m_WheelDirectionCS0{ 0, -1, 0 };

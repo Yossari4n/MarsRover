@@ -27,21 +27,26 @@ void MainScene::CreateScene() {
 
     auto rover = CreateObject("Rover"); {
         rover->Root().Scale(glm::vec3(0.1f));
+
         auto mesh = rover->CreateComponent<MeshRenderer>(GetModel("resources/models/opportunity/oppy.obj"), EShaderType::Phong);
-        auto rigid_body = rover->CreateComponent<RigidBody>(btScalar(800.0f), new btBoxShape(btVector3(1.0f, 0.1f, 0.5f)));
+        auto rigid_body = rover->CreateComponent<RigidBody>(400, new btBoxShape(btVector3(0.5f, 0.25f, 0.75f)));
         auto vehicle = rover->CreateComponent<Vehicle>();
+
         rover->Connect(rover->Root().ModelOut, mesh->ModelIn);
+        rover->Connect(rover->Root().TransformOut, rigid_body->TransformIn);
+
         rover->Connect(rigid_body->This, vehicle->Chassis);
     }
 
     auto camera = CreateObject("Camera"); {
-        camera->Root().Move(glm::vec3(-5.0f, 0.0f, 0.0f));
-        camera->CreateComponent<Camera>(glm::perspective(glm::radians(45.0f), static_cast<float>(g_Window.Width()) / static_cast<float>(g_Window.Height()), 0.1f, 100.0f));
+        camera->Root().Move(glm::vec3(-10.0f, 0.0f, 0.0f));
+        camera->CreateComponent<Camera>(glm::perspective(glm::radians(45.0f), static_cast<float>(g_Window.Width()) / static_cast<float>(g_Window.Height()), 0.1f, 500.0f));
         camera->CreateComponent<FirstPersonController>();
     }
 
     auto ground = CreateObject("Ground"); {
-        ground->Root().Position(glm::vec3(0.0f, -1.0f, 0.0f));
-        ground->CreateComponent<RigidBody>(btScalar(0.0f), new btBoxShape(btVector3(50.0f, 0.1f, 50.0f)));
+        ground->Root().Position(glm::vec3(0.0f, -3.0f, 0.0f));
+        auto rigid_body = ground->CreateComponent<RigidBody>(0, new btBoxShape(btVector3(15.0f, 1.0f, 15.0f)));
+        ground->Connect(ground->Root().TransformOut, rigid_body->TransformIn);
     }
 }
