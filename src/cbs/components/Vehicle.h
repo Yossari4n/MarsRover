@@ -10,49 +10,40 @@
 constexpr float DEFAULT_BREAKING_FORCE = 10.0f;
 
 class RigidBody;
+class Transform;
 class Vehicle : public Component {
 public:
-    Vehicle();
+    Vehicle(float suspension_rest_length, float steering_clamp, float wheel_radius, float wheel_width);
     
     void Initialize() override;
     void Update() override;
     void Destroy() override;
 
+    void WheelInfo(float suspension_stiffness, float damping_relaxation, float damping_compression, float friction_slip, float roll_influence);
+
     PropertyIn<RigidBody*> Chassis{ this };
-    PropertyIn<RigidBody*> LeftFrontWheel{ this };
-    PropertyIn<RigidBody*> RightFrontWheel{ this };
-    PropertyIn<RigidBody*> LeftBackWheel{ this };
-    PropertyIn<RigidBody*> RightBackWheel{ this };
+    PropertyIn<Transform*> FrontWheel1{ this };
+    PropertyIn<Transform*> FrontWheel2{ this };
+    PropertyIn<Transform*> BackWheel1{ this };
+    PropertyIn<Transform*> BackWheel2{ this };
 
 private:
     btRaycastVehicle* m_Vehicle;
     btVehicleRaycaster* m_VehicleRaycaster;
     btRaycastVehicle::btVehicleTuning m_Tunning;
 
+    float m_SteeringClamp;
+    btScalar m_SuspensionRestLength;
+
     float m_EngineForce{ 0.0f };
     float m_BreakingForce{ 0.0f };
-    float m_VehicleSteering{ 0.0f };
-
-    // Hardcoded for now
-    float m_MaxEngineForce{ 1000.0f };
-    float m_MaxBreakingForce{ 100.0f };
-    float m_SteeringIncrement{ 0.04f };
-    float m_SteeringClamp{ 0.3f };
+    float m_VehicleSteering{ 0.0f }; 
+    btVector3 m_WheelDirectionCS0{ 0, -1, 0 };
+    btVector3 m_WheelAxleCS{ 1, 0, 0 };
 
     // Remove?
     float m_WheelRadius{ 0.5f };
     float m_WheelWidth{ 0.4f };
-
-    // btWheelInfo
-    float m_WheelFriction{ 1000.0f };
-    float m_SuspensionStiffness{ 20.0f };
-    float m_SuspensionDamping{ 2.3f };
-    float m_SuspensionCompression{ 4.4f };
-    float m_RollInfluence{ 0.1f };
-
-    btScalar m_SuspensionRestLength{ 0.6f };
-    btVector3 m_WheelDirectionCS0{ 0, -1, 0 };
-    btVector3 m_WheelAxleCS{ -1, 0, 0 };
 };
 
 #endif

@@ -28,14 +28,34 @@ void MainScene::CreateScene() {
     auto rover = CreateObject("Rover"); {
         rover->Root().Scale(glm::vec3(0.1f));
 
-        auto mesh = rover->CreateComponent<MeshRenderer>(GetModel("resources/models/opportunity/oppy.obj"), EShaderType::Phong);
-        auto rigid_body = rover->CreateComponent<RigidBody>(400, new btBoxShape(btVector3(0.5f, 0.25f, 0.75f)));
-        auto vehicle = rover->CreateComponent<Vehicle>();
+        auto front_left = rover->CreateComponent<Transform>();
+        rover->Connect(rover->Root().TransformOut, front_left->Parent);
+        front_left->Move(glm::vec3(0.7f, -0.1f, 1.25f));
 
+        auto front_right = rover->CreateComponent<Transform>();
+        rover->Connect(rover->Root().TransformOut, front_right->Parent);
+        front_right->Move(glm::vec3(-0.7f, -0.1f, 1.25f));
+
+        auto back_left = rover->CreateComponent<Transform>();
+        rover->Connect(rover->Root().TransformOut, back_left->Parent);
+        back_left->Move(glm::vec3(-0.7f, -0.1f, -1.25f));
+
+        auto back_right = rover->CreateComponent<Transform>();
+        rover->Connect(rover->Root().TransformOut, back_right->Parent);
+        back_right->Move(glm::vec3(0.7f, -0.1f, -1.25f));
+
+        auto mesh = rover->CreateComponent<MeshRenderer>(GetModel("resources/models/opportunity/oppy.obj"), EShaderType::Phong);
         rover->Connect(rover->Root().ModelOut, mesh->ModelIn);
+
+        auto rigid_body = rover->CreateComponent<RigidBody>(400, new btBoxShape(btVector3(0.5f, 0.25f, 0.75f)));
         rover->Connect(rover->Root().TransformOut, rigid_body->TransformIn);
 
+        auto vehicle = rover->CreateComponent<Vehicle>(0.6, 0.3f, 0.5f, 0.3f);
         rover->Connect(rigid_body->This, vehicle->Chassis);
+        rover->Connect(front_left->TransformOut, vehicle->FrontWheel1);
+        rover->Connect(front_right->TransformOut, vehicle->FrontWheel2);
+        rover->Connect(back_left->TransformOut, vehicle->BackWheel1);
+        rover->Connect(back_right->TransformOut, vehicle->BackWheel2);
     }
 
     auto camera = CreateObject("Camera"); {

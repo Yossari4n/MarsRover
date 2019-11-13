@@ -3,44 +3,46 @@
 #include "../Object.h"
 #include "../../scenes/Scene.h"
 #include "RigidBody.h"
+#include "Transform.h"
 
-Vehicle::Vehicle()
+
+Vehicle::Vehicle(float suspension_rest_length, float steering_clamp, float wheel_radius, float wheel_width)
     : m_VehicleRaycaster(nullptr)
-    , m_Vehicle(nullptr) {
+    , m_Vehicle(nullptr)
+    , m_SuspensionRestLength(suspension_rest_length)
+    , m_SteeringClamp(steering_clamp)
+    , m_WheelRadius(wheel_radius)
+    , m_WheelWidth(wheel_width) {
+
 }
 
 void Vehicle::Initialize() {
+    assert(Chassis.Connected() && FrontWheel1.Connected() && FrontWheel2.Connected() && BackWheel1.Connected() && BackWheel2.Connected());
+
     m_VehicleRaycaster = new btDefaultVehicleRaycaster(Object().Scene().DynamicsWorld());
     m_Vehicle = new btRaycastVehicle(m_Tunning, Chassis.Value()->Handle(), m_VehicleRaycaster);
 
     Chassis.Value()->Handle()->setActivationState(DISABLE_DEACTIVATION);
-
     Object().Scene().AddVehicle(m_Vehicle);
-
     m_Vehicle->setCoordinateSystem(2, 1, 0);
 
-    float connect_height = -0.1f;
-    btVector3 connect_point(0.7, connect_height, 1.25);
+    glm::vec3 chassis_pos = Chassis.Value()->TransformIn.Value()->Position();
+
+    glm::vec3 diff = chassis_pos - FrontWheel1.Value()->Position();
+    btVector3 connect_point(diff.x, diff.y, diff.z);
     m_Vehicle->addWheel(connect_point, m_WheelDirectionCS0, m_WheelAxleCS, m_SuspensionRestLength, m_WheelRadius, m_Tunning, true);
 
-    connect_point = btVector3(-0.7, connect_height, 1.25);
+    diff = chassis_pos - FrontWheel2.Value()->Position();
+    connect_point = btVector3(diff.x, diff.y, diff.z);
     m_Vehicle->addWheel(connect_point, m_WheelDirectionCS0, m_WheelAxleCS, m_SuspensionRestLength, m_WheelRadius, m_Tunning, true);
 
-    connect_point = btVector3(-0.7, connect_height, -1.25);
+    diff = chassis_pos - BackWheel1.Value()->Position();
+    connect_point = btVector3(diff.x, diff.y, diff.z);
     m_Vehicle->addWheel(connect_point, m_WheelDirectionCS0, m_WheelAxleCS, m_SuspensionRestLength, m_WheelRadius, m_Tunning, false);
 
-    connect_point = btVector3(0.7, connect_height, -1.25);
+    diff = chassis_pos - BackWheel2.Value()->Position();
+    connect_point = btVector3(diff.x, diff.y, diff.z);
     m_Vehicle->addWheel(connect_point, m_WheelDirectionCS0, m_WheelAxleCS, m_SuspensionRestLength, m_WheelRadius, m_Tunning, false);
-
-    for (int i = 0; i < m_Vehicle->getNumWheels(); i++) {
-        btWheelInfo& wheel = m_Vehicle->getWheelInfo(i);
-
-        wheel.m_suspensionStiffness = m_SuspensionStiffness;
-        wheel.m_wheelsDampingRelaxation = m_SuspensionDamping;
-        wheel.m_wheelsDampingCompression = m_SuspensionCompression;
-        wheel.m_frictionSlip = m_WheelFriction;
-        wheel.m_rollInfluence = m_RollInfluence;
-    }
 
     auto handle = Chassis.Value()->Handle();
     handle->setCenterOfMassTransform(btTransform::getIdentity());
@@ -57,9 +59,9 @@ void Vehicle::Initialize() {
 void Vehicle::Update() {
     // Front
     m_Vehicle->applyEngineForce(10.0f, 0);
-    m_Vehicle->setSteeringValue(-0.5f, 0);
+    //m_Vehicle->setSteeringValue(-0.5f, 0);
     m_Vehicle->applyEngineForce(10.0f, 1);
-    m_Vehicle->setSteeringValue(-0.5f, 1);
+    //m_Vehicle->setSteeringValue(-0.5f, 1);
    
     // Back
     //m_Vehicle->setBrake(0.0f, 2);
@@ -119,4 +121,16 @@ void Vehicle::Destroy() {
 
     delete m_VehicleRaycaster;
     delete m_Vehicle;
+}
+
+void Vehicle::WheelInfo(float suspension_stiffness, float damping_relaxation, float damping_compression, float friction_slip, float roll_influence) {
+    for (int i = 0; i < m_Vehicle->getNumWheels(); i++) {
+        btWheelInfo& wheel = m_Vehicle->getWheelInfo(i);
+
+        wheel.m_suspensionStiffness = suspension_stiffness;
+        wheel.m_wheelsDampingRelaxation = damping_relaxation;
+        wheel.m_wheelsDampingCompression = damping_compression;
+        wheel.m_frictionSlip = friction_slip;
+        wheel.m_rollInfluence = roll_influence;
+    }
 }
