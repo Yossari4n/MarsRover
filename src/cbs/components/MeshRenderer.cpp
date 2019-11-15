@@ -1,4 +1,5 @@
 #include "MeshRenderer.h"
+#include "Transform.h"
 
 MeshRenderer::MeshRenderer(RawModel& raw_model, EShaderType shader)
     : m_Model(raw_model)
@@ -14,7 +15,7 @@ void MeshRenderer::Destroy() {
 }
 
 void MeshRenderer::Draw(const ShaderProgram& shader) const {
-    shader.Uniform("model", ModelIn);
+    shader.Uniform("model", TransformIn.Value()->Model());
 
     auto end = m_Model.Meshes().end();
     for (auto it = m_Model.Meshes().begin(); it != end; it++) {

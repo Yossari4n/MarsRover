@@ -13,7 +13,6 @@ Vehicle::Vehicle(float suspension_rest_length, float steering_clamp, float wheel
     , m_SteeringClamp(steering_clamp)
     , m_WheelRadius(wheel_radius)
     , m_WheelWidth(wheel_width) {
-
 }
 
 void Vehicle::Initialize() {
@@ -28,21 +27,33 @@ void Vehicle::Initialize() {
 
     glm::vec3 chassis_pos = Chassis.Value()->TransformIn.Value()->Position();
 
-    glm::vec3 diff = chassis_pos - FrontWheel1.Value()->Position();
-    btVector3 connect_point(diff.x, diff.y, diff.z);
-    m_Vehicle->addWheel(connect_point, m_WheelDirectionCS0, m_WheelAxleCS, m_SuspensionRestLength, m_WheelRadius, m_Tunning, true);
+    // potential glm error when not coping wheel position
+    glm::vec3 wheel_pos = FrontWheel1.Value()->Position();
+    glm::vec3 diff = wheel_pos - chassis_pos;
+    m_Vehicle->addWheel(btVector3(diff.x, diff.y, diff.z), m_WheelDirectionCS0, m_WheelAxleCS, m_SuspensionRestLength, m_WheelRadius, m_Tunning, true);
 
-    diff = chassis_pos - FrontWheel2.Value()->Position();
-    connect_point = btVector3(diff.x, diff.y, diff.z);
-    m_Vehicle->addWheel(connect_point, m_WheelDirectionCS0, m_WheelAxleCS, m_SuspensionRestLength, m_WheelRadius, m_Tunning, true);
+    wheel_pos = FrontWheel2.Value()->Position();
+    diff = wheel_pos - chassis_pos;
+    m_Vehicle->addWheel(btVector3(diff.x, diff.y, diff.z), m_WheelDirectionCS0, m_WheelAxleCS, m_SuspensionRestLength, m_WheelRadius, m_Tunning, true);
 
-    diff = chassis_pos - BackWheel1.Value()->Position();
-    connect_point = btVector3(diff.x, diff.y, diff.z);
-    m_Vehicle->addWheel(connect_point, m_WheelDirectionCS0, m_WheelAxleCS, m_SuspensionRestLength, m_WheelRadius, m_Tunning, false);
+    wheel_pos = BackWheel1.Value()->Position();
+    diff = wheel_pos - chassis_pos;
+    m_Vehicle->addWheel(btVector3(diff.x, diff.y, diff.z), m_WheelDirectionCS0, m_WheelAxleCS, m_SuspensionRestLength, m_WheelRadius, m_Tunning, false);
 
-    diff = chassis_pos - BackWheel2.Value()->Position();
-    connect_point = btVector3(diff.x, diff.y, diff.z);
-    m_Vehicle->addWheel(connect_point, m_WheelDirectionCS0, m_WheelAxleCS, m_SuspensionRestLength, m_WheelRadius, m_Tunning, false);
+    wheel_pos = BackWheel2.Value()->Position();
+    diff = wheel_pos - chassis_pos;
+    m_Vehicle->addWheel(btVector3(diff.x, diff.y, diff.z), m_WheelDirectionCS0, m_WheelAxleCS, m_SuspensionRestLength, m_WheelRadius, m_Tunning, false);
+
+    for (int i = 0; i < m_Vehicle->getNumWheels(); i++) {
+        btWheelInfo& wheel = m_Vehicle->getWheelInfo(i);
+
+        // Hardcoded for now
+        wheel.m_suspensionStiffness = 20.0f;
+        wheel.m_wheelsDampingRelaxation = 2.3f;
+        wheel.m_wheelsDampingCompression = 4.4f;
+        wheel.m_frictionSlip = 1000.0f;
+        wheel.m_rollInfluence = 0.1f;
+    }
 
     auto handle = Chassis.Value()->Handle();
     handle->setCenterOfMassTransform(btTransform::getIdentity());
@@ -57,15 +68,8 @@ void Vehicle::Initialize() {
 }
 
 void Vehicle::Update() {
-    // Front
-    m_Vehicle->applyEngineForce(10.0f, 0);
-    //m_Vehicle->setSteeringValue(-0.5f, 0);
-    m_Vehicle->applyEngineForce(10.0f, 1);
-    //m_Vehicle->setSteeringValue(-0.5f, 1);
-   
-    // Back
-    //m_Vehicle->setBrake(0.0f, 2);
-    //m_Vehicle->setBrake(0.0f, 3);
+    m_Vehicle->applyEngineForce(100, 0);
+    m_Vehicle->applyEngineForce(100, 1);
 
     {
         auto tr = m_Vehicle->getWheelTransformWS(0);
@@ -121,16 +125,4 @@ void Vehicle::Destroy() {
 
     delete m_VehicleRaycaster;
     delete m_Vehicle;
-}
-
-void Vehicle::WheelInfo(float suspension_stiffness, float damping_relaxation, float damping_compression, float friction_slip, float roll_influence) {
-    for (int i = 0; i < m_Vehicle->getNumWheels(); i++) {
-        btWheelInfo& wheel = m_Vehicle->getWheelInfo(i);
-
-        wheel.m_suspensionStiffness = suspension_stiffness;
-        wheel.m_wheelsDampingRelaxation = damping_relaxation;
-        wheel.m_wheelsDampingCompression = damping_compression;
-        wheel.m_frictionSlip = friction_slip;
-        wheel.m_rollInfluence = roll_influence;
-    }
 }

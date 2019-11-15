@@ -3,13 +3,11 @@
 void Scene::PreRun() {
     m_DrawManager.Initialize();
     m_PhysicsManager.Initialize();
-
-    // Initialize objects after initialization of all systems
-    m_ObjectManager.InitializeObjects();
 }
 
 void Scene::Run() {
     m_Running = true;
+    m_ObjectManager.InitializeObjects();
 
     // Initialize Time manager as close to game loop as possible
     // to avoid misrepresented delta time

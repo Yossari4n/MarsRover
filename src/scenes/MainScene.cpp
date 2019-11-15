@@ -18,6 +18,8 @@ void MainScene::CreateScene() {
            "resources/skyboxes/mars/back.png",
            "resources/skyboxes/mars/front.png");
 
+    //Gravity(btVector3(0, 0, 0));
+
     auto light = CreateObject("Light"); {
         light->CreateComponent<DirectionalLight>(glm::vec3(-0.2f, -0.5f, 0.3f),
                                                  glm::vec3(0.05f),
@@ -29,44 +31,45 @@ void MainScene::CreateScene() {
         rover->Root().Scale(glm::vec3(0.1f));
 
         auto front_left = rover->CreateComponent<Transform>();
-        rover->Connect(rover->Root().TransformOut, front_left->Parent);
-        front_left->Move(glm::vec3(0.7f, -0.1f, 1.25f));
+        rover->Connect(rover->Root().This, front_left->Parent);
+        front_left->Move(glm::vec3(0.7f, -0.5f, -1.25f));
 
         auto front_right = rover->CreateComponent<Transform>();
-        rover->Connect(rover->Root().TransformOut, front_right->Parent);
-        front_right->Move(glm::vec3(-0.7f, -0.1f, 1.25f));
+        rover->Connect(rover->Root().This, front_right->Parent);
+        front_right->Move(glm::vec3(-0.7f, -0.5f, -1.25f));
 
         auto back_left = rover->CreateComponent<Transform>();
-        rover->Connect(rover->Root().TransformOut, back_left->Parent);
-        back_left->Move(glm::vec3(-0.7f, -0.1f, -1.25f));
+        rover->Connect(rover->Root().This, back_left->Parent);
+        back_left->Move(glm::vec3(-0.7f, -0.5f, 1.25f));
 
         auto back_right = rover->CreateComponent<Transform>();
-        rover->Connect(rover->Root().TransformOut, back_right->Parent);
-        back_right->Move(glm::vec3(0.7f, -0.1f, -1.25f));
+        rover->Connect(rover->Root().This, back_right->Parent);
+        back_right->Move(glm::vec3(0.7f, -0.5f, 1.25f));
 
         auto mesh = rover->CreateComponent<MeshRenderer>(GetModel("resources/models/opportunity/oppy.obj"), EShaderType::Phong);
-        rover->Connect(rover->Root().ModelOut, mesh->ModelIn);
+        rover->Connect(rover->Root().This, mesh->TransformIn);
 
         auto rigid_body = rover->CreateComponent<RigidBody>(400, new btBoxShape(btVector3(0.5f, 0.25f, 0.75f)));
-        rover->Connect(rover->Root().TransformOut, rigid_body->TransformIn);
+        rover->Connect(rover->Root().This, rigid_body->TransformIn);
 
-        auto vehicle = rover->CreateComponent<Vehicle>(0.6, 0.3f, 0.5f, 0.3f);
+        auto vehicle = rover->CreateComponent<Vehicle>(0.1, 0.3f, 0.5f, 0.3f);
         rover->Connect(rigid_body->This, vehicle->Chassis);
-        rover->Connect(front_left->TransformOut, vehicle->FrontWheel1);
-        rover->Connect(front_right->TransformOut, vehicle->FrontWheel2);
-        rover->Connect(back_left->TransformOut, vehicle->BackWheel1);
-        rover->Connect(back_right->TransformOut, vehicle->BackWheel2);
+        rover->Connect(front_left->This, vehicle->FrontWheel1);
+        rover->Connect(front_right->This, vehicle->FrontWheel2);
+        rover->Connect(back_left->This, vehicle->BackWheel1);
+        rover->Connect(back_right->This, vehicle->BackWheel2);
     }
 
     auto camera = CreateObject("Camera"); {
         camera->Root().Move(glm::vec3(-10.0f, 0.0f, 0.0f));
         camera->CreateComponent<Camera>(glm::perspective(glm::radians(45.0f), static_cast<float>(g_Window.Width()) / static_cast<float>(g_Window.Height()), 0.1f, 500.0f));
-        camera->CreateComponent<FirstPersonController>();
+        auto fps = camera->CreateComponent<FirstPersonController>();
+        camera->Connect(camera->Root().This, fps->TransformIn);
     }
 
     auto ground = CreateObject("Ground"); {
         ground->Root().Position(glm::vec3(0.0f, -3.0f, 0.0f));
         auto rigid_body = ground->CreateComponent<RigidBody>(0, new btBoxShape(btVector3(15.0f, 1.0f, 15.0f)));
-        ground->Connect(ground->Root().TransformOut, rigid_body->TransformIn);
+        ground->Connect(ground->Root().This, rigid_body->TransformIn);
     }
 }

@@ -10,6 +10,7 @@
 #include "../../rendering/IDrawable.h"
 #include "../../rendering/Model/Model.h"
 
+class Transform;
 class MeshRenderer : public Component, public IDrawable {
 public:
     MeshRenderer(RawModel& model, EShaderType shader);
@@ -19,7 +20,7 @@ public:
 
     void Draw(const ShaderProgram& shader) const override;
 
-    PropertyIn<glm::mat4> ModelIn{ this };
+    PropertyIn<Transform*> TransformIn{ this };
 
 private:
     void DrawMesh(const ShaderProgram& shader, const Mesh& mesh) const;

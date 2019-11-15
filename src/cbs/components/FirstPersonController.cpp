@@ -1,4 +1,5 @@
 #include "FirstPersonController.h"
+#include "Transform.h"
 
 FirstPersonController::FirstPersonController(float movement_speed_fast, float movement_speed_slow, float mouse_sensivity)
     : m_CurrentMovementSpeed(0.0f)
@@ -31,8 +32,8 @@ void FirstPersonController::Update() {
     }
 
     // Update vectors
-    Object().Root().Rotate(glm::vec3(0.0f, rot_hor, 0.0f));
-    Object().Root().RotateRelative(glm::vec3(0.0f, 0.0f, rot_ver));
+    TransformIn.Value()->Rotate(glm::vec3(0.0f, rot_hor, 0.0f));
+    TransformIn.Value()->RotateRelative(glm::vec3(0.0f, 0.0f, rot_ver));
 
     // Keyboard
     if (g_Input.KeyHold(GLFW_KEY_LEFT_SHIFT) || g_Input.KeyHold(GLFW_KEY_RIGHT_SHIFT)) {
@@ -55,5 +56,5 @@ void FirstPersonController::Update() {
         movement.z = m_CurrentMovementSpeed * g_Time.DeltaTime();;
     }
 
-    Object().Root().MoveRelative(movement);
+    TransformIn.Value()->Move(movement);
 }

@@ -17,13 +17,14 @@ class Transform : public Component {
 public:
     void Initialize() override;
 
-    const glm::mat4& Model() const;
+    void Identity();
+
+    const glm::mat4& Model() const { return m_Model; }
     void Model(const glm::mat4 model);
     
     const glm::vec3& Position() const;
     void Position(const glm::vec3& position);
     void Move(const glm::vec3& vector);
-    void MoveRelative(const glm::vec3& vector);
 
     const glm::quat& Rotation() const;
     void Rotation(const glm::quat& rotation);
@@ -33,20 +34,20 @@ public:
     const glm::vec3& Scale() const;
     void Scale(const glm::vec3& scale);
 
-    glm::vec3 Front() { return RotationOut.Value() * glm::vec3(1.0f, 0.0f, 0.0f); }
-    glm::vec3 Up() { return RotationOut.Value() * glm::vec3(0.0f, 1.0f, 0.0f); }
-    glm::vec3 Right() { return RotationOut.Value() * glm::vec3(0.0f, 0.0f, 1.0f); }
+    glm::vec3 Front() { return m_Rotation * glm::vec3(1.0f, 0.0f, 0.0f); }
+    glm::vec3 Up() { return m_Rotation * glm::vec3(0.0f, 1.0f, 0.0f); }
+    glm::vec3 Right() { return m_Rotation * glm::vec3(0.0f, 0.0f, 1.0f); }
 
-    PropertyOut<Transform*> TransformOut{ this, this };
+    PropertyOut<Transform*> This{ this, this };
     PropertyIn<Transform*> Parent{ this };
-
-    PropertyOut<glm::mat4> ModelOut{ this, 0.0f };
-    PropertyOut<glm::vec3> PositionOut{ this, glm::vec3(0.0f) };
-    PropertyOut<glm::quat> RotationOut{ this, glm::vec3(0.0f) };
-    PropertyOut<glm::vec3> ScaleOut{ this, glm::vec3(1.0f) };
 
 private:
     void UpdateModel();
+
+    glm::mat4 m_Model;
+    glm::vec3 m_Position;
+    glm::quat m_Rotation;
+    glm::vec3 m_Scale;
 };
 
 #endif

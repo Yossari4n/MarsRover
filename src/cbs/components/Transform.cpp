@@ -6,76 +6,86 @@ void Transform::Initialize() {
     UpdateModel();
 }
 
-const glm::mat4& Transform::Model() const {
-    return ModelOut.Value();
+void Transform::Identity() {
+    m_Position = glm::vec3(0.0f);
+    m_Rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
+    m_Scale = glm::vec3(1.0f);
+
+    m_Model = glm::mat4(1.0f);
 }
 
 void Transform::Model(const glm::mat4 model) {
-    ModelOut.Value() = model;
+    m_Model = model;
 }
 
 const glm::vec3& Transform::Position() const {
-    return PositionOut.Value();
+    if (Parent.Connected()) {
+        return m_Position + Parent.Value()->Position();
+    } else {
+        return m_Position;
+    }
 }
 
 void Transform::Position(const glm::vec3& position) {
-    PositionOut = position;
+    m_Position = position;
 
     UpdateModel();
 }
 
 void Transform::Move(const glm::vec3& vector) {
-    PositionOut = PositionOut.Value() + vector;
-
-    UpdateModel();
-}
-
-void Transform::MoveRelative(const glm::vec3& vector) {
-    PositionOut = PositionOut.Value() + RotationOut.Value() * vector;
+    m_Position = m_Position + m_Rotation * vector;
 
     UpdateModel();
 }
 
 const glm::quat& Transform::Rotation() const {
-    return RotationOut.Value();
+    if (Parent.Connected()) {
+        return Parent.Value()->Rotation() * m_Rotation;
+    } else {
+        return m_Rotation;
+    }
 }
 
 void Transform::Rotation(const glm::quat &rotation) {
-    RotationOut = rotation;
+    m_Rotation = rotation;
 
     UpdateModel();
 }
 
 void Transform::Rotate(const glm::quat& rotation) {
-    RotationOut = rotation * RotationOut.Value();
+    m_Rotation = rotation * m_Rotation;
 
     UpdateModel();
 }
 
 void Transform::RotateRelative(const glm::quat& rotation) {
-    RotationOut = RotationOut.Value() * rotation;
+    m_Rotation = m_Rotation * rotation;
 
     UpdateModel();
 }
 
 const glm::vec3& Transform::Scale() const {
-    return ScaleOut.Value();
+    if (Parent.Connected()) {
+        return m_Scale * Parent.Value()->Scale();
+    } else {
+        return m_Scale;
+    }
 }
 
 void Transform::Scale(const glm::vec3& scale) {
-    ScaleOut.Value() = scale;
+    m_Scale = scale;
     
     UpdateModel();
 }
 
 void Transform::UpdateModel() {
     if (Parent.Connected()) {
-        ModelOut = Parent.Value()->Model();
+        m_Model = Parent.Value()->Model();
     } else {
-        ModelOut = glm::mat4(1.0f);
+        m_Model = glm::mat4(1.0f);
     }
 
-    ModelOut = glm::translate(ModelOut.Value(), PositionOut.Value());
-    ModelOut = ModelOut.Value() * glm::toMat4(RotationOut.Value());
-    ModelOut = glm::scale(ModelOut.Value(), ScaleOut.Value());
+    m_Model = glm::translate(m_Model, m_Position);
+    m_Model = m_Model * glm::toMat4(m_Rotation);
+    m_Model = glm::scale(m_Model, m_Scale);
 }
