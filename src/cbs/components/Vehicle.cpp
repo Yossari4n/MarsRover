@@ -27,21 +27,16 @@ void Vehicle::Initialize() {
 
     glm::vec3 chassis_pos = Chassis.Value()->TransformIn.Value()->Position();
 
-    // potential glm error when not coping wheel position
-    glm::vec3 wheel_pos = FrontWheel1.Value()->Position();
-    glm::vec3 diff = wheel_pos - chassis_pos;
+    glm::vec3 diff = FrontWheel1.Value()->Position() - chassis_pos;
     m_Vehicle->addWheel(btVector3(diff.x, diff.y, diff.z), m_WheelDirectionCS0, m_WheelAxleCS, m_SuspensionRestLength, m_WheelRadius, m_Tunning, true);
 
-    wheel_pos = FrontWheel2.Value()->Position();
-    diff = wheel_pos - chassis_pos;
+    diff = FrontWheel2.Value()->Position(); - chassis_pos;
     m_Vehicle->addWheel(btVector3(diff.x, diff.y, diff.z), m_WheelDirectionCS0, m_WheelAxleCS, m_SuspensionRestLength, m_WheelRadius, m_Tunning, true);
 
-    wheel_pos = BackWheel1.Value()->Position();
-    diff = wheel_pos - chassis_pos;
+    diff = BackWheel1.Value()->Position() - chassis_pos;
     m_Vehicle->addWheel(btVector3(diff.x, diff.y, diff.z), m_WheelDirectionCS0, m_WheelAxleCS, m_SuspensionRestLength, m_WheelRadius, m_Tunning, false);
 
-    wheel_pos = BackWheel2.Value()->Position();
-    diff = wheel_pos - chassis_pos;
+    diff = BackWheel2.Value()->Position() - chassis_pos;
     m_Vehicle->addWheel(btVector3(diff.x, diff.y, diff.z), m_WheelDirectionCS0, m_WheelAxleCS, m_SuspensionRestLength, m_WheelRadius, m_Tunning, false);
 
     for (int i = 0; i < m_Vehicle->getNumWheels(); i++) {
@@ -70,14 +65,14 @@ void Vehicle::Initialize() {
 void Vehicle::Update() {
     m_Vehicle->applyEngineForce(100, 0);
     m_Vehicle->applyEngineForce(100, 1);
-
+    // TODO change this monstrosity
     {
         auto tr = m_Vehicle->getWheelTransformWS(0);
         auto origin = tr.getOrigin();
         glm::vec3 glm_pos(origin.getX(), origin.getY(), origin.getZ());
         auto rot = tr.getRotation();
         glm::quat glm_rot(rot.getW(), rot.getX(), rot.getY(), rot.getZ());
-        glm::vec3 glm_scl(m_WheelRadius, m_WheelRadius, m_WheelWidth);
+        glm::vec3 glm_scl(m_WheelWidth, m_WheelRadius, m_WheelRadius);
         glm::mat4 model = glm::translate(glm::mat4(1.0f), glm_pos) * glm::mat4_cast(glm_rot);
         model = glm::scale(model, glm_scl);
         Object().Scene().DrawCuboid(model, glm::vec3(0.0f, 0.0f, 1.0f));
@@ -89,7 +84,7 @@ void Vehicle::Update() {
         glm::vec3 glm_pos(origin.getX(), origin.getY(), origin.getZ());
         auto rot = tr.getRotation();
         glm::quat glm_rot(rot.getW(), rot.getX(), rot.getY(), rot.getZ());
-        glm::vec3 glm_scl(m_WheelRadius, m_WheelRadius, m_WheelWidth);
+        glm::vec3 glm_scl(m_WheelWidth, m_WheelRadius, m_WheelRadius);
         glm::mat4 model = glm::translate(glm::mat4(1.0f), glm_pos) * glm::mat4_cast(glm_rot);
         model = glm::scale(model, glm_scl);
         Object().Scene().DrawCuboid(model, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -101,7 +96,7 @@ void Vehicle::Update() {
         glm::vec3 glm_pos(origin.getX(), origin.getY(), origin.getZ());
         auto rot = tr.getRotation();
         glm::quat glm_rot(rot.getW(), rot.getX(), rot.getY(), rot.getZ());
-        glm::vec3 glm_scl(m_WheelRadius, m_WheelRadius, m_WheelWidth);
+        glm::vec3 glm_scl(m_WheelWidth, m_WheelRadius, m_WheelRadius);
         glm::mat4 model = glm::translate(glm::mat4(1.0f), glm_pos) * glm::mat4_cast(glm_rot);
         model = glm::scale(model, glm_scl);
         Object().Scene().DrawCuboid(model, glm::vec3(1.0f, 0.0f, 0.0f));
@@ -113,7 +108,7 @@ void Vehicle::Update() {
         glm::vec3 glm_pos(origin.getX(), origin.getY(), origin.getZ());
         auto rot = tr.getRotation();
         glm::quat glm_rot(rot.getW(), rot.getX(), rot.getY(), rot.getZ());
-        glm::vec3 glm_scl(m_WheelRadius, m_WheelRadius, m_WheelWidth);
+        glm::vec3 glm_scl(m_WheelWidth, m_WheelRadius, m_WheelRadius);
         glm::mat4 model = glm::translate(glm::mat4(1.0f), glm_pos) * glm::mat4_cast(glm_rot);
         model = glm::scale(model, glm_scl);
         Object().Scene().DrawCuboid(model, glm::vec3(0.0f, 1.0f, 1.0f));
@@ -126,3 +121,9 @@ void Vehicle::Destroy() {
     delete m_VehicleRaycaster;
     delete m_Vehicle;
 }
+
+void Vehicle::ApplyEngineForce(float force) {}
+
+void Vehicle::Brake(float brake) {}
+
+void Vehicle::Steer(float steering) {}

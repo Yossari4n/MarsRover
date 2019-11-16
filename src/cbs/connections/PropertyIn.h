@@ -34,4 +34,15 @@ private:
     PropertyOut<T>* m_Source;
 };
 
+template <class T, size_t N>
+class PropertyIn<T[N]> final : public AbstractPropertyIn {
+    friend class ConnectionsManager;
+
+public:
+
+private:
+    Component* m_Owner;
+    std::array<PropertyOut<T>*, N> m_Values;
+};
+
 #endif

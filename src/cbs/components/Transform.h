@@ -22,16 +22,16 @@ public:
     const glm::mat4& Model() const { return m_Model; }
     void Model(const glm::mat4 model);
     
-    const glm::vec3& Position() const;
+    glm::vec3 Position() const;
     void Position(const glm::vec3& position);
     void Move(const glm::vec3& vector);
 
-    const glm::quat& Rotation() const;
+    glm::quat Rotation() const;
     void Rotation(const glm::quat& rotation);
     void Rotate(const glm::quat& rotation);
     void RotateRelative(const glm::quat& rotation);
 
-    const glm::vec3& Scale() const;
+    glm::vec3 Scale() const;
     void Scale(const glm::vec3& scale);
 
     glm::vec3 Front() { return m_Rotation * glm::vec3(1.0f, 0.0f, 0.0f); }

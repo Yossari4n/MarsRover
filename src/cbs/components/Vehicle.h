@@ -3,6 +3,7 @@
 
 #include "Component.h"
 #include "../connections/PropertyIn.h"
+#include "../connections/MessageIn.h"
 
 #include "btBulletDynamicsCommon.h"
 #include "BulletDynamics/Vehicle/btRaycastVehicle.h"
@@ -16,6 +17,10 @@ public:
     void Initialize() override;
     void Update() override;
     void Destroy() override;
+
+    void ApplyEngineForce(float force);
+    void Brake(float brake);
+    void Steer(float steering);
 
     PropertyIn<RigidBody*> Chassis{ this };
     PropertyIn<Transform*> FrontWheel1{ this };

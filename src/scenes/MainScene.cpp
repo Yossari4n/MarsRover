@@ -18,8 +18,6 @@ void MainScene::CreateScene() {
            "resources/skyboxes/mars/back.png",
            "resources/skyboxes/mars/front.png");
 
-    //Gravity(btVector3(0, 0, 0));
-
     auto light = CreateObject("Light"); {
         light->CreateComponent<DirectionalLight>(glm::vec3(-0.2f, -0.5f, 0.3f),
                                                  glm::vec3(0.05f),

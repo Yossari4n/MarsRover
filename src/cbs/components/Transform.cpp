@@ -18,7 +18,7 @@ void Transform::Model(const glm::mat4 model) {
     m_Model = model;
 }
 
-const glm::vec3& Transform::Position() const {
+glm::vec3 Transform::Position() const {
     if (Parent.Connected()) {
         return m_Position + Parent.Value()->Position();
     } else {
@@ -38,7 +38,7 @@ void Transform::Move(const glm::vec3& vector) {
     UpdateModel();
 }
 
-const glm::quat& Transform::Rotation() const {
+glm::quat Transform::Rotation() const {
     if (Parent.Connected()) {
         return Parent.Value()->Rotation() * m_Rotation;
     } else {
@@ -64,7 +64,7 @@ void Transform::RotateRelative(const glm::quat& rotation) {
     UpdateModel();
 }
 
-const glm::vec3& Transform::Scale() const {
+glm::vec3 Transform::Scale() const {
     if (Parent.Connected()) {
         return m_Scale * Parent.Value()->Scale();
     } else {
