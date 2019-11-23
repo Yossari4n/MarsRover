@@ -3,6 +3,7 @@
 void Scene::PreRun() {
     m_DrawManager.Initialize();
     m_PhysicsManager.Initialize();
+    m_AudioManager.Initialize();
 }
 
 void Scene::Run() {
@@ -153,10 +154,14 @@ btDynamicsWorld* Scene::DynamicsWorld() {
     return m_PhysicsManager.DynamicsWorld();
 }
 
-RawTexture& Scene::GetTexture(std::string path) {
-    return m_ResourceManager.GetTexture(path);
+RawTexture& Scene::LoadTexture(const std::string& path) {
+    return m_ResourceManager.LoadTexture(path);
 }
 
-RawModel& Scene::GetModel(std::string path) {
-    return m_ResourceManager.GetModel(path);
+RawModel& Scene::LoadModel(const std::string& path) {
+    return m_ResourceManager.LoadModel(path);
+}
+
+Sound& Scene::LoadSound(const std::string& path) {
+    return m_ResourceManager.LoadSound(path);
 }

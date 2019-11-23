@@ -3,6 +3,7 @@
 
 #include "Component.h"
 #include "../connections/PropertyIn.h"
+#include "../connections/PropertyOut.h"
 #include "../connections/MessageIn.h"
 
 #include "btBulletDynamicsCommon.h"
@@ -22,6 +23,7 @@ public:
     void Brake(float brake);
     void Steer(float steering);
 
+    PropertyOut<Vehicle*> This{ this, this };
     PropertyIn<RigidBody*> Chassis{ this };
     PropertyIn<Transform*> FrontWheel1{ this };
     PropertyIn<Transform*> FrontWheel2{ this };
@@ -36,8 +38,8 @@ private:
     float m_SteeringClamp;
     btScalar m_SuspensionRestLength;
 
-    float m_EngineForce{ 0.0f };
-    float m_BreakingForce{ 0.0f };
+    float m_MaxEngineForce{ 0.0f };
+    float m_MaxBreakingForce{ 0.0f };
     float m_VehicleSteering{ 0.0f }; 
     btVector3 m_WheelDirectionCS0{ 0, -1, 0 };
     btVector3 m_WheelAxleCS{ 1, 0, 0 };

@@ -8,6 +8,7 @@
 #include "../cbs/components/PointLight.h"
 #include "../cbs/components/Dummy.h"
 #include "../cbs/components/Vehicle.h"
+#include "../cbs/components/Controller.h"
 
 void MainScene::CreateScene() {
     FrameRateLimit(60);
@@ -30,32 +31,35 @@ void MainScene::CreateScene() {
 
         auto front_left = rover->CreateComponent<Transform>();
         rover->Connect(rover->Root().This, front_left->Parent);
-        front_left->Move(glm::vec3(0.7f, -0.5f, -1.25f));
+        front_left->Move(glm::vec3(0.8f, -0.5f, -1.1f));
 
         auto front_right = rover->CreateComponent<Transform>();
         rover->Connect(rover->Root().This, front_right->Parent);
-        front_right->Move(glm::vec3(-0.7f, -0.5f, -1.25f));
+        front_right->Move(glm::vec3(-0.8f, -0.5f, -1.1f));
 
         auto back_left = rover->CreateComponent<Transform>();
         rover->Connect(rover->Root().This, back_left->Parent);
-        back_left->Move(glm::vec3(-0.7f, -0.5f, 1.25f));
+        back_left->Move(glm::vec3(-0.8f, -0.5f, 0.8f));
 
         auto back_right = rover->CreateComponent<Transform>();
         rover->Connect(rover->Root().This, back_right->Parent);
-        back_right->Move(glm::vec3(0.7f, -0.5f, 1.25f));
+        back_right->Move(glm::vec3(0.8f, -0.5f, 0.8f));
 
-        auto mesh = rover->CreateComponent<MeshRenderer>(GetModel("resources/models/opportunity/oppy.obj"), EShaderType::Phong);
+        auto mesh = rover->CreateComponent<MeshRenderer>(LoadModel("resources/models/opportunity/oppy.obj"), EShaderType::Phong);
         rover->Connect(rover->Root().This, mesh->TransformIn);
 
-        auto rigid_body = rover->CreateComponent<RigidBody>(400, new btBoxShape(btVector3(0.5f, 0.25f, 0.75f)));
+        auto rigid_body = rover->CreateComponent<RigidBody>(100, new btBoxShape(btVector3(0.5f, 0.25f, 0.75f)));
         rover->Connect(rover->Root().This, rigid_body->TransformIn);
 
-        auto vehicle = rover->CreateComponent<Vehicle>(0.1, 0.3f, 0.5f, 0.3f);
+        auto vehicle = rover->CreateComponent<Vehicle>(0.1f, 0.3f, 0.4f, 0.3f);
         rover->Connect(rigid_body->This, vehicle->Chassis);
         rover->Connect(front_left->This, vehicle->FrontWheel1);
         rover->Connect(front_right->This, vehicle->FrontWheel2);
         rover->Connect(back_left->This, vehicle->BackWheel1);
         rover->Connect(back_right->This, vehicle->BackWheel2);
+
+        auto controller = rover->CreateComponent<Controller>(100.0f, 25.0f, 0.5f);
+        rover->Connect(vehicle->This, controller->ControlledVehicle);
     }
 
     auto camera = CreateObject("Camera"); {
@@ -66,8 +70,11 @@ void MainScene::CreateScene() {
     }
 
     auto ground = CreateObject("Ground"); {
-        ground->Root().Position(glm::vec3(0.0f, -3.0f, 0.0f));
-        auto rigid_body = ground->CreateComponent<RigidBody>(0, new btBoxShape(btVector3(15.0f, 1.0f, 15.0f)));
+        ground->Root().Position(glm::vec3(0.0f, -2.0f, 0.0f));
+        auto rigid_body = ground->CreateComponent<RigidBody>(0, new btBoxShape(btVector3(15.0f, 1.0f, 50.0f)));
         ground->Connect(ground->Root().This, rigid_body->TransformIn);
-    }
+    } 
+
+    Sound& background = LoadSound("resources/audio/ambient.wav");
+    std::cout << background.Length();
 }

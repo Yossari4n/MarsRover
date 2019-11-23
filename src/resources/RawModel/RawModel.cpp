@@ -71,14 +71,14 @@ void RawModel::LoadMesh(const aiMesh* mesh, const aiScene* scene, const std::str
         if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0) {
             aiString path;
             material->GetTexture(aiTextureType_DIFFUSE, 0, &path);
-            diffuse = &manager.GetTexture(directory + '/' + path.C_Str());
+            diffuse = &manager.LoadTexture(directory + '/' + path.C_Str());
         }
 
         // Load specular texture
         if (material->GetTextureCount(aiTextureType_SPECULAR) > 0) {
             aiString path;
             material->GetTexture(aiTextureType_SPECULAR, 0, &path);
-            specular = &manager.GetTexture(directory + '/' + path.C_Str());
+            specular = &manager.LoadTexture(directory + '/' + path.C_Str());
         }
 
         // Load shininess

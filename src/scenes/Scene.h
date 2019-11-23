@@ -5,6 +5,7 @@
 #include "../cbs/ObjectManager.h"
 #include "../rendering/DrawManager.h"
 #include "../resources/ResourcesManager.h"
+#include "../audio/AudioManager.h"
 
 #include "../utilities/Time.h"
 #include "../utilities/Input.h"
@@ -63,13 +64,15 @@ public:
     btDynamicsWorld* DynamicsWorld();
 
     // ResourceManager functions
-    RawTexture& GetTexture(std::string path);
-    RawModel& GetModel(std::string path);
+    RawTexture& LoadTexture(const std::string& path);
+    RawModel& LoadModel(const std::string& path);
+    Sound& LoadSound(const std::string& path);
 
 private:
     ObjectManager m_ObjectManager{ *this };
     DrawManager m_DrawManager{};
     PhysicsManager m_PhysicsManager{};
+    AudioManager m_AudioManager{};
     ResourcesManager m_ResourceManager{};
 
     bool m_Running{ false };

@@ -3,6 +3,7 @@
 
 #include "RawTexture.h"
 #include "RawModel/RawModel.h"
+#include "Sound.h"
 #include "../debuging/Logger.h"
 
 #include <string>
@@ -13,12 +14,14 @@ constexpr const char* ERROR_MODEL3D_PATH = "resources/models/ErrorMesh/ErrorMesh
 
 class ResourcesManager {
 public:
-    RawTexture& GetTexture(std::string path);
-    RawModel& GetModel(std::string path);
+    RawTexture& LoadTexture(std::string path);
+    RawModel& LoadModel(std::string path);
+    Sound& LoadSound(std::string path);
 
 private:
     std::unordered_map<std::string, RawTexture> m_Textures;
     std::unordered_map<std::string, RawModel> m_Models;
+    std::unordered_map<std::string, Sound> m_Sounds;
 };
 
 #endif 

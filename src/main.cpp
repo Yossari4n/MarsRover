@@ -10,6 +10,10 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 
+#include <OpenAL/al.h>
+#include <OpenAL/alc.h>
+#include <AL/alut.h>
+
 #include <iostream>
 #include <fstream>
 #pragma warning(pop)
@@ -50,6 +54,9 @@ int main() {
 
     glfwSetInputMode(g_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+    // OpenAL init
+    alutInit(nullptr, nullptr);
+
     // Main scene
     MainScene main_scene;
     main_scene.PreRun();
@@ -60,5 +67,6 @@ int main() {
     // End of application
     glfwSetWindowShouldClose(g_Window, true);
     glfwTerminate();
+    alutExit();
     return EXIT_SUCCESS;
 }

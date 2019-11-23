@@ -43,11 +43,11 @@ void Vehicle::Initialize() {
         btWheelInfo& wheel = m_Vehicle->getWheelInfo(i);
 
         // Hardcoded for now
-        wheel.m_suspensionStiffness = 20.0f;
+        wheel.m_suspensionStiffness = 100.0f;
         wheel.m_wheelsDampingRelaxation = 2.3f;
         wheel.m_wheelsDampingCompression = 4.4f;
-        wheel.m_frictionSlip = 1000.0f;
-        wheel.m_rollInfluence = 0.1f;
+        wheel.m_frictionSlip = 5000.0f;
+        wheel.m_rollInfluence = 1.0f;
     }
 
     auto handle = Chassis.Value()->Handle();
@@ -63,8 +63,6 @@ void Vehicle::Initialize() {
 }
 
 void Vehicle::Update() {
-    m_Vehicle->applyEngineForce(100, 0);
-    m_Vehicle->applyEngineForce(100, 1);
     // TODO change this monstrosity
     {
         auto tr = m_Vehicle->getWheelTransformWS(0);
@@ -122,8 +120,17 @@ void Vehicle::Destroy() {
     delete m_Vehicle;
 }
 
-void Vehicle::ApplyEngineForce(float force) {}
+void Vehicle::ApplyEngineForce(float force) {
+    m_Vehicle->applyEngineForce(force, 0);
+    m_Vehicle->applyEngineForce(force, 1);
+}
 
-void Vehicle::Brake(float brake) {}
+void Vehicle::Brake(float brake) {
+    m_Vehicle->setBrake(brake, 2);
+    m_Vehicle->setBrake(brake, 3);
+}
 
-void Vehicle::Steer(float steering) {}
+void Vehicle::Steer(float steering) {
+    m_Vehicle->setSteeringValue(steering, 0);
+    m_Vehicle->setSteeringValue(steering, 1);
+}
