@@ -5,9 +5,9 @@ Watch demo here:
 https://www.youtube.com/watch?v=j06aF7a2f5Y
 
 ## Controls
-WS to accelerate and brake
-AD to steer
-Hold LMB to rotate camera
+* W, S to accelerate and brake
+* A, D to steer
+* Hold Left Mouse Button to rotate camera
 
 ## Special thanks
 TODO put all the asset sources
