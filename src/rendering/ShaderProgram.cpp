@@ -137,7 +137,7 @@ unsigned int ShaderProgram::AttachShader(const char *path, GLenum shader_type) {
         
         shader_code = shader_stream.str();
     } catch(const std::ifstream::failure &e) {
-        Logger::Instance().ErrorLog(Logger::ESender::Rendering, "Failed to read shader file %s:\n%s", path, e.what());
+        ERROR_LOG(Logger::ESender::Rendering, "Failed to read shader file %s:\n%s", path, e.what());
     }
 
     // Compile shader
@@ -152,7 +152,7 @@ unsigned int ShaderProgram::AttachShader(const char *path, GLenum shader_type) {
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if (!success) {
         glGetShaderInfoLog(shader, 1024, NULL, info_log);
-        Logger::Instance().ErrorLog(Logger::ESender::Rendering, "Failed to compile shader %s:\n%s", path, info_log);
+        ERROR_LOG(Logger::ESender::Rendering, "Failed to compile shader %s:\n%s", path, info_log);
     }
     
     glAttachShader(m_ID, shader);

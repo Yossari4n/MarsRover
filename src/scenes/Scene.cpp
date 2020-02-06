@@ -1,6 +1,11 @@
 #include "Scene.h"
 
-void Scene::PreRun() {
+Scene::Scene() 
+    : m_ObjectManager(*this)
+    , m_PhysicsManager(new PhysicsRenderer(m_DrawManager)) {
+}
+
+void Scene::Initialize() {
     m_DrawManager.Initialize();
     m_PhysicsManager.Initialize();
     m_AudioManager.Initialize();
@@ -8,7 +13,6 @@ void Scene::PreRun() {
 
 void Scene::Run() {
     m_Running = true;
-    m_ObjectManager.InitializeObjects();
 
     // Initialize Time manager as close to game loop as possible
     // to avoid misrepresented delta time
@@ -26,14 +30,14 @@ void Scene::Run() {
         g_Time.Update();
         g_Input.Update(g_Window);
         
-        // Managers
+        // Update managers
         m_PhysicsManager.StepSimulation(g_Time.DeltaTime());
-        m_ObjectManager.UpdateObjects();
+        m_ObjectManager.ProcessFrame();
         m_DrawManager.CallDraws();
     }
 }
 
-void Scene::PostRun() {
+void Scene::Destroy() {
     m_ObjectManager.DestroyObjects();
     m_PhysicsManager.ExitPhysics();
 }
@@ -46,17 +50,15 @@ void Scene::FrameRateLimit(unsigned int frame_rate) {
     m_FrameRateLimit = frame_rate != 0 ? 1.0f / (float)frame_rate : 0.0f;
 }
 
+
 Object* Scene::CreateObject(const std::string& name) {
     return m_ObjectManager.CreateObject(name);
-}
-
-void Scene::DestroyObject(const std::string& name) {
-    m_ObjectManager.DestroyObject(name);
 }
 
 void Scene::DestroyObject(Object::ID_t id) {
     m_ObjectManager.DestroyObject(id);
 }
+
 
 void Scene::RegisterDrawCall(const IDrawable* drawable, EShaderType shader) {
     m_DrawManager.RegisterDrawCall(drawable, shader);
@@ -94,6 +96,10 @@ void Scene::DrawCuboid(glm::mat4 model, glm::vec3 color) {
     m_DrawManager.DrawCuboid(model, color);
 }
 
+void Scene::DrawSphere(glm::mat4 model, glm::vec3 color) {
+    //TODO
+}
+
 void Scene::RegisterCamera(Camera* camera) {
     m_DrawManager.RegisterCamera(camera);
 }
@@ -110,16 +116,17 @@ void Scene::Background(const glm::vec3& background) {
     m_DrawManager.Background(background);
 }
 
-void Scene::RegisterPhysicalObject(IPhysicalObject* component) {
-    m_PhysicsManager.RegisterPhysicalObject(component);
+
+void Scene::AddCollisionObject(btCollisionObject* collision_object, int collision_filter_group, int collision_filter_mask) {
+    m_PhysicsManager.AddCollisionObject(collision_object, collision_filter_group, collision_filter_mask);
 }
 
-void Scene::UnregisterPhysicalObject(IPhysicalObject* component) {
-    m_PhysicsManager.UnregisterPhysiaclObject(component);
+void Scene::RemoveCollisionObject(btCollisionObject* collision_object) {
+    m_PhysicsManager.RemoveCollisionObject(collision_object);
 }
 
-void Scene::AddRigidBody(btRigidBody* rigid_body) {
-    m_PhysicsManager.AddRigidBody(rigid_body);
+void Scene::AddRigidBody(btRigidBody* rigid_body, int group, int mask) {
+    m_PhysicsManager.AddRigidBody(rigid_body, group, mask);
 }
 
 void Scene::RemoveRigidBody(btRigidBody* rigid_body) {
@@ -134,12 +141,16 @@ void Scene::RemoveConstraint(btTypedConstraint* constraint) {
     m_PhysicsManager.RemoveConstraint(constraint);
 }
 
-void Scene::AddVehicle(btActionInterface* vehicle) {
+void Scene::AddVehicle(btRaycastVehicle* vehicle) {
     m_PhysicsManager.AddVehicle(vehicle);
 }
 
-void Scene::RemoveVehicle(btActionInterface* vehicle) {
+void Scene::RemoveVehicle(btRaycastVehicle* vehicle) {
     m_PhysicsManager.RemoveVehicle(vehicle);
+}
+
+void Scene::Raycast(const btVector3& from, const btVector3& to, btCollisionWorld::RayResultCallback& result) {
+    m_PhysicsManager.Raycast(from, to, result);
 }
 
 void Scene::Gravity(const btVector3& gravity) {
@@ -153,6 +164,24 @@ btVector3 Scene::Gravity() const {
 btDynamicsWorld* Scene::DynamicsWorld() {
     return m_PhysicsManager.DynamicsWorld();
 }
+
+
+void Scene::ListenerPosition(float x, float y, float z) {
+    m_AudioManager.ListenerPosition(x, y, z);
+}
+
+void Scene::ListenerVelocity(float x, float y, float z) {
+    m_AudioManager.ListenerVelocity(x, y, z);
+}
+
+void Scene::ListenerGain(float gain) {
+    m_AudioManager.ListenerGain(gain);
+}
+
+void Scene::ListenerOrientation(float at_x, float at_y, float at_z, float up_x, float up_y, float up_z) {
+    m_AudioManager.ListenerOrientation(at_x, at_y, at_z, up_x, up_y, up_z);
+}
+
 
 RawTexture& Scene::LoadTexture(const std::string& path) {
     return m_ResourceManager.LoadTexture(path);

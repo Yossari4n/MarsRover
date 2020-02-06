@@ -1,6 +1,8 @@
 #ifndef RawTexture_h
 #define RawTexture_h
 
+#include "../debuging/Logger.h"
+
 #pragma warning(push, 0)
 #include <stb/stb_image.h>
 

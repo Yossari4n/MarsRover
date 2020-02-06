@@ -8,9 +8,9 @@ class MessageOut final : public AbstractMessageOut {
     friend class ConnectionsManager;
 
 public:
-    MessageOut(Component* owner, ConnectionsManager* connections_manager)
+    MessageOut(Component* owner)
         : m_Owner(owner)
-        , m_ConnectionsManager(connections_manager) {}
+        , m_ConnectionsManager(nullptr) {}
 
     MessageOut() = delete;
     MessageOut(const MessageOut&) = delete;
@@ -21,7 +21,11 @@ public:
 
     Component* Owner() const override { return m_Owner; }
 
-    void Send(M& message) {  m_MessageManager->ForwardMessage(this, &message); }
+    void Send(M& message) { 
+        if (m_ConnectionsManager) {
+            m_ConnectionsManager->ForwardMessage(this, &message);
+        }
+    }
 
 private:
     Component* m_Owner;

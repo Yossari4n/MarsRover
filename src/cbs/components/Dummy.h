@@ -7,6 +7,7 @@ class Dummy : public Component {
 public:
     Dummy() = default;
 
+    void Initialize() override;
     void Update() override;
 };
 

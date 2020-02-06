@@ -3,11 +3,6 @@
 
 #include "ConnectionsManager.h"
 
-/**
- * AbstractProperty
- *
- * TODO doc
- **/
 class AbstractPropertyOut {
     friend class ConnectionsManager;
 
@@ -39,12 +34,6 @@ protected:
     virtual void RemoveSource() = 0;
 };
 
-
-/**
- * AbstractMessager
- *
- * TODO doc
- **/
 class AbstractMessageOut {
     friend class ConnectionsManager;
 
@@ -76,12 +65,6 @@ protected:
     virtual void Receive(void* message) = 0;
 };
 
-
-/**
- * AbstractTrigger
- *
- * TODO doc
- **/
 class AbstractTriggerOut {
     friend class ConnectionsManager;
 

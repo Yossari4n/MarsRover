@@ -9,11 +9,11 @@ Object::Object(ObjectManager& owner, ID_t id, std::string name)
     , m_Owner(owner)
     , m_ConnectionsManager()
     , m_NextCompID(2)
-    , m_CurrentIndex(0)
-    , m_ToInitialize(0)
+    , m_ToDestroy(0)
+    , m_ToUpdate(0) 
     , m_ToInitializeNextFrame(0)
-    , m_ToUpdate(0)
-    , m_ToDestroy(0) {
+    , m_Iterator(0) {
+    // Initialize Root component
     m_Root.m_Object = this;
     m_Root.m_ID = 1;
     m_Root.Identity();
@@ -21,53 +21,39 @@ Object::Object(ObjectManager& owner, ID_t id, std::string name)
 }
 
 void Object::ProcessFrame() {
-    // Components registered in previous frame will be initialized now
-    m_ToInitialize = m_ToInitializeNextFrame;
+    // 
+    Components_t::size_type to_initialize = m_ToInitializeNextFrame;
     m_ToInitializeNextFrame = 0;
 
-    // Initialize all components from (end - m_ToInitialize - m_ToInitializeNextFrame) to (end - m_ToInitializeNextFrame)
-    for (int i = 0; i < m_ToInitialize; i++) {
-        m_Components[m_Components.size() - m_ToInitialize - m_ToInitializeNextFrame + i]->Initialize();
+    // Initialize components
+    m_Iterator = m_Components.size() - to_initialize;
+    for (; m_Iterator < m_Components.size(); m_Iterator++) {
+        m_Components[m_Iterator]->Initialize();
     }
 
-    m_ToInitialize = 0;
-
-    // Update all components from (begin + m_ToDestroy + m_ToUpdate) to (begin + m_ToDestroy)
-    for (int i = 0; i < m_ToUpdate; i++) {
-        m_Components[m_ToDestroy + m_ToUpdate - i - 1]->Update();
+    // Update components
+    m_Iterator = m_ToDestroy;
+    for (; m_Iterator < m_ToDestroy + m_ToUpdate; m_Iterator++) {
+        m_Components[m_Iterator]->Update();
     }
 
-    // Destroy all components from begining to (begin + m_ToDestroy)
+    // Destroy components
     if (m_ToDestroy > 0) {
-        for (m_CurrentIndex = 0; m_CurrentIndex < m_ToDestroy; m_CurrentIndex++) {
-            m_ConnectionsManager.RemoveConnections(m_Components[m_Components.size() - 1 - m_CurrentIndex].get());
-            m_Components[m_Components.size() - 1 - m_CurrentIndex - m_ToInitializeNextFrame]->Destroy();
+        m_Iterator = 0;
+        for (; m_Iterator < m_ToDestroy; m_Iterator++) {
+            m_ConnectionsManager.RemoveConnections(m_Components[m_Components.size() - 1 - m_Iterator].get());
+            m_Components[m_Iterator]->Destroy();
         }
         m_Components.erase(m_Components.begin(), m_Components.begin() + m_ToDestroy);
         m_ToDestroy = 0;
     }
 }
 
-void Object::InitializeComponents() {
-    for (int i = 0; i < m_Components.size(); i++) {
-        m_Components[i]->Initialize();
-    }
-    m_ToInitialize = 0;
-}
-
-void Object::UpdateComponents() {    
-    for (int i = 0; i < m_Components.size(); i++) {
-        m_Components[i]->Update();
-    }
-}
-
 void Object::DestroyComponents() {
-    for (int i = 0; i < m_Components.size(); i++) {
-        m_Components[i]->Destroy();
+    for (auto& comp : m_Components) {
+        comp->Destroy();
     }
-    m_CurrentIndex = 0;
-    m_ToUpdate = 0;
-    m_ToDestroy = 0;
+    m_Components.clear();
 }
 
 void Object::RegisterUpdateCall(const Component* component) {
@@ -80,9 +66,8 @@ void Object::RegisterUpdateCall(const Component* component) {
 
     assert(comp != m_Components.end());
     if (std::distance(m_Components.begin() + m_ToDestroy, comp) >= static_cast<ptrdiff_t>(m_ToUpdate)) {
-        m_CurrentIndex = m_CurrentIndex - 1;
-        m_ToUpdate = m_ToUpdate + 1;
-        std::iter_swap(m_Components.begin() + m_ToDestroy + m_ToUpdate - 1, comp);
+        std::iter_swap(m_Components.begin() + m_ToDestroy + m_ToUpdate, comp);
+        m_ToUpdate += 1;
     }
 }
 
@@ -96,8 +81,8 @@ void Object::UnregisterUpdateCall(const Component* component) {
 
     assert(comp != m_Components.end());
     if (std::distance(m_Components.begin() + m_ToDestroy, comp) <= static_cast<ptrdiff_t>(m_ToUpdate)) {
-        m_ToUpdate = m_ToUpdate - 1;
         std::iter_swap(m_Components.begin() + m_ToDestroy + m_ToUpdate, comp);
+        m_ToUpdate -= 1;
     }
 }
 
@@ -108,10 +93,9 @@ Scene& Object::Scene() const {
 void Object::MarkToDestroy(Components_t::iterator it) {
     // Check if component hasn't been already marked
     if (std::distance(m_Components.begin(), it) > static_cast<ptrdiff_t>(m_ToDestroy)) {
-        // Unregister update call if needed
         UnregisterUpdateCall(it->get());
 
-        m_ToDestroy = m_ToDestroy + 1;
+        m_ToDestroy += 1;
         std::iter_swap(m_Components.begin() + m_ToDestroy, it);
     }
 }

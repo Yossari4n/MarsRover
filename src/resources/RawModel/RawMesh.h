@@ -31,9 +31,15 @@ public:
 
     const std::vector<Vertex>& Vertices() const { return m_Vertices; }
     const std::vector<unsigned int>& Indices() const { return m_Indices; }
+
     const RawTexture* Diffuse() const { return m_Diffuse; }
+    void Diffuse(const RawTexture* texture) { m_Diffuse = texture; }
+
     const RawTexture* Specular() const { return m_Specular; }
+    void Specular(const RawTexture* texture) { m_Specular = texture; }
+
     float Shininess() const { return m_Shininess; }
+    void Shininess(float shininess) { m_Shininess = shininess; }
 
 private:
     std::vector<Vertex> m_Vertices;

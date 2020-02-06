@@ -10,10 +10,17 @@ class Object;
 class ConnectionPipe;
 class ConnectionsManager;
 
+/** \brief Base class for all components
+ *
+ * Components represents behaviour of game objects. To create new component inherit from this class and override
+ * all neccesary functions. Each component has unique ID of type ID_t. 
+ */
 class Component {
     friend class Object;
 
 public:
+    using ID_t = std::uint8_t;
+
     Component() = default;
     Component(const Component&) = delete;
     Component& operator=(const Component&) = delete;
@@ -21,12 +28,15 @@ public:
     Component& operator=(Component&&) = delete;
     virtual ~Component() = default;
 
-    std::uint8_t ID() const { return m_ID; }
+    /// Returns component ID
+    ID_t ID() const { return m_ID; }
+
+    /// Returns component owner
     Object& Object() const { return *m_Object; }
 
 protected:
     virtual void Initialize() {};
-    virtual void Update() { assert(true && "Update function not overloaded"); };
+    virtual void Update() {};
     virtual void Destroy() {};
 
     void RegisterUpdateCall() const;
@@ -34,7 +44,7 @@ protected:
 
 private:
     class Object* m_Object{ nullptr };
-    std::uint8_t m_ID{ 0 };
+    ID_t m_ID{ 0 };
 };
 
 #endif

@@ -12,17 +12,17 @@ PointLight::PointLight(glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular,
 
     if (m_Constant < 0.0f) {
         m_Constant = 0.0f;
-        Logger::Instance().WarningLog(Logger::ESender::CBS, "Constant value of point light should not be negative, changing to 0");
+        WARNING_LOG(Logger::ESender::CBS, "Constant value of point light should not be negative, changing to 0");
     }
 
     if (m_Linear < 0.0f) {
         m_Linear = 0.0f;
-        Logger::Instance().WarningLog(Logger::ESender::CBS, "Linear value of point light should not be negative, changing to 0");
+        WARNING_LOG(Logger::ESender::CBS, "Linear value of point light should not be negative, changing to 0");
     }
 
     if (m_Quadratic < 0.0f) {
         m_Quadratic = 0.0f;
-        Logger::Instance().WarningLog(Logger::ESender::CBS, "Quadratic value of point light should not be negative, changing to 0");
+        WARNING_LOG(Logger::ESender::CBS, "Quadratic value of point light should not be negative, changing to 0");
     }
 
     m_Index = QUANTITY;

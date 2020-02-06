@@ -19,12 +19,13 @@ void Logger::Pop(EChannel channel) {
     m_ChannelMask = m_ChannelMask | (~channel);
 }
 
-void Logger::InfoLog(ESender sender, const char* format, ...) {
+void Logger::InfoLog(ESender sender, const char* file, int line, const char* format, ...) {
     if (static_cast<unsigned char>(m_ChannelMask & EChannel::Info)) {
         SetConsoleTextAttribute(m_ConsoleHandle, static_cast<WORD>(sender));
 
         va_list argptr;
         va_start(argptr, format);
+        printf("%s %d: ", file, line);
         vfprintf(stdout, format, argptr);
         printf("\n");
         va_end(argptr);
@@ -34,13 +35,13 @@ void Logger::InfoLog(ESender sender, const char* format, ...) {
     }
 }
 
-void Logger::WarningLog(ESender sender, const char* format, ...) {
+void Logger::WarningLog(ESender sender, const char* file, int line, const char* format, ...) {
     if (static_cast<unsigned char>(m_ChannelMask & EChannel::Warning)) {
         SetConsoleTextAttribute(m_ConsoleHandle, static_cast<WORD>(sender));
 
         va_list argptr;
         va_start(argptr, format);
-        printf("Warning: ");
+        printf("WARNING %s %d: ", file, line);
         vfprintf(stdout, format, argptr);
         printf("\n");
         va_end(argptr);
@@ -50,13 +51,13 @@ void Logger::WarningLog(ESender sender, const char* format, ...) {
     }
 }
 
-void Logger::ErrorLog(ESender sender, const char* format, ...) {
+void Logger::ErrorLog(ESender sender, const char* file, int line, const char* format, ...) {
     if (static_cast<unsigned char>(m_ChannelMask & EChannel::Error)) {
         SetConsoleTextAttribute(m_ConsoleHandle, static_cast<WORD>(sender));
 
         va_list argptr;
         va_start(argptr, format);
-        printf("Error: ");
+        printf("ERROR %s %d: ", file, line);
         vfprintf(stdout, format, argptr);
         printf("\n");
         va_end(argptr);

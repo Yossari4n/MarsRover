@@ -33,7 +33,7 @@ int main() {
     glfwWindowHint(GLFW_SAMPLES, 4);
 
     // Create window
-    g_Window.Initialize(1920, 1080, "Rubik's cube");
+    g_Window.Initialize(1920, 1080, "Mars Rover");
     if (!g_Window) {
         glfwTerminate();
         std::cout << "Failed to create GLFW window\n";
@@ -59,10 +59,10 @@ int main() {
 
     // Main scene
     MainScene main_scene;
-    main_scene.PreRun();
+    main_scene.Initialize();
     main_scene.CreateScene();
     main_scene.Run();
-    main_scene.PostRun();
+    main_scene.Destroy();
 
     // End of application
     glfwSetWindowShouldClose(g_Window, true);

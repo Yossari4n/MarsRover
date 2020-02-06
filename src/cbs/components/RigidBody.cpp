@@ -1,8 +1,10 @@
 #include "RigidBody.h"
 
-RigidBody::RigidBody(btScalar mass, btCollisionShape* shape)
-    : m_ScaleMatrix(1.0f) {
+RigidBody::RigidBody(btScalar mass, btCollisionShape* shape, int group, int mask)
+    : m_Group(group)
+    , m_Mask(mask) {
     btVector3 local_inertia(0, 0, 0);
+
     if (mass != 0.0f) {
         shape->calculateLocalInertia(mass, local_inertia);
     }
@@ -10,21 +12,12 @@ RigidBody::RigidBody(btScalar mass, btCollisionShape* shape)
     btTransform start;
     start.setIdentity();
 
-    // Resources will be deleted by PhysicsManager on PhysicsExits
+    // Resources will be deleted by PhysicsManager
     btDefaultMotionState* motion_state = new btDefaultMotionState(start);
     btRigidBody::btRigidBodyConstructionInfo info(mass, motion_state, shape, local_inertia);
 
     m_RigidBody = new btRigidBody(info);
-    m_RigidBody->setUserIndex(-1);
-
-    // Dirty way to determinate scale matrix and debug draw function
-    switch (shape->getShapeType()) {
-    case BOX_SHAPE_PROXYTYPE:
-        auto box_shape = reinterpret_cast<btBoxShape*>(shape);
-        auto half_extents = box_shape->getHalfExtentsWithMargin();
-        m_ScaleMatrix = glm::scale(m_ScaleMatrix, glm::vec3(half_extents.x() * 2, half_extents.y() * 2, half_extents.z() * 2));
-        break;
-    }
+    m_RigidBody->setUserPointer((IPhysicalObject*)this);
 }
 
 void RigidBody::Initialize() {
@@ -37,32 +30,33 @@ void RigidBody::Initialize() {
     auto rot = TransformIn.Value()->Rotation();
     transform.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
 
+    btVector3 transform_scale = btVector3(TransformIn.Value()->Scale().x, TransformIn.Value()->Scale().y, TransformIn.Value()->Scale().z);
+
     m_RigidBody->setWorldTransform(transform);
     m_RigidBody->getMotionState()->setWorldTransform(transform);
+    m_RigidBody->getCollisionShape()->setLocalScaling(transform_scale);
 
-    Object().Scene().AddRigidBody(m_RigidBody);
-    Object().Scene().RegisterPhysicalObject(this);
+    Object().Scene().AddRigidBody(m_RigidBody, m_Group, m_Mask);
 }
 
 void RigidBody::Destroy() {
-    Object().Scene().UnregisterPhysicalObject(this);
+    Object().Scene().RemoveRigidBody(m_RigidBody);
+}
+
+void RigidBody::OnCollision(const btCollisionObject* collider) {
+    CollisionOut.Send(collider);
 }
 
 void RigidBody::PhysicsUpdate() {
     btTransform trans;
     m_RigidBody->getMotionState()->getWorldTransform(trans);
 
-    // TODO optimise it?
     auto origin = trans.getOrigin();
-    glm::vec3 glm_pos(origin.getX(), origin.getY(), origin.getZ());
+    TransformIn.Value()->Position(glm::vec3(origin.getX(), origin.getY(), origin.getZ()));
+
     auto rot = trans.getRotation();
-    glm::quat glm_rot(rot.getW(), rot.getX(), rot.getY(), rot.getZ());
+    TransformIn.Value()->Rotation(glm::quat(rot.getW(), rot.getX(), rot.getY(), rot.getZ()));
 
-    // Update connected transform with position and rotation
-    TransformIn.Value()->Position(glm_pos);
-    TransformIn.Value()->Rotation(glm_rot);
-
-    // Debug draw
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm_pos) * glm::mat4_cast(glm_rot) * m_ScaleMatrix;
-    Object().Scene().DrawCuboid(model, glm::vec3(1.0f, 0.0f, 0.0f));
+    auto scale = m_RigidBody->getCollisionShape()->getLocalScaling();
+    TransformIn.Value()->Scale(glm::vec3(scale.getX(), scale.getY(), scale.getZ()));
 }

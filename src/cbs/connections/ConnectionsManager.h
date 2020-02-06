@@ -36,6 +36,9 @@ class TriggerIn;
 
 #pragma endregion
 
+/** \brief Manages all connection beetwen components inside one object
+ *
+ */
 class ConnectionsManager {
     using PropertyConnections_t = std::vector<std::pair<AbstractPropertyOut*, AbstractPropertyIn*>>;
     using MessageConnections_t = std::unordered_map<AbstractMessageOut*, std::vector<AbstractMessageIn*>>;
@@ -100,6 +103,7 @@ void ConnectionsManager::Disconnect(PropertyOut<T>& subject, PropertyIn<T>& obse
 
 template <class M, class O, void(O::*F)(M)>
 void ConnectionsManager::Connect(MessageOut<M>& sender, MessageIn<M, O, F>& receiver) {
+    sender.m_ConnectionsManager = this;
     m_MessageConnections[&sender].push_back(&receiver);
 }
 
@@ -112,6 +116,7 @@ void ConnectionsManager::Disconnect(MessageOut<M>& sender, MessageIn<M, O, F>& r
 
 template <class O, void(O::* F)()>
 void ConnectionsManager::Connect(TriggerOut& sender, TriggerIn<O, F>& receiver) {
+    sender.m_ConnectionsManager = this;
     m_TriggerConnections[&sender].push_back(&receiver);
 }
 

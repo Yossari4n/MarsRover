@@ -13,13 +13,26 @@ Vehicle::Vehicle(float suspension_rest_length, float steering_clamp, float wheel
     , m_SteeringClamp(steering_clamp)
     , m_WheelRadius(wheel_radius)
     , m_WheelWidth(wheel_width) {
+    if (m_WheelRadius < 0.0f) {
+        WARNING_LOG(Logger::ESender::CBS, "Value of m_WheelRadius shoud not be negative, changing to 1.0f");
+        m_WheelRadius = 1.0f;
+    }
+    
+    if (m_WheelWidth < 0.0f) {
+        WARNING_LOG(Logger::ESender::CBS, "Value of m_WheelWidth shoud not be negative, changing to 1.0f");
+        m_WheelWidth = 1.0f;
+    }
+
+    m_WheelCircumference = 2 * M_PI * wheel_radius;
 }
 
 void Vehicle::Initialize() {
-    assert(Chassis.Connected() && FrontWheel1.Connected() && FrontWheel2.Connected() && BackWheel1.Connected() && BackWheel2.Connected());
+    assert(Chassis.Connected() && FrontLeftWheel.Connected() && FrontRightWheel.Connected() && BackLeftWheel.Connected() && BackRightWheel.Connected());
+
+    btRaycastVehicle::btVehicleTuning tunning;
 
     m_VehicleRaycaster = new btDefaultVehicleRaycaster(Object().Scene().DynamicsWorld());
-    m_Vehicle = new btRaycastVehicle(m_Tunning, Chassis.Value()->Handle(), m_VehicleRaycaster);
+    m_Vehicle = new btRaycastVehicle(tunning, Chassis.Value()->Handle(), m_VehicleRaycaster);
 
     Chassis.Value()->Handle()->setActivationState(DISABLE_DEACTIVATION);
     Object().Scene().AddVehicle(m_Vehicle);
@@ -27,31 +40,30 @@ void Vehicle::Initialize() {
 
     glm::vec3 chassis_pos = Chassis.Value()->TransformIn.Value()->Position();
 
-    glm::vec3 diff = FrontWheel1.Value()->Position() - chassis_pos;
-    m_Vehicle->addWheel(btVector3(diff.x, diff.y, diff.z), m_WheelDirectionCS0, m_WheelAxleCS, m_SuspensionRestLength, m_WheelRadius, m_Tunning, true);
+    glm::vec3 diff = FrontLeftWheel.Value()->Position() - chassis_pos;
+    m_Vehicle->addWheel(btVector3(diff.x, diff.y, diff.z), m_WheelDirectionCS0, m_WheelAxleCS, m_SuspensionRestLength, m_WheelRadius, tunning, true);
 
-    diff = FrontWheel2.Value()->Position(); - chassis_pos;
-    m_Vehicle->addWheel(btVector3(diff.x, diff.y, diff.z), m_WheelDirectionCS0, m_WheelAxleCS, m_SuspensionRestLength, m_WheelRadius, m_Tunning, true);
+    diff = FrontRightWheel.Value()->Position() - chassis_pos;
+    m_Vehicle->addWheel(btVector3(diff.x, diff.y, diff.z), m_WheelDirectionCS0, m_WheelAxleCS, m_SuspensionRestLength, m_WheelRadius, tunning, true);
 
-    diff = BackWheel1.Value()->Position() - chassis_pos;
-    m_Vehicle->addWheel(btVector3(diff.x, diff.y, diff.z), m_WheelDirectionCS0, m_WheelAxleCS, m_SuspensionRestLength, m_WheelRadius, m_Tunning, false);
+    diff = BackLeftWheel.Value()->Position() - chassis_pos;
+    m_Vehicle->addWheel(btVector3(diff.x, diff.y, diff.z), m_WheelDirectionCS0, m_WheelAxleCS, m_SuspensionRestLength, m_WheelRadius, tunning, false);
 
-    diff = BackWheel2.Value()->Position() - chassis_pos;
-    m_Vehicle->addWheel(btVector3(diff.x, diff.y, diff.z), m_WheelDirectionCS0, m_WheelAxleCS, m_SuspensionRestLength, m_WheelRadius, m_Tunning, false);
+    diff = BackRightWheel.Value()->Position() - chassis_pos;
+    m_Vehicle->addWheel(btVector3(diff.x, diff.y, diff.z), m_WheelDirectionCS0, m_WheelAxleCS, m_SuspensionRestLength, m_WheelRadius, tunning, false);
 
     for (int i = 0; i < m_Vehicle->getNumWheels(); i++) {
         btWheelInfo& wheel = m_Vehicle->getWheelInfo(i);
 
         // Hardcoded for now
-        wheel.m_suspensionStiffness = 100.0f;
-        wheel.m_wheelsDampingRelaxation = 2.3f;
-        wheel.m_wheelsDampingCompression = 4.4f;
-        wheel.m_frictionSlip = 5000.0f;
-        wheel.m_rollInfluence = 1.0f;
+        wheel.m_suspensionStiffness = 150.0f;
+        wheel.m_wheelsDampingCompression = 0.3f;
+        wheel.m_wheelsDampingRelaxation = 0.5f;
+        wheel.m_frictionSlip = 200.0f;
+        wheel.m_rollInfluence = 0.1f;
     }
 
     auto handle = Chassis.Value()->Handle();
-    handle->setCenterOfMassTransform(btTransform::getIdentity());
     handle->setLinearVelocity(btVector3(0.0f, 0.0f, 0.0f));
     handle->setAngularVelocity(btVector3(0.0f, 0.0f, 0.0f));
     m_Vehicle->resetSuspension();
@@ -63,54 +75,23 @@ void Vehicle::Initialize() {
 }
 
 void Vehicle::Update() {
-    // TODO change this monstrosity
-    {
-        auto tr = m_Vehicle->getWheelTransformWS(0);
-        auto origin = tr.getOrigin();
-        glm::vec3 glm_pos(origin.getX(), origin.getY(), origin.getZ());
-        auto rot = tr.getRotation();
-        glm::quat glm_rot(rot.getW(), rot.getX(), rot.getY(), rot.getZ());
-        glm::vec3 glm_scl(m_WheelWidth, m_WheelRadius, m_WheelRadius);
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm_pos) * glm::mat4_cast(glm_rot);
-        model = glm::scale(model, glm_scl);
-        Object().Scene().DrawCuboid(model, glm::vec3(0.0f, 0.0f, 1.0f));
-    }
+    const float speed = std::abs(m_Vehicle->getCurrentSpeedKmHour()) / 3.6f; // km/h to m/s
+    const float rotation = speed * g_Time.FixedDeltaTime() / m_WheelCircumference * 2 * M_PI;
 
-    {
-        auto tr = m_Vehicle->getWheelTransformWS(1);
-        auto origin = tr.getOrigin();
-        glm::vec3 glm_pos(origin.getX(), origin.getY(), origin.getZ());
-        auto rot = tr.getRotation();
-        glm::quat glm_rot(rot.getW(), rot.getX(), rot.getY(), rot.getZ());
-        glm::vec3 glm_scl(m_WheelWidth, m_WheelRadius, m_WheelRadius);
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm_pos) * glm::mat4_cast(glm_rot);
-        model = glm::scale(model, glm_scl);
-        Object().Scene().DrawCuboid(model, glm::vec3(0.0f, 1.0f, 0.0f));
-    }
+    // Not the best solution but works for now
+    const float delta_steer = m_Vehicle->getWheelInfo(0).m_steering - m_PrevSteer;
 
-    {
-        auto tr = m_Vehicle->getWheelTransformWS(2);
-        auto origin = tr.getOrigin();
-        glm::vec3 glm_pos(origin.getX(), origin.getY(), origin.getZ());
-        auto rot = tr.getRotation();
-        glm::quat glm_rot(rot.getW(), rot.getX(), rot.getY(), rot.getZ());
-        glm::vec3 glm_scl(m_WheelWidth, m_WheelRadius, m_WheelRadius);
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm_pos) * glm::mat4_cast(glm_rot);
-        model = glm::scale(model, glm_scl);
-        Object().Scene().DrawCuboid(model, glm::vec3(1.0f, 0.0f, 0.0f));
-    }
+    FrontLeftWheel.Value()->Rotate(glm::vec3(0.0f, delta_steer, 0.0f));
+    FrontLeftWheel.Value()->RotateRelative(glm::vec3(rotation, 0.0f, 0.0f));
+    FrontRightWheel.Value()->Rotate(glm::vec3(0.0f, delta_steer, 0.0f));
+    FrontRightWheel.Value()->RotateRelative(glm::vec3(-rotation, 0.0f, 0.0f));
+    MiddleLeftWheel.Value()->RotateRelative(glm::vec3(rotation, 0.0f, 0.0f));
+    MiddleRightWheel.Value()->RotateRelative(glm::vec3(-rotation, 0.0f, 0.0f));
+    BackLeftWheel.Value()->RotateRelative(glm::vec3(rotation, 0.0f, 0.0f));
+    BackRightWheel.Value()->RotateRelative(glm::vec3(-rotation, 0.0f, 0.0f));
 
-    {
-        auto tr = m_Vehicle->getWheelTransformWS(3);
-        auto origin = tr.getOrigin();
-        glm::vec3 glm_pos(origin.getX(), origin.getY(), origin.getZ());
-        auto rot = tr.getRotation();
-        glm::quat glm_rot(rot.getW(), rot.getX(), rot.getY(), rot.getZ());
-        glm::vec3 glm_scl(m_WheelWidth, m_WheelRadius, m_WheelRadius);
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm_pos) * glm::mat4_cast(glm_rot);
-        model = glm::scale(model, glm_scl);
-        Object().Scene().DrawCuboid(model, glm::vec3(0.0f, 1.0f, 1.0f));
-    }
+
+    m_PrevSteer = m_Vehicle->getWheelInfo(0).m_steering;
 }
 
 void Vehicle::Destroy() {

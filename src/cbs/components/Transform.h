@@ -11,6 +11,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
 #pragma warning(pop)
 
 class Transform : public Component {
@@ -19,9 +20,10 @@ public:
 
     void Identity();
 
-    const glm::mat4& Model() const { return m_Model; }
+    glm::mat4 Model() const;
     void Model(const glm::mat4 model);
-    
+    void Model(const float* model);
+
     glm::vec3 Position() const;
     void Position(const glm::vec3& position);
     void Move(const glm::vec3& vector);
@@ -44,10 +46,10 @@ public:
 private:
     void UpdateModel();
 
-    glm::mat4 m_Model;
-    glm::vec3 m_Position;
-    glm::quat m_Rotation;
-    glm::vec3 m_Scale;
+    glm::mat4 m_Model{ 1.0f };
+    glm::vec3 m_Position{ 0.0f };
+    glm::quat m_Rotation{ glm::vec3(0.0f) };
+    glm::vec3 m_Scale{ 1.0f };
 };
 
 #endif

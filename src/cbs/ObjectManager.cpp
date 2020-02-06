@@ -3,48 +3,52 @@
 #include "../scenes/Scene.h"
 
 ObjectManager::ObjectManager(class Scene& owner)
-    : m_Scene(owner) {
+    : m_Scene(owner)
+    , m_ToDestroy(0)
+    , m_Iterator(0) {
 }
 
-void ObjectManager::InitializeObjects() {
-    for (auto& [key, object] : m_Objects) {
-        object.InitializeComponents();
+void ObjectManager::ProcessFrame() {
+    // 
+    Objects_t::size_type to_initialize = m_ToInitializeNextFrame;
+    m_ToInitializeNextFrame = 0;
+
+    // Update components
+    m_Iterator = m_ToDestroy;
+    for (; m_Iterator < m_Objects.size() - to_initialize; m_Iterator++) {
+        m_Objects[m_Iterator]->ProcessFrame();
     }
-}
 
-void ObjectManager::UpdateObjects() {
-    for (auto& [key, object] : m_Objects) {
-        object.UpdateComponents();
+    // Destroy components
+    if (m_ToDestroy > 0) {
+        m_Iterator = 0;
+        for (; m_Iterator < m_ToDestroy; m_Iterator++) {
+            m_Objects[m_Iterator]->DestroyComponents();
+        }
+        m_Objects.erase(m_Objects.begin(), m_Objects.begin() + m_ToDestroy);
+        m_ToDestroy = 0;
     }
 }
 
 void ObjectManager::DestroyObjects() {
-    for (auto& [key, object] : m_Objects) {
-        object.DestroyComponents();
+    for (auto& object : m_Objects) {
+        object->DestroyComponents();
     }
     m_Objects.clear();
 }
 
 Object* ObjectManager::CreateObject(const std::string& name) {
-    Object::ID_t id = m_Hasher(name);
-
-    assert(m_Objects.find(id) == m_Objects.end());
-
-    m_Objects.try_emplace(id, *this, id, name);
-
-    return &m_Objects.at(id);
-}
-
-void ObjectManager::DestroyObject(const std::string& name) {
-    Object::ID_t id = m_Hasher(name);
-    DestroyObject(id);
+    m_Objects.emplace_back(std::make_unique<Object>(*this, m_NextObjectID++, name));
+    return m_Objects.back().get();
 }
 
 void ObjectManager::DestroyObject(Object::ID_t id) {
-    auto object = m_Objects.find(id);
+    auto object = std::find_if(m_Objects.begin(),
+                               m_Objects.end(),
+                               [=](auto& it){ return it->ID() == id; });
 
-    if (object != m_Objects.end()) {
-        object->second.DestroyComponents();
-        m_Objects.erase(object);
+    if (object != m_Objects.end() && std::distance(m_Objects.begin(), object) > static_cast<ptrdiff_t>(m_ToDestroy)) {
+        std::iter_swap(m_Objects.begin() + m_ToDestroy, object);
+        m_ToDestroy += 1;
     }
 }

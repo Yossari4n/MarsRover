@@ -26,7 +26,7 @@ public:
     ALint Bits() const { return m_Bits; }
     ALint Channels() const { return m_Channels; }
     ALint Frequency() const { return m_Frequency; }
-    ALint Length() const { return m_Length; }
+    ALfloat Length() const { return m_Length; }
 
 private:
     ALuint m_ID;

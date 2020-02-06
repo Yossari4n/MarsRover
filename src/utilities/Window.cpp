@@ -5,7 +5,7 @@ void Window::Initialize(unsigned int width, unsigned int height, const std::stri
     m_Height = height;
     m_Title = title;
 
-    m_GLFWHandler = glfwCreateWindow(m_Width, m_Height, "Rubick's cube", nullptr, nullptr);
+    m_GLFWHandler = glfwCreateWindow(m_Width, m_Height, title.c_str(), nullptr, nullptr);
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {

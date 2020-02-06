@@ -12,6 +12,8 @@
 #include "../cbs/components/Camera.h"
 
 void DrawManager::Initialize() {
+    INFO_LOG(Logger::ESender::Rendering, "Initializing draw manager");
+
     // Dear imgui initialiation
     ImGui::CreateContext();
     ImGui::StyleColorsDark();

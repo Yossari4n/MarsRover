@@ -11,28 +11,33 @@
 #include "../utilities/Input.h"
 #include "../utilities/Window.h"
 
+
 class Scene {
 public:
-    Scene() = default;
-    virtual ~Scene() = default;
+    Scene();
+
     Scene(const Scene&) = delete;
     Scene& operator=(const Scene&) = delete;
     Scene(Scene&&) = delete;
     Scene& operator=(Scene&&) = delete;
+    virtual ~Scene() = default;
 
+    // 
+    void Initialize();
+    virtual void PreRun() {}
     virtual void CreateScene() = 0;
-
-    void PreRun();
     void Run();
-    void PostRun();
+    virtual void PostRun() {}
+    void Destroy();
 
+    // Scene functions
     void Exit();
     void FrameRateLimit(unsigned int frame_rate);
+    float FrameRateLimit() const { return m_FrameRateLimit; }
     float FrameRate() const { return 1.0f / g_Time.DeltaTime(); }
 
-    // ObjectManger functions
+    // ObjectManager functions
     Object* CreateObject(const std::string& name);
-    void DestroyObject(const std::string& name);
     void DestroyObject(Object::ID_t id);
 
     // DrawManager functions
@@ -45,23 +50,31 @@ public:
     void DrawLine(glm::vec3 start, glm::vec3 end, glm::vec3 color);
     void DrawPlane(glm::mat4 model, glm::vec3 color);
     void DrawCuboid(glm::mat4 model, glm::vec3 color);
+    void DrawSphere(glm::mat4 model, glm::vec3 color);
     void RegisterCamera(Camera* camera);
     Camera* MainCamera() const;
     void Skybox(const std::string& right, const std::string& left, const std::string& top, const std::string& bottom, const std::string& back, const std::string& front);
     void Background(const glm::vec3& background);
 
     // PhysicsManager functions
-    void RegisterPhysicalObject(IPhysicalObject* physical_object);
-    void UnregisterPhysicalObject(IPhysicalObject* physical_object);
-    void AddRigidBody(btRigidBody* rigid_body);
+    void AddCollisionObject(btCollisionObject* collision_object, int collision_filter_group = 1, int collision_filter_mask = -1);
+    void RemoveCollisionObject(btCollisionObject* collision_object);
+    void AddRigidBody(btRigidBody* rigid_body, int group = 1, int mask = -1);
     void RemoveRigidBody(btRigidBody* rigid_body);
     void AddConstraint(btTypedConstraint* constraint, bool disable_collisions_between_linked_bodies = false);
     void RemoveConstraint(btTypedConstraint* constraint);
-    void AddVehicle(btActionInterface* vehicle);
-    void RemoveVehicle(btActionInterface* vehicle);
+    void AddVehicle(btRaycastVehicle* vehicle);
+    void RemoveVehicle(btRaycastVehicle* vehicle);
+    void Raycast(const btVector3& from, const btVector3& to, btCollisionWorld::RayResultCallback& result);
     void Gravity(const btVector3& gravity);
     btVector3 Gravity() const;
     btDynamicsWorld* DynamicsWorld();
+
+    // AudioManager functions
+    void ListenerPosition(float x, float y, float z);
+    void ListenerVelocity(float x, float y, float z);
+    void ListenerGain(float gain);
+    void ListenerOrientation(float at_x, float at_y, float at_z, float up_x, float up_y, float up_z);
 
     // ResourceManager functions
     RawTexture& LoadTexture(const std::string& path);
@@ -69,11 +82,11 @@ public:
     Sound& LoadSound(const std::string& path);
 
 private:
-    ObjectManager m_ObjectManager{ *this };
-    DrawManager m_DrawManager{};
-    PhysicsManager m_PhysicsManager{};
-    AudioManager m_AudioManager{};
-    ResourcesManager m_ResourceManager{};
+    ObjectManager m_ObjectManager;
+    DrawManager m_DrawManager;
+    PhysicsManager m_PhysicsManager;
+    AudioManager m_AudioManager;
+    ResourcesManager m_ResourceManager;
 
     bool m_Running{ false };
     float m_FrameRateLimit{ 0.0f };

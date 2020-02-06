@@ -25,6 +25,8 @@ public:
     void Radius(float radius);
     float Radius() const  { return m_Radius; }
 
+    PropertyIn<Transform*> TransformIn{ this };
+
 private:
     class Object* m_Target;
     Transform* m_TargetTransform;

@@ -3,14 +3,19 @@
 
 #include "Component.h"
 #include "../connections/PropertyIn.h"
+#include "../connections/MessageOut.h"
+#include "../connections/MessageIn.h"
 
 #include "../../utilities/Input.h"
 #include "../../utilities/Time.h"
 
+#include "btBulletCollisionCommon.h"
+#include "../../physics/IPhysicalObject.h"
+
 class Vehicle;
 class Controller : public Component {
 public:
-    Controller(float engine_force, float breaking_force, float steering);
+    Controller(float engine_force, float breaking_force, float steering, float max_steering);
 
     void Initialize() override;
     void Update() override;
@@ -20,6 +25,7 @@ public:
 private:
     float m_MaxEngineForce;
     float m_MaxBreakingForce;
+    float m_Steering;
     float m_MaxSteering;
 
     float m_CurrEngineForce{ 0.0f };

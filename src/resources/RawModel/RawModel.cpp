@@ -8,13 +8,27 @@ RawModel::RawModel(std::string path, ResourcesManager& manager)
     const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-        Logger::Instance().ErrorLog(Logger::ESender::Resources, "Failed to load model %s:\n%s", path.c_str(), importer.GetErrorString());
+        //ERROR_LOG(Logger::ESender::Resources, "Failed to load model %s:\n%s", path.c_str(), importer.GetErrorString());
+        Logger::Instance().ErrorLog(Logger::ESender::Resources, __FILE__, __LINE__, "Failed to load model %s:\n%s", path.c_str(), importer.GetErrorString());
         scene = importer.ReadFile(ERROR_MODEL3D_PATH, aiProcess_Triangulate | aiProcess_FlipUVs);
     }
 
     std::string directory = path.substr(0, path.find_last_of('/'));
     m_RawMeshes.reserve(scene->mNumMeshes);
     LoadNode(scene->mRootNode, scene, directory, manager);
+}
+
+// TODO
+void RawModel::Skin(const std::string& material_path) {
+    assert(true);
+}
+
+void RawModel::Skin(const RawTexture* diffuse, const RawTexture* specular, float shininess) {
+    for (auto it = m_RawMeshes.begin(); it != m_RawMeshes.end(); it++) {
+        it->Diffuse(diffuse);
+        it->Specular(specular);
+        it->Shininess(shininess);
+    }
 }
 
 void RawModel::LoadNode(const aiNode* node, const aiScene* scene, const std::string& directory, ResourcesManager& manager) {
@@ -66,26 +80,35 @@ void RawModel::LoadMesh(const aiMesh* mesh, const aiScene* scene, const std::str
     // Load material
     if (mesh->mMaterialIndex >= 0) {
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+        aiString texture_file;
 
-        // Load diffuse texture
-        if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0) {
-            aiString path;
-            material->GetTexture(aiTextureType_DIFFUSE, 0, &path);
-            diffuse = &manager.LoadTexture(directory + '/' + path.C_Str());
+        material->Get(AI_MATKEY_TEXTURE(aiTextureType_UNKNOWN, 0), texture_file);
+
+        if (auto texture = scene->GetEmbeddedTexture(texture_file.C_Str())) {
+            // Load embedded texture
+        } else {
+            // Load regular files
+
+            // Load diffuse texture
+            if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0) {
+                aiString path;
+                material->GetTexture(aiTextureType_DIFFUSE, 0, &path);
+                diffuse = &manager.LoadTexture(directory + '/' + path.C_Str());
+            }
+
+            // Load specular texture
+            if (material->GetTextureCount(aiTextureType_SPECULAR) > 0) {
+                aiString path;
+                material->GetTexture(aiTextureType_SPECULAR, 0, &path);
+                specular = &manager.LoadTexture(directory + '/' + path.C_Str());
+            }
+
+            // Load shininess
+            float strength = 1.0f;
+            material->Get(AI_MATKEY_SHININESS, shininess);
+            material->Get(AI_MATKEY_SHININESS_STRENGTH, strength);
+            shininess = 64; // shininess* strength;
         }
-
-        // Load specular texture
-        if (material->GetTextureCount(aiTextureType_SPECULAR) > 0) {
-            aiString path;
-            material->GetTexture(aiTextureType_SPECULAR, 0, &path);
-            specular = &manager.LoadTexture(directory + '/' + path.C_Str());
-        }
-
-        // Load shininess
-        float strength = 1.0f;
-        material->Get(AI_MATKEY_SHININESS, shininess);
-        material->Get(AI_MATKEY_SHININESS_STRENGTH, strength);
-        shininess = shininess * strength;
     }
 
     m_RawMeshes.emplace_back(vertices, indices, diffuse, specular, shininess);

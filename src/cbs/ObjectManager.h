@@ -4,23 +4,20 @@
 #include "Object.h"
 
 #include <vector>
-#include <unordered_map>
 #include <string>
 
 class Scene;
 
 class ObjectManager {
-    using Objects_t = std::unordered_map<Object::ID_t, Object>;
+    using Objects_t = std::vector<std::unique_ptr<Object>>;
 
 public:
     explicit ObjectManager(class Scene& owner);
 
-    void InitializeObjects();
-    void UpdateObjects();
+    void ProcessFrame();
     void DestroyObjects();
 
     Object* CreateObject(const std::string& name);
-    void DestroyObject(const std::string& name);
     void DestroyObject(Object::ID_t id);
 
     Scene& Scene() const { return m_Scene; }
@@ -28,8 +25,13 @@ public:
 private:
     class Scene& m_Scene;
 
-    std::hash<std::string> m_Hasher;
+    Object::ID_t m_NextObjectID;
+
     Objects_t m_Objects;
+    Objects_t::size_type m_ToDestroy;
+    Objects_t::size_type m_ToInitializeNextFrame;
+
+    Objects_t::size_type m_Iterator;
 };
 
 #endif

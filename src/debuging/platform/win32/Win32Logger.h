@@ -8,6 +8,22 @@
 #define NOMINMAX
 #include <Windows.h>
 
+#define INFO_LOG(sender, ...)                                              \
+do {                                                                       \
+    Logger::Instance().InfoLog(sender, __FILE__, __LINE__, ##__VA_ARGS__); \
+} while (0)
+
+#define WARNING_LOG(sender, ...)                                                \
+do {                                                                            \
+    Logger::Instance().WarningLog(sender, __FILE__, __LINE__, ##__VA_ARGS__);   \
+} while(0)
+
+#define ERROR_LOG(sender, ...)                                              \
+do {                                                                        \
+    Logger::Instance().ErrorLog(sender, __FILE__, __LINE__, ##__VA_ARGS__); \
+} while(0)
+
+
 class Logger {
 public:
     enum class EChannel : unsigned char {
@@ -23,6 +39,7 @@ public:
         Rendering = 2,  // Green
         Resources = 3,  // Cyan
         Physics = 4,    // Red
+        Audio = 5,      //
 
         None = 15       // White
     };
@@ -38,9 +55,9 @@ public:
     void Push(EChannel channel);
     void Pop(EChannel channel);
 
-    void InfoLog(ESender sender, const char* format, ...);
-    void WarningLog(ESender sender, const char* format, ...);
-    void ErrorLog(ESender sender, const char* format, ...);
+    void InfoLog(ESender sender, const char* file, int line, const char* format, ...);
+    void WarningLog(ESender sender, const char* file, int line, const char* format, ...);
+    void ErrorLog(ESender sender, const char* file, int line, const char* format, ...);
 
 private:
     Logger();

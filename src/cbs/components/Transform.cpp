@@ -14,13 +14,27 @@ void Transform::Identity() {
     m_Model = glm::mat4(1.0f);
 }
 
+glm::mat4 Transform::Model() const {
+    if (Parent.Connected()) {
+        glm::mat4 model = glm::translate(Parent.Value()->Model(), m_Position) * glm::toMat4(m_Rotation);
+        model = glm::scale(model, m_Scale);
+        return model;
+    } else {
+        return m_Model;
+    }
+}
+
 void Transform::Model(const glm::mat4 model) {
     m_Model = model;
 }
 
+void Transform::Model(const float* model) {
+    m_Model = glm::make_mat4(model);
+}
+
 glm::vec3 Transform::Position() const {
     if (Parent.Connected()) {
-        return m_Position + Parent.Value()->Position();
+        return glm::vec3(Model()[3]);
     } else {
         return m_Position;
     }
@@ -40,7 +54,12 @@ void Transform::Move(const glm::vec3& vector) {
 
 glm::quat Transform::Rotation() const {
     if (Parent.Connected()) {
-        return Parent.Value()->Rotation() * m_Rotation;
+        glm::quat rotation;
+        glm::vec3 tmp1, tmp2, tmp3;
+        glm::vec4 tmp4;
+        glm::decompose(Model(), tmp1, rotation, tmp2, tmp3, tmp4);
+
+        return rotation;
     } else {
         return m_Rotation;
     }
