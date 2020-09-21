@@ -4,7 +4,7 @@ Mars rover is a simplistic, physics based simualation of a rover called Oppurtun
 ![Screenshot](Photo1.png?raw=true "Mars Rover")
 
 Watch demo here:
-[![Wath demo](Thumbnail.jpg)](https://www.youtube.com/watch?v=j06aF7a2f5Y)
+[![Wath demo](Thumbnail.png)](https://www.youtube.com/watch?v=j06aF7a2f5Y)
 
 ## Controls
 * W, S to accelerate and brake
