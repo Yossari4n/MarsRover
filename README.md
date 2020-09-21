@@ -12,6 +12,6 @@ Watch demo here:
 * Hold Left Mouse Button to rotate camera
 
 ## Special thanks
-Mars Rover model: https://sketchfab.com/3d-models/opportunity-0eef63b33e774be6b2ddec9e2e86e2f8
-Skybox: https://gamebanana.com/textures/4390
-Ground texture: https://seamless-pixels.blogspot.com/2013/
+* Mars Rover model: https://sketchfab.com/3d-models/opportunity-0eef63b33e774be6b2ddec9e2e86e2f8
+* Skybox: https://gamebanana.com/textures/4390
+* Ground texture: https://seamless-pixels.blogspot.com/2013/
